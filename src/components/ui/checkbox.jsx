@@ -1,5 +1,4 @@
 import React from "react";
-import { Checkbox as MTCheckbox } from "@material-tailwind/react";
 
 const Checkbox = ({
   label,
@@ -13,20 +12,24 @@ const Checkbox = ({
   ...props
 }) => {
   return (
-    <MTCheckbox
-      checked={checked}
-      onChange={onChange}
-      name={name}
-      disabled={disabled}
-      color={color}
-      className={className}
-      label={
-        <span className={`text-sm text-gray-700 ${labelClassName}`}>
+    <label
+      className={`flex items-center cursor-pointer ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        name={name}
+        disabled={disabled}
+        className={`w-4 h-4 text-[#0ebe7f] bg-gray-100 border-gray-300 rounded focus:ring-[#0ebe7f] focus:ring-2 cursor-pointer ${className}`}
+        {...props}
+      />
+      {label && (
+        <span className={`ml-2 text-sm text-gray-700 ${labelClassName}`}>
           {label}
         </span>
-      }
-      {...props}
-    />
+      )}
+    </label>
   );
 };
 
