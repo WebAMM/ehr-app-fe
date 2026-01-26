@@ -8,7 +8,8 @@ const PATH = {
   FORGOT_PASSWORD: "/forgot-password",
   OTP_VERIFICATION: "/otp",
   DASHBOARD: "/dashboard",
-  RESET_PASSWORD: "/reset-password"
+  RESET_PASSWORD: "/reset-password",
+  USER_AND_PATIENT_DASHBOARD: "/user-and-patient-dashboard",
 };
 
 const TOASTER_STYLING_VALUES = {

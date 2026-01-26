@@ -1,12 +1,12 @@
-import React from "react";
-import { Formik, Form } from "formik";
-import { loginSchema } from "./validation";
-import { Link } from "react-router-dom";
 import { IMAGES } from "../../assets/images";
-import Input from "../../components/ui/Input";
-import Checkbox from "../../components/ui/checkbox";
-import Button from "../../components/ui/Button";
+import { Link, useNavigate } from "react-router-dom";
+import { loginSchema } from "./AuthValidation";
+import { loginWithDummyUser } from "../../utils/loginWithDummyUser";
 import AuthHero from "./AuthHero";
+import { Form, Formik } from "formik";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
+import Checkbox from "../../components/ui/checkbox";
 
 const Login = () => {
   const initialValues = {
@@ -14,11 +14,15 @@ const Login = () => {
     password: "",
     rememberMe: false,
   };
-
+  const navigate = useNavigate();
   const handleSubmit = (values, actions) => {
-    console.log("Login form values:", values);
-    setTimeout(() => actions.setSubmitting(false), 500);
+    loginWithDummyUser();
+    setTimeout(() => {
+      actions.setSubmitting(false);
+      navigate("/user-and-patient-dashboard");
+    }, 500);
   };
+
   return (
     <div className=" min-h-screen bg-[#f6f8fb] flex items-center justify-center px-8 py-10">
       <div className="w-full  min-h-[90vh] grid lg:grid-cols-5 gap-0 bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden ">

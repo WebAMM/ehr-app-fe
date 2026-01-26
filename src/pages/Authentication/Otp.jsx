@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Formik, Form } from "formik";
-import { otpSchema } from "./validation";
+import { otpSchema } from "./AuthValidation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { IMAGES } from "../../assets/images";

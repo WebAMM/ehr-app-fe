@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { registerSchema } from "./validation";
+import { registerSchema } from "./AuthValidation";
 import { Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { IMAGES } from "../../assets/images";

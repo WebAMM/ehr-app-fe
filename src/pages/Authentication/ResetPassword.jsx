@@ -1,23 +1,20 @@
 import React from "react";
 import { Formik, Form } from "formik";
-import { resetPasswordSchema } from "./validation";
+import { resetPasswordSchema } from "./AuthValidation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { IMAGES } from "../../assets/images";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import AuthHero from "./AuthHero";
-
 const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;
-
   const initialValues = {
     password: "",
     confirmPassword: "",
   };
-
   const handleSubmit = (values, actions) => {
     console.log("Reset password for", email || "user", values.password);
     setTimeout(() => {

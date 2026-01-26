@@ -2,9 +2,9 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { WEB_PAGES } from "../pages";
 import { PATH } from "../../config";
-import PublicRoute from "./Auth/PublicRoute";
-import PrivateRoute from "./Auth/PrivateRoute";
-import ModerateRoute from "./Auth/ModerateRoute";
+import PublicRoute from "./routeGuards/PublicRoute";
+import PrivateRoute from "./routeGuards/PrivateRoute";
+import ModerateRoute from "./routeGuards/ModerateRoute";
 import { INITIAL_VALUE } from "./DataRouteConfig";
 export const RouterConfig = () => {
   return (

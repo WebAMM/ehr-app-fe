@@ -7,7 +7,7 @@ const AuthHero = ({ image = IMAGES.BG_AUTH_MAIN }) => {
       <img
         src={image}
         alt="Healthcare professionals"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover image-center"
       />
       <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#0ebe7f]/30 to-black" />
 

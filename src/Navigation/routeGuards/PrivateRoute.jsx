@@ -4,7 +4,9 @@ import { PATH } from "../../../config";
 import { PrivateLayout } from "../../components/common/PrivateLayout";
 
 function PrivateRoute({ children }) {
-  const jwtToken = JSON.parse(localStorage.getItem("userToken"));
+  const jwtToken = JSON.parse(
+    localStorage.getItem("persist:root", ""),
+  )?.auth?.replace(/"/g, "");
   if (jwtToken) {
     return <PrivateLayout>{children}</PrivateLayout>;
   } else {
