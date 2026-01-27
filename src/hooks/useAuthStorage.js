@@ -7,7 +7,6 @@ export function useAuthStorage() {
       return {};
     }
   }, []);
-
   const getAuthState = useCallback(() => {
     const persistRoot = getPersistRoot();
     if (persistRoot?.auth) {

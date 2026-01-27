@@ -14,7 +14,7 @@ export const roleToFlow = {
 
 export const sidebarMenus = {
   patient: [
-    { label: "Dashboard", icon: FiGrid, to: "/dashboard" },
+    { label: "Dashboard", icon: FiGrid, to: "/user-and-patient-dashboard" },
     { label: "Find Doctors", icon: FiSearch, to: "/find-doctors" },
     { label: "Clinics", icon: FiHome, to: "/clinics" },
     { label: "Laboratories", icon: FiActivity, to: "/laboratories" },

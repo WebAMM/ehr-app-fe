@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { IMAGES } from "../../assets/images";
 import Input from "../../components/ui/Input";
-import Checkbox from "../../components/ui/checkbox";
+import Checkbox from "../../components/ui/Checkbox";
 import Button from "../../components/ui/Button";
 import AuthHero from "./AuthHero";
 const Register = () => {

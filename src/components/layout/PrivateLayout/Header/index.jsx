@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaBell } from "react-icons/fa";
-import Avatar from "react-avatar";
-
+import CustomAvatar from "@/components/ui/Avatar";
 export default function Header() {
   const user = {
     name: "John Doe",
     role: "User",
   };
-
   const notifications = [
     {
       id: 1,
@@ -34,7 +32,6 @@ export default function Header() {
       isRead: false,
     },
   ];
-
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef(null);
   useEffect(() => {
@@ -51,9 +48,7 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
   const unreadCount = notifications.filter((n) => !n.isRead).length;
-
   return (
     <header className="relative top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
@@ -129,15 +124,13 @@ export default function Header() {
             )}
           </div>
 
-          {/* User Info */}
           <div className="flex items-center space-x-2">
-            <Avatar
+            <CustomAvatar
               name={user.name}
               size="48"
               round={true}
-              color="#C2184B"
+              bgColor="#C2184B"
               fgColor="#fff"
-              className="shadow-md"
             />
             <div className="flex flex-col items-start ml-2">
               <span className="text-sm font-medium text-gray-900">

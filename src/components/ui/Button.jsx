@@ -21,16 +21,13 @@ const Button = ({
 
   const variants = {
     primary:
-      "text-white bg-[#0090E0] hover:bg-[#0077B8] focus:ring-blue-500 border border-transparent active:bg-[#006099]",
+      "text-white bg-primary hover:bg-primary-dark focus:ring-primary border border-transparent active:bg-primary-darker",
     success:
       "text-white bg-green-600 hover:bg-green-700 focus:ring-green-500 border border-transparent active:bg-green-800",
     danger:
       "text-white bg-red-600 hover:bg-red-700 focus:ring-red-500 border border-transparent active:bg-red-800",
     gradient:
-      "text-white bg-gradient-to-r from-[#0EBE7F] to-[#06583B] hover:bg- focus:ring-emerald-500 border border-transparent active:from-[#0ABF73] active:to-[#28D998] transition-all duration-300",
-
-    primaryOutline:
-      "text-[#0090E0] bg-white hover:bg-blue-50 focus:ring-blue-500 border border-[#0090E0] active:bg-blue-100",
+      "text-white bg-gradient-to-r from-secondary to-primary/90 hover:bg- focus:ring-emerald-500 border border-transparent active:from-[#0ABF73] active:to-[#28D998] transition-all duration-300",
     successOutline:
       "text-green-600 bg-white hover:bg-green-50 focus:ring-green-500 border border-green-600 active:bg-green-100",
     dangerOutline:
@@ -41,6 +38,7 @@ const Button = ({
       "text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-gray-500 border border-transparent active:bg-gray-300",
     ghost:
       "text-gray-700 bg-transparent hover:bg-gray-100 focus:ring-gray-500 border border-transparent active:bg-gray-200",
+    link: "text-secondary hover:underline focus:ring-secondary bg-transparent", // No background, secondary text, hover underline
   };
 
   const sizes = {

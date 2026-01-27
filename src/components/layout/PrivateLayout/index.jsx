@@ -9,7 +9,10 @@ export const PrivateLayout = ({ children }) => {
   const HEADER_HEIGHT = 30;
   return (
     <div className="flex min-h-screen bg-[#f6f8fb]">
-      <Sidebar role={getRole()} />
+      <div className="max-w-96 sticky top-0 h-screen">
+        <Sidebar role={getRole()} />
+      </div>
+
       <div className="flex-1 flex flex-col min-h-screen">
         <Header />
         <main

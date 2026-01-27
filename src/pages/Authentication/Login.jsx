@@ -6,7 +6,7 @@ import AuthHero from "./AuthHero";
 import { Form, Formik } from "formik";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
-import Checkbox from "../../components/ui/checkbox";
+import Checkbox from "../../components/ui/Checkbox";
 
 const Login = () => {
   const initialValues = {
