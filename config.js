@@ -10,6 +10,8 @@ const PATH = {
   DASHBOARD: "/dashboard",
   RESET_PASSWORD: "/reset-password",
   USER_AND_PATIENT_DASHBOARD: "/user-and-patient-dashboard",
+  FIND_DOCTORS: "/find-doctors",
+  DOCTOR_DETAILS: "/doctor-details",
 };
 
 const TOASTER_STYLING_VALUES = {

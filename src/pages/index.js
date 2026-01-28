@@ -4,6 +4,8 @@ import Register from "./Authentication/Register";
 import Otp from "./Authentication/Otp"; 
 import ResetPassword from "./Authentication/ResetPassword"; 
 import UserAndPatientDashboard from "./UserAndPatient/UserAndPatientDashboard";
+import FindDoctors from "./UserAndPatient/FindDoctors";
+import DoctorDetailsPage from "./UserAndPatient/FindDoctors/DoctorDetails";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -11,5 +13,7 @@ const WEB_PAGES = {
   OTP_VERIFICATION: Otp,
   RESET_PASSWORD: ResetPassword,
   USER_AND_PATIENT_DASHBOARD: UserAndPatientDashboard,
+  FIND_DOCTORS: FindDoctors,
+  DOCTOR_DETAILS: DoctorDetailsPage,
 };
 export { WEB_PAGES };
