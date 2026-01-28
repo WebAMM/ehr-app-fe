@@ -1,21 +1,12 @@
-import React from "react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { Link } from "react-router-dom";
-import { IMAGES } from "../assets/images";
-import Input from "../components/ui/Input";
-import Checkbox from "../components/ui/checkbox";
-import Button from "../components/ui/Button";
-
-const LoginSchema = Yup.object({
-  email: Yup.string()
-    .email("Enter a valid email")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  rememberMe: Yup.boolean(),
-});
+import { IMAGES } from "../../assets/images";
+import { Link, useNavigate } from "react-router-dom";
+import { loginSchema } from "./AuthValidation";
+import { loginWithDummyUser } from "../../utils/loginWithDummyUser";
+import AuthHero from "./AuthHero";
+import { Form, Formik } from "formik";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
+import Checkbox from "../../components/ui/Checkbox";
 
 const Login = () => {
   const initialValues = {
@@ -23,47 +14,24 @@ const Login = () => {
     password: "",
     rememberMe: false,
   };
-
+  const navigate = useNavigate();
   const handleSubmit = (values, actions) => {
-    // Replace with your auth request
-    console.log("Login form values:", values);
-    setTimeout(() => actions.setSubmitting(false), 500);
+    loginWithDummyUser();
+    setTimeout(() => {
+      actions.setSubmitting(false);
+      navigate("/user-and-patient-dashboard");
+    }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f8fb] flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden">
-        {/* Left: Hero */}
-        <div className="relative hidden lg:flex items-end justify-center bg-[#0ebe7f]">
-          <img
-            src={IMAGES.BG_AUTH_MAIN}
-            alt="Healthcare professionals"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0ebe7f] via-[#0ebe7f]/70 to-black/80" />
-
-          <div className="relative flex flex-col items-center text-center px-10 pb-16 w-full">
-            <h1 className="text-3xl font-bold leading-tight text-white mb-4">
-              Schedule <span className="text-[#b4ffd9]">Appointments</span> with
-              <br />
-              Expert <span className="text-[#b4ffd9]">Doctors</span>
-            </h1>
-            <p className="text-white/85 text-sm leading-relaxed max-w-md">
-              Find experienced specialist doctors with expert ratings and
-              reviews and book your appointments hassle-free.
-            </p>
-            <div className="flex items-center space-x-2 mt-6">
-              <span className="w-2 h-2 bg-white/50 rounded-full" />
-              <span className="w-8 h-2 bg-[#b4ffd9] rounded-full" />
-              <span className="w-2 h-2 bg-white/50 rounded-full" />
-            </div>
-          </div>
+    <div className=" min-h-screen bg-[#f6f8fb] flex items-center justify-center px-8 py-10">
+      <div className="w-full  min-h-[90vh] grid lg:grid-cols-5 gap-0 bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] overflow-hidden ">
+        <div className="min-h-full col-span-3">
+          <AuthHero />
         </div>
-
-        {/* Right: Form */}
-        <div className="px-4 sm:px-8 py-8 flex items-center">
-          <div className="w-full">
-            <div className="flex justify-center lg:justify-start mb-6">
+        <div className="px-4 sm:px-8 py-8 flex items-center  min-h-full h-full col-span-2">
+          <div className="w-full h-full flex  justify-center flex-col">
+            <div className="flex justify-center  mb-16 lg:justify-start">
               <div className="rounded-full border-2 border-[#0ebe7f]/60 p-2 bg-white shadow-sm">
                 <img
                   src={IMAGES.LOGO}
@@ -82,7 +50,7 @@ const Login = () => {
 
             <Formik
               initialValues={initialValues}
-              validationSchema={LoginSchema}
+              validationSchema={loginSchema}
               onSubmit={handleSubmit}
             >
               {({
@@ -155,6 +123,7 @@ const Login = () => {
                     size="lg"
                     fullWidth
                     loading={isSubmitting}
+                    loaderSize={25}
                     disabled={isSubmitting}
                     className="shadow-md shadow-[#0ebe7f]/25"
                   >

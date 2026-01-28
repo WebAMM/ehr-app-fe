@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Input as MTInput } from "@material-tailwind/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Input = ({
@@ -16,6 +15,7 @@ const Input = ({
   containerClass = "",
   height,
   width,
+  onBlur,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,34 +31,50 @@ const Input = ({
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const customStyles = {
-    height: height,
-    width: width,
+    height: height ? `${height}px` : "48px",
+    width: width ? `${width}px` : "100%",
   };
+
   return (
-    <div className={` ${containerClass}`}>
+    <div className={`${containerClass}`}>
       <div className="relative">
-        <MTInput
+        {label && (
+          <label
+            htmlFor={name}
+            className="block text-start text-sm font-medium text-gray-700 mb-1"
+          >
+            {label}
+          </label>
+        )}
+        <input
+          id={name}
           style={customStyles}
           type={inputType}
-          label={label}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur && onBlur(e);
+          }}
+          onFocus={() => setFocused(true)}
           name={name}
           required={required}
           disabled={disabled}
-          error={Boolean(error)}
-          className={className}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          className={`w-full px-4 py-3 border ${
+            error
+              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-[#0ebe7f] focus:ring-[#0ebe7f]"
+          } rounded-lg outline-none focus:ring-2 focus:ring-opacity-50 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed ${className}`}
           {...props}
         />
 
         {isPasswordType && (
           <button
             type="button"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            className="absolute right-3 top-[70%] transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             onClick={togglePasswordVisibility}
             disabled={disabled}
           >

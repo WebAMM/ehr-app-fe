@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PuffLoader from "react-spinners/PuffLoader";
+import { PuffLoader } from "react-spinners";
 
 export function LoaderCenter({ size = 50 }) {
   const override = {
@@ -9,7 +9,7 @@ export function LoaderCenter({ size = 50 }) {
   let [loading, setLoading] = useState(true);
   return (
     <div className="text-align-center">
-      <PuffLoader loading={loading} cssOverride={override} size={`${size}`} />
+      <PuffLoader loading={loading} cssOverride={override} size={size} />
     </div>
   );
 }
