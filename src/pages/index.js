@@ -6,6 +6,8 @@ import ResetPassword from "./Authentication/ResetPassword";
 import UserAndPatientDashboard from "./UserAndPatient/UserAndPatientDashboard";
 import FindDoctors from "./UserAndPatient/FindDoctors";
 import DoctorDetailsPage from "./UserAndPatient/FindDoctors/DoctorDetails";
+import DoctorBookingAppointment from "./UserAndPatient/FindDoctors/DoctorBookingpointment";
+import NearbyClinicsAndHospitals from "./UserAndPatient/NearbyClinics&Hospitals/MainPage";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -15,5 +17,7 @@ const WEB_PAGES = {
   USER_AND_PATIENT_DASHBOARD: UserAndPatientDashboard,
   FIND_DOCTORS: FindDoctors,
   DOCTOR_DETAILS: DoctorDetailsPage,
+  DOCTOR_BOOKING_APPOINTMENT: DoctorBookingAppointment,
+  NEARBY_CLINICS_AND_HOSPITALS: NearbyClinicsAndHospitals,
 };
 export { WEB_PAGES };
