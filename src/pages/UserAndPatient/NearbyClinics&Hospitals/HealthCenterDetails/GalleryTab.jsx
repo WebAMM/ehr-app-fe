@@ -3,11 +3,11 @@ import React from "react";
 const GALLERY_IMAGES = [
   "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=400&h=300&fit=crop&auto=format",
   "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=300&fit=crop&auto=format",
-  "https://images.unsplash.com/photo-1580281657527-47a1fbbd6d1c?w=400&h=300&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=400&h=300&fit=crop&auto=format",
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&h=300&fit=crop&auto=format",
   "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=400&h=300&fit=crop&auto=format",
   "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=300&fit=crop&auto=format",
-  "https://images.unsplash.com/photo-1580281657527-47a1fbbd6d1c?w=400&h=300&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=400&h=300&fit=crop&auto=format",
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&h=300&fit=crop&auto=format",
 ];
 
