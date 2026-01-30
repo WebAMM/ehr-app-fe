@@ -3,9 +3,9 @@ import { Formik, Form } from "formik";
 import { forgotPasswordSchema } from "./AuthValidation";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-import { IMAGES } from "../../assets/images";
-import Input from "../../components/ui/Input";
-import Button from "../../components/ui/Button";
+import { IMAGES } from "@/assets/images";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import AuthHero from "./AuthHero";
 const ForgotPassword = () => {
   const navigate = useNavigate();

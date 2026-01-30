@@ -1,11 +1,11 @@
 import { IMAGES } from "../../assets/images";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSchema } from "./AuthValidation";
-import { loginWithDummyUser } from "../../utils/loginWithDummyUser";
+import { loginWithDummyUser } from "@/utils/loginWithDummyUser";
 import AuthHero from "./AuthHero";
 import { Form, Formik } from "formik";
-import Input from "../../components/ui/Input";
-import Button from "../../components/ui/Button";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import Checkbox from "@/components/ui/Checkbox";
 
 const Login = () => {
