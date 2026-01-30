@@ -6,7 +6,6 @@ const Checkbox = ({
   onChange,
   name,
   disabled = false,
-  color = "green",
   className = "",
   labelClassName = "",
   ...props

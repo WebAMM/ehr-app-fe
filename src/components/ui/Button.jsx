@@ -29,7 +29,7 @@ const Button = ({
     danger:
       "text-white bg-red-600 hover:bg-red-700 focus:ring-red-500 border border-transparent active:bg-red-800",
     gradient:
-      "text-white bg-gradient-to-r from-secondary to-primary/90 hover:bg- focus:ring-emerald-500 border-0  active:from-[#0ABF73] active:to-[#28D998] transition-all duration-300",
+      "text-white bg-gradient-to-r from-secondary to-primary/80 hover:bg- focus:ring-emerald-500 border-0  active:from-[#0ABF73] active:to-[#28D998] transition-all duration-300",
     successOutline:
       "text-green-600 bg-white hover:bg-green-50 focus:ring-green-500 border border-green-600 active:bg-green-100",
     dangerOutline:

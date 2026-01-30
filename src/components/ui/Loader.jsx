@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { PuffLoader } from "react-spinners";
 
 export function LoaderCenter({ size = 50 }) {
@@ -6,10 +6,9 @@ export function LoaderCenter({ size = 50 }) {
     display: "block",
     margin: "0 auto",
   };
-  let [loading, setLoading] = useState(true);
   return (
     <div className="text-align-center">
-      <PuffLoader loading={loading} cssOverride={override} size={size} />
+      <PuffLoader loading={true} cssOverride={override} size={size} />
     </div>
   );
 }
@@ -19,8 +18,7 @@ export function LoaderRight() {
     display: "block",
     marginLeft: "auto",
   };
-  let [loading, setLoading] = useState(true);
-  return <PuffLoader loading={loading} cssOverride={override} size={50} />;
+  return <PuffLoader loading={true} cssOverride={override} size={50} />;
 }
 
 export function LoaderLeft() {
@@ -28,8 +26,7 @@ export function LoaderLeft() {
     display: "block",
     marginRight: "auto",
   };
-  let [loading, setLoading] = useState(true);
-  return <PuffLoader loading={loading} cssOverride={override} size={50} />;
+  return <PuffLoader loading={true} cssOverride={override} size={50} />;
 }
 
 export function LoaderTable() {
@@ -37,10 +34,9 @@ export function LoaderTable() {
     display: "block",
     margin: "0 auto",
   };
-  let [loading, setLoading] = useState(true);
   return (
     <div>
-      <PuffLoader loading={loading} cssOverride={override} size={40} />
+      <PuffLoader loading={true} cssOverride={override} size={40} />
     </div>
   );
 }
@@ -51,10 +47,9 @@ export function Loader1() {
     margin: "0 auto",
     color: "#fff",
   };
-  let [loading, setLoading] = useState(true);
   return (
     <div className="text-align-center loader_white">
-      <PuffLoader loading={loading} cssOverride={override} size={50} />
+      <PuffLoader loading={true} cssOverride={override} size={50} />
     </div>
   );
 }

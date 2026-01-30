@@ -19,7 +19,6 @@ const Input = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [focused, setFocused] = useState(false);
 
   const isPasswordType = type === "password";
   const inputType = isPasswordType
@@ -56,10 +55,9 @@ const Input = ({
           value={value}
           onChange={onChange}
           onBlur={(e) => {
-            setFocused(false);
             onBlur && onBlur(e);
           }}
-          onFocus={() => setFocused(true)}
+          onFocus={() => {}}
           name={name}
           required={required}
           disabled={disabled}
