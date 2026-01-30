@@ -91,7 +91,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { MapPin, Star, Award, BookOpen } from "lucide-react";
 import Card from "@/components/ui/Card";
-import Button from "@/components/ui/button";
+import Button from "@/components/ui/Button";
 import StickyHeader from "@/components/ui/StickyHeader";
 
 export default function DoctorDetailsPage() {

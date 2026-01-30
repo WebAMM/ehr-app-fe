@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const Reminder = ({ text, sub }) => (
   <div className="p-3 bg-secondary/10 border border-secondary/20 rounded-xl">
