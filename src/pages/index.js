@@ -8,6 +8,7 @@ import FindDoctors from "./UserAndPatient/FindDoctors";
 import DoctorDetailsPage from "./UserAndPatient/FindDoctors/DoctorDetails";
 import DoctorBookingAppointment from "./UserAndPatient/FindDoctors/DoctorBookingpointment";
 import NearbyClinicsAndHospitals from "./UserAndPatient/NearbyClinics&Hospitals/MainPage";
+import HealthCenterDetails from "./UserAndPatient/NearbyClinics&Hospitals/HealthCenterDetails";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -19,5 +20,6 @@ const WEB_PAGES = {
   DOCTOR_DETAILS: DoctorDetailsPage,
   DOCTOR_BOOKING_APPOINTMENT: DoctorBookingAppointment,
   NEARBY_CLINICS_AND_HOSPITALS: NearbyClinicsAndHospitals,
+  HEALTH_CENTER_DETAILS: HealthCenterDetails,
 };
 export { WEB_PAGES };

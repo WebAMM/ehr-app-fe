@@ -6,7 +6,7 @@ const Card = ({
   footer,
   className = "",
   shadow = "md",
-  padding = "md",
+  padding = "sm",
   border = true,
   hover = false,
 }) => {
@@ -16,7 +16,6 @@ const Card = ({
     md: "shadow-md",
     lg: "shadow-lg",
   };
-
   const paddingClasses = {
     sm: "p-4",
     md: "p-6",

@@ -6,7 +6,7 @@ import AuthHero from "./AuthHero";
 import { Form, Formik } from "formik";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
-import Checkbox from "../../components/ui/Checkbox";
+import Checkbox from "@/components/ui/Checkbox";
 
 const Login = () => {
   const initialValues = {
@@ -40,7 +40,6 @@ const Login = () => {
                 />
               </div>
             </div>
-
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 text-center lg:text-left">
               Log in to Apolo Now
             </h2>

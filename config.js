@@ -14,6 +14,7 @@ const PATH = {
   DOCTOR_DETAILS: "/doctor-details",
   DOCTOR_BOOKING_APPOINTMENT: "/doctor-booking-appointment",
   NEARBY_CLINICS_AND_HOSPITALS: "/nearby-clinics-and-hospitals",
+  HEALTH_CENTER_DETAILS: "/health-center-details",
 };
 
 const TOASTER_STYLING_VALUES = {
