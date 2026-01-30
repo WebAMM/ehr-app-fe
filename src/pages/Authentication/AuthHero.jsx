@@ -1,5 +1,5 @@
 import React from "react";
-import { IMAGES } from "../../assets/images";
+import { IMAGES } from "@/assets/images";
 
 const AuthHero = ({ image = IMAGES.BG_AUTH_MAIN }) => {
   return (

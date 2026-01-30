@@ -3,8 +3,8 @@ import { Formik, Form } from "formik";
 import { otpSchema } from "./AuthValidation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-import { IMAGES } from "../../assets/images";
-import Button from "../../components/ui/Button";
+import { IMAGES } from "@/assets/images";
+import Button from "@/components/ui/Button";
 import AuthHero from "./AuthHero";
 const Otp = () => {
   const navigate = useNavigate();
