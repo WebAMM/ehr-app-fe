@@ -12,6 +12,8 @@ const PATH = {
   USER_AND_PATIENT_DASHBOARD: "/user-and-patient-dashboard",
   FIND_DOCTORS: "/find-doctors",
   DOCTOR_DETAILS: "/doctor-details",
+  DOCTOR_BOOKING_APPOINTMENT: "/doctor-booking-appointment",
+  NEARBY_CLINICS_AND_HOSPITALS: "/nearby-clinics-and-hospitals",
 };
 
 const TOASTER_STYLING_VALUES = {

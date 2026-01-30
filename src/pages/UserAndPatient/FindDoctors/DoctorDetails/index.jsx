@@ -89,9 +89,10 @@ const DOCTOR_DATA = {
 
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Heart, MapPin, Star, Award, BookOpen } from "lucide-react";
+import { MapPin, Star, Award, BookOpen } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/button";
+import StickyHeader from "@/components/ui/StickyHeader";
 
 export default function DoctorDetailsPage() {
   const { id } = useParams();
@@ -101,27 +102,13 @@ export default function DoctorDetailsPage() {
 
   return (
     <main className="min-h-screen bg-pageBackground">
-      <div className="sticky top-0 z-20 bg-card border-b border-border bg-pageBackground shadow-sm">
-        <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between ">
-          <Link
-            to="/find-doctors"
-            className="flex items-center gap-2 text-foreground"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Doctor Details</span>
-          </Link>
-
-          <button
-            onClick={() => setIsFavorite(!isFavorite)}
-            className="text-muted-foreground hover:text-red-500"
-          >
-            <Heart
-              className="w-6 h-6"
-              fill={isFavorite ? "currentColor" : "none"}
-            />
-          </button>
-        </div>
-      </div>
+      <StickyHeader
+        linkTo="/find-doctors"
+        linkText="Doctor Details"
+        showFavorite={true}
+        isFavorite={isFavorite}
+        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+      />
       <div className="px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <Card className="p-6">
