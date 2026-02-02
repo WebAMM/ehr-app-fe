@@ -36,7 +36,7 @@ const ActionButtons = () => {
       <Button fullWidth className="mt-4" variant="secondary" size="md">
         Subscribe All Services
       </Button>
-      <div className="grid grid-cols-3 gap-3 mt-5">
+      <div className="grid grid-cols-3 max-sm:grid-cols-1 gap-3 mt-5">
         {actions.map(
           (
             { icon: IconComponent, label }, // eslint-disable-line no-unused-vars

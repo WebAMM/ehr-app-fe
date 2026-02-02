@@ -9,6 +9,8 @@ import DoctorDetailsPage from "./UserAndPatient/FindDoctors/DoctorDetails";
 import DoctorBookingAppointment from "./UserAndPatient/FindDoctors/DoctorBookingpointment";
 import NearbyClinicsAndHospitals from "./UserAndPatient/NearbyClinics&Hospitals/MainPage";
 import HealthCenterDetails from "./UserAndPatient/NearbyClinics&Hospitals/HealthCenterDetails";
+import LaboratoriesAndDiagnostics from "./UserAndPatient/LaboratoriesAndDiagnostics/MainPage";
+import ClinicCenterDetails from "./UserAndPatient/LaboratoriesAndDiagnostics/ClinicCenterDetails"; 
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -21,5 +23,7 @@ const WEB_PAGES = {
   DOCTOR_BOOKING_APPOINTMENT: DoctorBookingAppointment,
   NEARBY_CLINICS_AND_HOSPITALS: NearbyClinicsAndHospitals,
   HEALTH_CENTER_DETAILS: HealthCenterDetails,
+  LABORATORIES_AND_DIAGNOSTICS: LaboratoriesAndDiagnostics,
+  CLINIC_CENTER_DETAILS: ClinicCenterDetails,
 };
 export { WEB_PAGES };

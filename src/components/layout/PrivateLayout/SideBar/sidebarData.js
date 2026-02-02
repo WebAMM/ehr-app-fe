@@ -17,7 +17,7 @@ export const sidebarMenus = {
     { label: "Dashboard", icon: FiGrid, to: "/user-and-patient-dashboard" },
     { label: "Find Doctors", icon: FiSearch, to: "/find-doctors" },
     { label: "Clinics", icon: FiHome, to: "/nearby-clinics-and-hospitals" },
-    { label: "Laboratories", icon: FiActivity, to: "/laboratories" },
+    { label: "Laboratories", icon: FiActivity, to: "/laboratories-and-diagnostics" },
     { label: "My Bookings", icon: FiCalendar, to: "/bookings" },
     { label: "Select Location", icon: FiMapPin, to: "/location" },
     { label: "Medical Records", icon: FiFileText, to: "/records" },

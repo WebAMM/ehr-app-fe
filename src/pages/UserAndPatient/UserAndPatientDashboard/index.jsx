@@ -109,28 +109,30 @@ const UserAndPatientDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2" shadow="md" padding="lg">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-medium text-text">Upcoming Appointments</h2>
-              <span className="cursor-pointer text-secondary font-medium hover:opacity-80 transition">
-                View All
-              </span>
-            </div>
+        <div className="lg:col-span-2">
+          <Card shadow="md" padding="lg">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-medium text-text">Upcoming Appointments</h2>
+                <span className="cursor-pointer text-secondary font-medium hover:opacity-80 transition">
+                  View All
+                </span>
+              </div>
 
-            {appointments?.map((appt, index) => (
-              <AppointmentCard key={index} {...appt} />
-            ))}
-            <div className="border border-dashed border-border rounded-xl p-6 text-center flex flex-col items-center justify-center">
-              <p className="text-sm text-text opacity-70">
-                No more upcoming appointments
-              </p>
-              <Button variant="link" className="mt-2 text-secondary">
-                Book an appointment →
-              </Button>
+              {appointments?.map((appt, index) => (
+                <AppointmentCard key={index} {...appt} />
+              ))}
+              <div className="border border-dashed border-border rounded-xl p-6 text-center flex flex-col items-center justify-center">
+                <p className="text-sm text-text opacity-70">
+                  No more upcoming appointments
+                </p>
+                <Button variant="link" className="mt-2 text-secondary">
+                  Book an appointment →
+                </Button>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
         <div className="space-y-6">
           <Card shadow="md" padding="lg" className="max-w-md">

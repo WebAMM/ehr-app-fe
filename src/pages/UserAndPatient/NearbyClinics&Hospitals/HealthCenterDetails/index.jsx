@@ -26,7 +26,7 @@ const HealthCenterDetails = () => {
   return (
     <div className="bg-bg">
       <StickyHeader
-        linkTo="/find-doctor"
+        linkTo="/nearby-clinics-and-hospitals"
         linkText="Health Center's Details"
         showFavorite
         isFavorite={isFavorite}
