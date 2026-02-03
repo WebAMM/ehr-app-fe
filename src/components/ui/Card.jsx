@@ -23,7 +23,7 @@ const Card = ({
   };
   return (
     <div
-      className={`bg-bg rounded-lg ${border ? "border border-border" : ""} ${shadowClasses[shadow]} ${paddingClasses[padding]} ${hover ? "hover:shadow-lg transition-shadow" : ""} ${className}`}
+      className={`bg-bg rounded-lg ${border ? "border border-border" : ""} ${shadowClasses[shadow]} ${paddingClasses[padding]} ${hover ? "hover:shadow-lg transition-shadow" : ""}`}
     >
       {(title || subtitle) && (
         <div className="mb-4">
@@ -35,7 +35,7 @@ const Card = ({
           )}
         </div>
       )}
-      <div className="text-text">{children}</div>
+      <div className={`text-text ${className}`}>{children}</div>
       {footer && (
         <div className="mt-4 pt-4 border-t border-border">{footer}</div>
       )}

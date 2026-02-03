@@ -1,5 +1,82 @@
 import React from "react";
-import { PuffLoader } from "react-spinners";
+
+const puffStyles = `
+@keyframes puff {
+  0%, 80%, 100% {
+    opacity: 0.5;
+    transform: scale(0.5);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+`;
+
+function CustomPuffLoader({ size = 50, color = "#000", style = {} }) {
+  const puffSize = size * 0.25;
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: puffStyles }} />
+      <div
+        style={{ position: "relative", width: size, height: size, ...style }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            width: puffSize,
+            height: puffSize,
+            background: color,
+            borderRadius: "50%",
+            top: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            animation: "puff 1.5s ease-in-out infinite",
+          }}
+        ></div>
+        <div
+          style={{
+            position: "absolute",
+            width: puffSize,
+            height: puffSize,
+            background: color,
+            borderRadius: "50%",
+            top: "50%",
+            right: 0,
+            transform: "translateY(-50%)",
+            animation: "puff 1.5s ease-in-out infinite 0.3s",
+          }}
+        ></div>
+        <div
+          style={{
+            position: "absolute",
+            width: puffSize,
+            height: puffSize,
+            background: color,
+            borderRadius: "50%",
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            animation: "puff 1.5s ease-in-out infinite 0.6s",
+          }}
+        ></div>
+        <div
+          style={{
+            position: "absolute",
+            width: puffSize,
+            height: puffSize,
+            background: color,
+            borderRadius: "50%",
+            top: "50%",
+            left: 0,
+            transform: "translateY(-50%)",
+            animation: "puff 1.5s ease-in-out infinite 0.9s",
+          }}
+        ></div>
+      </div>
+    </>
+  );
+}
 
 export function LoaderCenter({ size = 50 }) {
   const override = {
@@ -8,7 +85,7 @@ export function LoaderCenter({ size = 50 }) {
   };
   return (
     <div className="text-align-center">
-      <PuffLoader loading={true} cssOverride={override} size={size} />
+      <CustomPuffLoader size={size} style={override} />
     </div>
   );
 }
@@ -18,7 +95,7 @@ export function LoaderRight() {
     display: "block",
     marginLeft: "auto",
   };
-  return <PuffLoader loading={true} cssOverride={override} size={50} />;
+  return <CustomPuffLoader size={50} style={override} />;
 }
 
 export function LoaderLeft() {
@@ -26,7 +103,7 @@ export function LoaderLeft() {
     display: "block",
     marginRight: "auto",
   };
-  return <PuffLoader loading={true} cssOverride={override} size={50} />;
+  return <CustomPuffLoader size={50} style={override} />;
 }
 
 export function LoaderTable() {
@@ -36,7 +113,7 @@ export function LoaderTable() {
   };
   return (
     <div>
-      <PuffLoader loading={true} cssOverride={override} size={40} />
+      <CustomPuffLoader size={40} style={override} />
     </div>
   );
 }
@@ -49,7 +126,7 @@ export function Loader1() {
   };
   return (
     <div className="text-align-center loader_white">
-      <PuffLoader loading={true} cssOverride={override} size={50} />
+      <CustomPuffLoader size={50} color="#fff" style={override} />
     </div>
   );
 }
@@ -86,7 +163,7 @@ export function LoaderFullPage({ size = 60, background = "white" }) {
       aria-live="polite"
     >
       <div className="text-center">
-        <PuffLoader loading={true} size={size} />
+        <CustomPuffLoader size={size} />
       </div>
     </div>
   );

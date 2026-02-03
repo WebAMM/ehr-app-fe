@@ -52,7 +52,7 @@ export default function DoctorBookingAppointment() {
   const isFormComplete =
     booking.selectedDate && booking.selectedTime && booking.duration;
   return (
-    <div className="min-h-screen bg-[#FAF9F7] ">
+    <div className="min-h-screen bg-bg ">
       <StickyHeader
         linkTo="/doctor-details"
         linkText="Doctor Details"
