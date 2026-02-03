@@ -17,6 +17,9 @@ const PATH = {
   HEALTH_CENTER_DETAILS: "/health-center-details",
   LABORATORIES_AND_DIAGNOSTICS: "/laboratories-and-diagnostics",
   CLINIC_CENTER_DETAILS: "/clinic-center-details",
+  MY_BOOKINGS: "/my-bookings",
+  CALL_SCREEN: "/call-screen",
+  CONSULTATION_ENDED: "/consultation-ended",
 };
 
 const TOASTER_STYLING_VALUES = {

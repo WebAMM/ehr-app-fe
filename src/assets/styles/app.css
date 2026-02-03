@@ -21,3 +21,14 @@
 .text-info {
   color: #17a2b8;
 }
+
+/* Success Reminder Styles */
+.bg-success\/10 {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+.border-success {
+  border-color: #22c55e;
+}
+.text-success {
+  color: #22c55e;
+}

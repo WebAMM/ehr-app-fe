@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -145,23 +146,23 @@ const UserAndPatientDashboard = () => {
                 return (
                   <div
                     key={index}
-                    className={`flex items-start gap-3 rounded-xl border p-4
-            ${
-              isWarning
-                ? "bg-orange-50 border-orange-200"
-                : "bg-blue-50 border-blue-200"
-            }
-          `}
+                    className={clsx(
+                      "flex items-start gap-3 rounded-xl border p-4",
+                      {
+                        "bg-orange-50 border-orange-200": isWarning,
+                        "bg-blue-50 border-blue-200": !isWarning,
+                      },
+                    )}
                   >
                     {/* Icon */}
                     <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full
-              ${
-                isWarning
-                  ? "bg-orange-100 text-orange-600"
-                  : "bg-blue-100 text-blue-600"
-              }
-            `}
+                      className={clsx(
+                        "flex h-8 w-8 items-center justify-center rounded-full",
+                        {
+                          "bg-orange-100 text-orange-600": isWarning,
+                          "bg-blue-100 text-blue-600": !isWarning,
+                        },
+                      )}
                     >
                       {isWarning ? (
                         <AlertCircle size={18} />
@@ -172,9 +173,10 @@ const UserAndPatientDashboard = () => {
 
                     <div className="space-y-0.5">
                       <p
-                        className={`text-sm font-medium ${
-                          isWarning ? "text-orange-800" : "text-blue-800"
-                        }`}
+                        className={clsx("text-sm font-medium", {
+                          "text-orange-800": isWarning,
+                          "text-blue-800": !isWarning,
+                        })}
                       >
                         {reminder.text}
                       </p>
@@ -201,7 +203,7 @@ const UserAndPatientDashboard = () => {
 
                 return (
                   <div key={index} className="flex items-start gap-3">
-                    <span className={`text-lg ${colors[index]}`}>
+                    <span className={clsx("text-lg", colors[index])}>
                       {icons[index]}
                     </span>
 

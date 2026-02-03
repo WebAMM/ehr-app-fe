@@ -2,8 +2,13 @@ import React from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ClinicCard = ({ data }) => {
+  const navigate = useNavigate();
+  const handleViewDetails = () => {
+    navigate("/health-center-details", { state: { clinicId: data.id } });
+  };
   return (
     <Card padding="none" hover className="flex flex-col">
       <div className="relative mb-4">
@@ -41,7 +46,7 @@ const ClinicCard = ({ data }) => {
           ))}
         </div>
 
-        <Button variant="secondary" fullWidth>
+        <Button variant="secondary" fullWidth onClick={handleViewDetails}>
           View Details
         </Button>
       </div>

@@ -88,8 +88,15 @@ const DOCTOR_DATA = {
 };
 
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { MapPin, Star, Award, BookOpen } from "lucide-react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  MapPin,
+  Star,
+  Award,
+  BookOpen,
+  Video,
+  MapPinCheck,
+} from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import StickyHeader from "@/components/ui/StickyHeader";
@@ -99,6 +106,11 @@ export default function DoctorDetailsPage() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const doctor = DOCTOR_DATA[id] || DOCTOR_DATA["1"];
+
+  const navigate = useNavigate();
+  const handleAppointmentClick = () => {
+    navigate("/doctor-booking-appointment");
+  };
 
   return (
     <main className="min-h-screen bg-pageBackground">
@@ -228,20 +240,34 @@ export default function DoctorDetailsPage() {
           <Card className="p-6 border border-secondary/30">
             <h3 className="font-semibold mb-4">Book Appointment</h3>
 
-            <div className="flex items-center gap-3 bg-secondary/10 p-4 rounded-lg mb-4">
+            <div
+              className="flex items-center gap-3 bg-secondary p-4 rounded-lg mb-4 text-text-light cursor-pointer"
+              onClick={handleAppointmentClick}
+            >
               <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
-                📹
+                <Video />
               </div>
               <div className="flex-1">
                 <p className="font-medium">Video Consultation</p>
-                <p className="text-sm text-muted-foreground">Available today</p>
+                <span className=" text-text-light">9800 CFA</span>
               </div>
-              <span className="font-bold text-secondary">9800 CFA</span>
             </div>
-
+            <div
+              className="flex items-center gap-3 bg-none p-4 rounded-lg mb-4 text-secondary border border-secondary cursor-pointer"
+              onClick={handleAppointmentClick}
+            >
+              <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+                <MapPinCheck />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">Video Consultation</p>
+                <span className=" ">9800 CFA</span>
+              </div>
+            </div>
+            {/* 
             <Button className="w-full py-6 text-lg bg-secondary text-white">
               Book Now
-            </Button>
+            </Button> */}
 
             <p className="text-xs text-muted-foreground text-center mt-3">
               You won’t be charged until confirmed
