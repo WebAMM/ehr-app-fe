@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import clsx from "clsx";
 import { Search, Check, Plus } from "lucide-react";
 import Button from "@/components/ui/Button";
 import StickyHeader from "@/components/ui/StickyHeader";
@@ -139,9 +140,13 @@ const ClinicCenterDetails = () => {
 
                 <button
                   onClick={() => toggleTest(test)}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    selected ? "bg-secondary" : "bg-gray-100"
-                  }`}
+                  className={clsx(
+                    "w-8 h-8 rounded-full flex items-center justify-center",
+                    {
+                      "bg-secondary": selected,
+                      "bg-gray-100": !selected,
+                    },
+                  )}
                 >
                   {selected ? (
                     <Check className="w-4 h-4 text-white" />
@@ -172,11 +177,7 @@ const ClinicCenterDetails = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Button
-              className="rounded-xl bg-gray-100 text-foreground"
-              size="lg"
-              fullWidth
-            >
+            <Button size="lg" fullWidth variant="grayOutline">
               Review Order
             </Button>
             <Button

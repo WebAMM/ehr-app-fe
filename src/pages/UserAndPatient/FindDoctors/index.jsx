@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import PageHeader from "@/components/ui/PageHeader";
 import { DOCTORS } from "./DoctorData";
-
+import { useNavigate } from "react-router-dom";
 const SPECIALTIES = [
   "All Specialties",
   "Cardiologist",
@@ -20,6 +20,7 @@ export default function FindDoctors() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All Specialties");
   const [favorites, setFavorites] = useState(new Set());
+  const navigate = useNavigate();
 
   const toggleFavorite = (id) => {
     const newFavorites = new Set(favorites);
@@ -187,7 +188,11 @@ export default function FindDoctors() {
                     </p>
                   </div>
                 </div>
-                <Button variant="gradient" className="">
+                <Button
+                  variant="gradient"
+                  className=""
+                  onClick={() => navigate("/doctor-details")}
+                >
                   Book Now
                 </Button>
               </div>

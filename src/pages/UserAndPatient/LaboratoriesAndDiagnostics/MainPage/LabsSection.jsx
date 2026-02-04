@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import clsx from "clsx";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
@@ -6,6 +7,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { Clock, Home, MapPin, Calendar } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom";
 
 const labs = [
   {
@@ -56,6 +58,11 @@ const LabsSection = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [currentLab, setCurrentLab] = useState(null);
+  const navigate = useNavigate();
+
+  const handleBookTest = (lab) => {
+    navigate("/clinic-center-details", { state: { lab } });
+  };
 
   return (
     <>
@@ -133,11 +140,12 @@ const LabsSection = () => {
               </div>
 
               <span
-                className={`text-xs px-2 py-1 rounded-full ${
-                  lab.status === "Available Today"
-                    ? "bg-green-100 text-green-600"
-                    : "bg-orange-100 text-orange-600"
-                }`}
+                className={clsx("text-xs px-2 py-1 rounded-full", {
+                  "bg-green-100 text-green-600":
+                    lab.status === "Available Today",
+                  "bg-orange-100 text-orange-600":
+                    lab.status !== "Available Today",
+                })}
               >
                 {lab.status}
               </span>
@@ -147,6 +155,7 @@ const LabsSection = () => {
                 variant="secondary"
                 fullWidth
                 size="md"
+                onClick={() => handleBookTest(lab)}
                 // icon={<Calendar size={16} />}
               >
                 Book Test
