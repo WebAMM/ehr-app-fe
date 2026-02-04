@@ -20,7 +20,7 @@ export const sidebarMenus = {
     { label: "Laboratories", icon: FiActivity, to: "/laboratories-and-diagnostics" },
     { label: "My Bookings", icon: FiCalendar, to: "/my-bookings" },
     { label: "Select Location", icon: FiMapPin, to: "/location" },
-    { label: "Medical Records", icon: FiFileText, to: "/records" },
+    { label: "Medical Records", icon: FiFileText, to: "/medical-records"},
     { label: "Messages", icon: FiMessageCircle, to: "/messages" },
     { label: "Subscription", icon: FiZap, to: "/subscription" },
     { label: "Settings", icon: FiSettings, to: "/settings" },

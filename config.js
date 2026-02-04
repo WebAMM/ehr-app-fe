@@ -20,6 +20,8 @@ const PATH = {
   MY_BOOKINGS: "/my-bookings",
   CALL_SCREEN: "/call-screen",
   CONSULTATION_ENDED: "/consultation-ended",
+  DOCTOR_APPOINTMENT_DETAILS: "/doctor-appointment-details",
+  MEDICAL_RECORDS: "/medical-records",
 };
 
 const TOASTER_STYLING_VALUES = {

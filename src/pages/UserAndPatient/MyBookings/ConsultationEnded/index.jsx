@@ -6,10 +6,7 @@ import { Video } from "lucide-react";
 const ConsultationEnded = () => {
   return (
     <div className="min-h-screen bg-pageBackground">
-      {/* Header */}
       <StickyHeader linkTo="/my-bookings" linkText="Doctor Details" />
-
-      {/* Content */}
       <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
         {/* Icon */}
         <div className="relative mb-6">
