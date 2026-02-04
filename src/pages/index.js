@@ -14,6 +14,8 @@ import ClinicCenterDetails from "./UserAndPatient/LaboratoriesAndDiagnostics/Cli
 import MyBookings from "./UserAndPatient/MyBookings/MyBookingPage";
 import CallScreenPage from "./UserAndPatient/MyBookings/CallScreen"; 
 import ConsultationEnded from "./UserAndPatient/MyBookings/ConsultationEnded";
+import DoctorAppointmentDetails from "./UserAndPatient/MyBookings/DoctorAppointmentDetails";
+import MedicalRecords from "./UserAndPatient/MedicalRecords";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -31,5 +33,7 @@ const WEB_PAGES = {
   MY_BOOKINGS: MyBookings,
   CALL_SCREEN: CallScreenPage,
   CONSULTATION_ENDED: ConsultationEnded,
+  DOCTOR_APPOINTMENT_DETAILS: DoctorAppointmentDetails,
+  MEDICAL_RECORDS: MedicalRecords,
 };
 export { WEB_PAGES };
