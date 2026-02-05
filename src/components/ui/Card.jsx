@@ -9,6 +9,8 @@ const Card = ({
   padding = "sm",
   border = true,
   hover = false,
+  width = "",
+  parentClass = "",
 }) => {
   const shadowClasses = {
     none: "",
@@ -23,7 +25,7 @@ const Card = ({
   };
   return (
     <div
-      className={`bg-bg rounded-lg ${border ? "border border-border" : ""} ${shadowClasses[shadow]} ${paddingClasses[padding]} ${hover ? "hover:shadow-lg transition-shadow" : ""}`}
+      className={`bg-bg rounded-lg ${border ? "border border-border" : ""} ${shadowClasses[shadow]} ${paddingClasses[padding]} ${hover ? "hover:shadow-lg transition-shadow" : ""} ${width} ${parentClass}`}
     >
       {(title || subtitle) && (
         <div className="mb-4">

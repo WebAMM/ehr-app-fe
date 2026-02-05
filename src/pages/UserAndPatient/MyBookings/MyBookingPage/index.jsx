@@ -37,7 +37,6 @@ const BOOKINGS = {
   Completed: [],
   Cancelled: [],
 };
-
 const getStatusClasses = (status) => {
   switch (status) {
     case "Upcoming":
@@ -50,7 +49,6 @@ const getStatusClasses = (status) => {
       return "bg-gray-100 text-gray-700";
   }
 };
-
 const MyBookings = () => {
   const [activeTab, setActiveTab] = useState("Upcoming");
   const navigate = useNavigate();
