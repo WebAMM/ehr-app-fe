@@ -22,6 +22,9 @@ const PATH = {
   CONSULTATION_ENDED: "/consultation-ended",
   DOCTOR_APPOINTMENT_DETAILS: "/doctor-appointment-details",
   MEDICAL_RECORDS: "/medical-records",
+  USER_MESSAGES_PAGE: "/user-messages",
+  SELECT_LOCATION: "/location",
+  SUBSCRIPTION_PLANS: "/subscription-plans",
 };
 
 const TOASTER_STYLING_VALUES = {

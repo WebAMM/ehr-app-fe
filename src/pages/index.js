@@ -16,6 +16,9 @@ import CallScreenPage from "./UserAndPatient/MyBookings/CallScreen";
 import ConsultationEnded from "./UserAndPatient/MyBookings/ConsultationEnded";
 import DoctorAppointmentDetails from "./UserAndPatient/MyBookings/DoctorAppointmentDetails";
 import MedicalRecords from "./UserAndPatient/MedicalRecords";
+import UserMessagesPage from "./UserAndPatient/MessagesPage";
+import SelectLocation from "./UserAndPatient/SelectLocation";
+import SubscriptionPlans from "./UserAndPatient/SubscriptionPlans";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -35,5 +38,8 @@ const WEB_PAGES = {
   CONSULTATION_ENDED: ConsultationEnded,
   DOCTOR_APPOINTMENT_DETAILS: DoctorAppointmentDetails,
   MEDICAL_RECORDS: MedicalRecords,
+  USER_MESSAGES_PAGE: UserMessagesPage,
+  SELECT_LOCATION: SelectLocation,
+  SUBSCRIPTION_PLANS: SubscriptionPlans,
 };
 export { WEB_PAGES };

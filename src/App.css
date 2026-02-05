@@ -3,6 +3,7 @@
 @theme {
 --color-primary: #06583B;
 --color-secondary: #0EBE7F;
+--color-tertiary: #05b073;
 --color-primary-dark: #05472F;
 --color-secondary-light: #2FE8A0;
 --color-linearGradient: linear-gradient(135deg, #06583B 0%, #0EBE7F 100%);
