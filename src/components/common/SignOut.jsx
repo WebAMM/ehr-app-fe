@@ -1,7 +1,10 @@
 import React from "react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 export function SignOut() {
+  const navigate = useNavigate();
+
   function logout() {
     Swal.fire({
       title: "Are you sure?",
@@ -14,7 +17,7 @@ export function SignOut() {
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem("persist:root");
-        window.location.href = "/";
+        navigate("/");
       }
     });
   }

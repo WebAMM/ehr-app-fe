@@ -19,6 +19,12 @@ import MedicalRecords from "./UserAndPatient/MedicalRecords";
 import UserMessagesPage from "./UserAndPatient/MessagesPage";
 import SelectLocation from "./UserAndPatient/SelectLocation";
 import SubscriptionPlans from "./UserAndPatient/SubscriptionPlans";
+import UserSettings from "./UserAndPatient/Settings";
+import EditProfilePage from "./UserAndPatient/Settings/EditProfile";
+import FavoritesPage from "./UserAndPatient/Settings/FavoritesPage";
+import MedicalPrescriptions from "./UserAndPatient/Settings/MedicalPrescriptions";
+import PaymentHistory from "./UserAndPatient/Settings/PaymentHistory";
+import HelpSupport from "./UserAndPatient/Settings/HelpSupport";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -41,5 +47,11 @@ const WEB_PAGES = {
   USER_MESSAGES_PAGE: UserMessagesPage,
   SELECT_LOCATION: SelectLocation,
   SUBSCRIPTION_PLANS: SubscriptionPlans,
+  USER_SETTINGS: UserSettings,
+  EDIT_PROFILE: EditProfilePage,
+  FAVORITES_PAGE: FavoritesPage,
+  MEDICAL_PRESCRIPTIONS: MedicalPrescriptions,
+  PAYMENT_HISTORY: PaymentHistory,
+  HELP_SUPPORT: HelpSupport,
 };
 export { WEB_PAGES };

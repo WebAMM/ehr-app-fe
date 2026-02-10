@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaBell } from "react-icons/fa";
 import CustomAvatar from "@/components/ui/Avatar";
-export default function Header() {
+import { Menu, Search, X } from "lucide-react";
+import clsx from "clsx";
+export default function Header({ isSidebarOpen, toggleSidebar }) {
   const user = {
     name: "John Doe",
     role: "User",
@@ -33,6 +35,7 @@ export default function Header() {
     },
   ];
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [handleSearch, setHandleSearch] = useState(false);
   const notificationRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
@@ -50,13 +53,25 @@ export default function Header() {
   }, []);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   return (
-    <header className="relative top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between px-6 py-4">
-        <div className="flex-1 max-w-xs">
+    <header className="absolute lg:relative top-0 left-0 right-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex items-center justify-between px-6 py-4 ">
+        <div className=" max-w-xs">
+          <div className="lg:hidden p-2 rounded-md cursor-pointer flex items-center gap-3">
+            <div onClick={toggleSidebar}>
+              {isSidebarOpen ? <X /> : <Menu />}
+            </div>
+            <span onClick={() => setHandleSearch((prev) => !prev)}>
+              <Search />
+            </span>
+          </div>
+
           <input
             type="text"
             placeholder="Search..."
-            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+            className={clsx(
+              " px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent max-lg:absolute left-0 top-full mt-1 bg-pageBackground  lg:block",
+              handleSearch ? "block mx-6" : "hidden",
+            )}
           />
         </div>
 
