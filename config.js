@@ -25,6 +25,12 @@ const PATH = {
   USER_MESSAGES_PAGE: "/user-messages",
   SELECT_LOCATION: "/location",
   SUBSCRIPTION_PLANS: "/subscription-plans",
+  USER_SETTINGS: "/settings",
+  EDIT_PROFILE: "/edit-profile",
+  FAVORITES_PAGE: "/favorites",
+  MEDICAL_PRESCRIPTIONS: "/medical-prescriptions",
+  PAYMENT_HISTORY: "/payment-history",
+  HELP_SUPPORT: "/help-support",
 };
 
 const TOASTER_STYLING_VALUES = {

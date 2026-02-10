@@ -168,3 +168,14 @@ export function LoaderFullPage({ size = 60, background = "white" }) {
     </div>
   );
 }
+
+export const FaqSkeleton = () => (
+  <div className="animate-pulse space-y-4">
+    {[...Array(5)].map((_, i) => (
+      <div key={i} className="flex items-center gap-3">
+        <div className="h-4 w-16 bg-border rounded" />
+        <div className="h-4 flex-1 bg-border rounded" />
+      </div>
+    ))}
+  </div>
+);

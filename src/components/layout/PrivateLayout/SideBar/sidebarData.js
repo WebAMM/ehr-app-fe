@@ -24,7 +24,7 @@ export const sidebarMenus = {
     { label: "Messages", icon: FiMessageCircle, to: "/user-messages" },
     { label: "Subscription", icon: FiZap, to: "/subscription-plans" },
     { label: "Settings", icon: FiSettings, to: "/settings" },
-    { label: "Logout", icon: FiLogOut, to: "/logout" },
+    { label: "Logout", icon: FiLogOut, to: "" },
   ],
   doctor: [
     { label: "Dashboard", icon: FiGrid, to: "/doctor/dashboard" },
@@ -32,7 +32,7 @@ export const sidebarMenus = {
     { label: "Messages", icon: FiMessageCircle, to: "/doctor/messages" },
     { label: "Subscription", icon: FiZap, to: "/doctor/subscription" },
     { label: "Settings", icon: FiSettings, to: "/doctor/settings" },
-    { label: "Logout", icon: FiLogOut, to: "/logout" },
+    { label: "Logout", icon: FiLogOut, to: "" },
   ],
   clinic: [
     { label: "Dashboard", icon: FiGrid, to: "/clinic/dashboard" },
@@ -40,6 +40,6 @@ export const sidebarMenus = {
     { label: "Messages", icon: FiMessageCircle, to: "/clinic/messages" },
     { label: "Subscription", icon: FiZap, to: "/clinic/subscription" },
     { label: "Settings", icon: FiSettings, to: "/clinic/settings" },
-    { label: "Logout", icon: FiLogOut, to: "/logout" },
+    { label: "Logout", icon: FiLogOut, to: "" },
   ],
 };
