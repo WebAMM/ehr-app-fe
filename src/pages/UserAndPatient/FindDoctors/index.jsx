@@ -71,12 +71,12 @@ export default function FindDoctors() {
             </Button>
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
             {SPECIALTIES.map((specialty) => (
               <button
                 key={specialty}
                 onClick={() => setSelectedSpecialty(specialty)}
-                className={`px-4 py-2 rounded-full whitespace-nowrap font-medium transition-colors ${
+                className={`lg:px-4 lg:py-2 px-2 py-1 max-lg:text-xs rounded-full whitespace-nowrap font-medium transition-colors ${
                   selectedSpecialty === specialty
                     ? "bg-secondary text-white"
                     : "bg-secondary/20 text-foreground hover:bg-secondary/30"
@@ -100,7 +100,7 @@ export default function FindDoctors() {
             <option>Experience: Most</option>
           </select>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredDoctors.map((doctor) => (
             // <Link to={`/doctor/${doctor.id}`} key={doctor.id}>
             <Card

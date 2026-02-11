@@ -31,6 +31,9 @@ const PATH = {
   MEDICAL_PRESCRIPTIONS: "/medical-prescriptions",
   PAYMENT_HISTORY: "/payment-history",
   HELP_SUPPORT: "/help-support",
+  DOCTOR_DASHBOARD: "/doctor-dashboard",
+  APPOINTMENTS_PAGE: "/appointments",
+  DOCTOR_MESSAGES: "/doctor-messages",
 };
 
 const TOASTER_STYLING_VALUES = {
