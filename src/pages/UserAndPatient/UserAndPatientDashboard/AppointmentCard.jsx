@@ -14,7 +14,7 @@ const AppointmentCard = ({
 
   return (
     <div
-      className={`flex items-center justify-between p-4 rounded-xl border border-border bg-bg ${bg}`}
+      className={`flex items-center justify-between max-md:flex-col max-md:items-start  p-4 rounded-xl border border-border bg-bg ${bg}`}
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-border overflow-hidden" />
@@ -31,7 +31,7 @@ const AppointmentCard = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 max-md:mt-4">
         <span
           className={`px-3 py-1 rounded-full text-xs font-medium
             ${

@@ -25,6 +25,9 @@ import FavoritesPage from "./UserAndPatient/Settings/FavoritesPage";
 import MedicalPrescriptions from "./UserAndPatient/Settings/MedicalPrescriptions";
 import PaymentHistory from "./UserAndPatient/Settings/PaymentHistory";
 import HelpSupport from "./UserAndPatient/Settings/HelpSupport";
+import DoctorDashboard from "./Doctor/DoctorDashboard";
+import AppointmentsPage from "./Doctor/Appointments";
+import DoctorMessages from "./Doctor/DoctorMessages";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -53,5 +56,8 @@ const WEB_PAGES = {
   MEDICAL_PRESCRIPTIONS: MedicalPrescriptions,
   PAYMENT_HISTORY: PaymentHistory,
   HELP_SUPPORT: HelpSupport,
+  DOCTOR_DASHBOARD: DoctorDashboard,
+  APPOINTMENTS_PAGE: AppointmentsPage,
+  DOCTOR_MESSAGES: DoctorMessages,
 };
 export { WEB_PAGES };
