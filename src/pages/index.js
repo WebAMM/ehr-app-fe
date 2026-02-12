@@ -28,6 +28,7 @@ import HelpSupport from "./UserAndPatient/Settings/HelpSupport";
 import DoctorDashboard from "./Doctor/DoctorDashboard";
 import AppointmentsPage from "./Doctor/Appointments";
 import DoctorMessages from "./Doctor/DoctorMessages";
+import SubscriptionPage from "./Doctor/SubscriptionPage";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -59,5 +60,6 @@ const WEB_PAGES = {
   DOCTOR_DASHBOARD: DoctorDashboard,
   APPOINTMENTS_PAGE: AppointmentsPage,
   DOCTOR_MESSAGES: DoctorMessages,
+  SUBSCRIPTION_PAGE: SubscriptionPage,
 };
 export { WEB_PAGES };
