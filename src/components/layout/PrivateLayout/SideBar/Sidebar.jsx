@@ -46,7 +46,7 @@ const Sidebar = ({
 
   return (
     <>
-      <aside className="bg-linear-to-t from-primary z-50  to-secondary text-text-light flex flex-col py-6 px-4.5 shadow-[0_14px_40px_rgba(0,0,0,0.22)] relative   md:rounded-b-[22px] max-lg:absolute">
+      <aside className="bg-linear-to-t from-primary z-50  to-secondary text-text-light flex flex-col py-6 px-4.5 shadow-[0_14px_40px_rgba(0,0,0,0.22)] relative   md:rounded-b-[22px] max-lg:absolute min-h-screen">
         <div className="flex items-center lg:justify-center justify-between p-2.5 pb-4 border-b border-[rgba(255,255,255,0.14)]">
           {IMAGES?.LOGO2 || IMAGES?.LOGO ? (
             <img

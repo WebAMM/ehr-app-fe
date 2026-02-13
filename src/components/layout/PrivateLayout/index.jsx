@@ -14,7 +14,7 @@ export const PrivateLayout = ({ children }) => {
 
   const HEADER_HEIGHT = 30;
   return (
-    <div className="flex min-h-screen bg-[#f6f8fb]">
+    <div className="flex min-h-screen bg-pageBackground">
       <div
         className={clsx(
           " min-w-72 lg:sticky top-0 h-screen z-50  lg:block transition-transform duration-300 ease-in-out",

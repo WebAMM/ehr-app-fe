@@ -13,13 +13,20 @@ const Login = () => {
     email: "",
     password: "",
     rememberMe: false,
+    role: "user",
   };
   const navigate = useNavigate();
   const handleSubmit = (values, actions) => {
-    loginWithDummyUser();
+    loginWithDummyUser(values.role);
     setTimeout(() => {
       actions.setSubmitting(false);
-      navigate("/user-and-patient-dashboard");
+      if (values.role === "clinic") {
+        navigate("/clinic-dashboard");
+      } else if (values.role === "doctor") {
+        navigate("/doctor-dashboard");
+      } else if (values.role === "user") {
+        navigate("/user-and-patient-dashboard");
+      }
     }, 500);
   };
 
@@ -94,6 +101,22 @@ const Login = () => {
                       height={48}
                       className="text-sm"
                     />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Role
+                    </label>
+                    <select
+                      name="role"
+                      value={values.role}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0ebe7f] focus:border-transparent text-sm"
+                    >
+                      <option value="user">User</option>
+                      <option value="doctor">Doctor</option>
+                      <option value="clinic">Clinic</option>
+                    </select>
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
