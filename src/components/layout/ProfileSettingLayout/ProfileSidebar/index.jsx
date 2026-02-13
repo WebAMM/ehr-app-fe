@@ -13,37 +13,47 @@ import {
 
 const ProfileSidebar = () => {
   const menuItems = [
-    { id: "profile", label: "Profile", icon: User, path: "/profile" },
-    { id: "edit", label: "Edit Profile", icon: Edit, path: "/profile/edit" },
+    {
+      id: "profile",
+      label: "Profile",
+      icon: User,
+      path: "/doctor-settings/profile",
+    },
+    {
+      id: "edit",
+      label: "Edit Profile",
+      icon: Edit,
+      path: "/doctor-settings/edit",
+    },
     {
       id: "password",
       label: "Change Password",
       icon: Eye,
-      path: "/profile/change-password",
+      path: "/doctor-settings/change-password",
     },
     {
       id: "notifications",
       label: "Notifications",
       icon: Bell,
-      path: "/profile/notifications",
+      path: "/doctor-settings/notifications",
     },
     {
       id: "billing",
       label: "Billing History",
       icon: CreditCard,
-      path: "/profile/billing",
+      path: "/doctor-settings/billing",
     },
     {
       id: "reviews",
       label: "My Reviews",
       icon: Star,
-      path: "/profile/reviews",
+      path: "/doctor-settings/reviews",
     },
     {
       id: "help",
       label: "Help Center",
       icon: HelpCircle,
-      path: "/profile/help",
+      path: "/doctor-settings/help",
     },
   ];
 

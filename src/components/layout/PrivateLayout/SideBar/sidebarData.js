@@ -27,11 +27,11 @@ export const sidebarMenus = {
     { label: "Logout", icon: FiLogOut, to: "" },
   ],
   doctor: [
-    { label: "Dashboard", icon: FiGrid, to: "/doctor/dashboard" },
-    { label: "Appointments", icon: FiCalendar, to: "/doctor/appointments" },
-    { label: "Messages", icon: FiMessageCircle, to: "/doctor/messages" },
-    { label: "Subscription", icon: FiZap, to: "/doctor/subscription" },
-    { label: "Settings", icon: FiSettings, to: "/doctor/settings" },
+    { label: "Dashboard", icon: FiGrid, to: "/doctor-dashboard" },
+    { label: "Appointments", icon: FiCalendar, to: "/appointments" },
+    { label: "Messages", icon: FiMessageCircle, to: "/doctor-messages" },
+    { label: "Subscription", icon: FiZap, to: "/subscription" },
+    { label: "Settings", icon: FiSettings, to: "/doctor-settings" },
     { label: "Logout", icon: FiLogOut, to: "" },
   ],
   clinic: [

@@ -1,11 +1,14 @@
-import React, { Children } from "react";
+import React from "react";
+import { Outlet } from "react-router-dom";
 import ProfileSidebar from "./ProfileSidebar";
 
-const ProfileSettingLayout = ({ children }) => {
+const ProfileSettingLayout = () => {
   return (
-    <div className="flex">
+    <div className="flex bg-pageBackground min-h-screen p-5">
       <ProfileSidebar />
-      <div>{children}</div>
+      <div className="flex-1 ml-5">
+        <Outlet />
+      </div>
     </div>
   );
 };

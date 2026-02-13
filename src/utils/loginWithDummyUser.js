@@ -1,4 +1,4 @@
-export const loginWithDummyUser = () => {
+export const loginWithDummyUser = (role) => {
   const persistRoot =
     JSON.parse(localStorage.getItem("persist:root")) || {};
 
@@ -9,7 +9,7 @@ export const loginWithDummyUser = () => {
       firstName: "Dummy",
       lastName: "User",
       email: "dummy@example.com",
-      role: "user",
+      role: role,
     },
   });
 
