@@ -21,7 +21,7 @@ const Login = () => {
     setTimeout(() => {
       actions.setSubmitting(false);
       if (values.role === "clinic") {
-        navigate("/clinic-dashboard");
+        navigate("/laboratories-dashboard");
       } else if (values.role === "doctor") {
         navigate("/doctor-dashboard");
       } else if (values.role === "user") {

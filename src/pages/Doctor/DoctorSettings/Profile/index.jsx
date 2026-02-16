@@ -1,6 +1,6 @@
 import React from "react";
 
-import Card from "../../../../components/ui/Card";
+import Card from "@/components/ui/Card";
 
 const Item = ({ label, value }) => (
   <div className="space-y-1">

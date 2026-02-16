@@ -36,6 +36,8 @@ const PATH = {
   DOCTOR_MESSAGES: "/doctor-messages",
   SUBSCRIPTION_PAGE: "/subscription",
   DOCTOR_SETTING: "/doctor-settings",
+  LABORATORIES_DASHBOARD: "/laboratories-dashboard",
+  LABORATORIES_APPOINTMENTS: "/laboratories-appointments"
 };
 
 const TOASTER_STYLING_VALUES = {

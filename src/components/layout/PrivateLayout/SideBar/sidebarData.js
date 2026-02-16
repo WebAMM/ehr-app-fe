@@ -35,8 +35,8 @@ export const sidebarMenus = {
     { label: "Logout", icon: FiLogOut, to: "" },
   ],
   clinic: [
-    { label: "Dashboard", icon: FiGrid, to: "/clinic/dashboard" },
-    { label: "Appointments", icon: FiCalendar, to: "/clinic/appointments" },
+    { label: "Dashboard", icon: FiGrid, to: "/laboratories-dashboard" },
+    { label: "Appointments", icon: FiCalendar, to: "/laboratories-appointments" },
     { label: "Messages", icon: FiMessageCircle, to: "/clinic/messages" },
     { label: "Subscription", icon: FiZap, to: "/clinic/subscription" },
     { label: "Settings", icon: FiSettings, to: "/clinic/settings" },

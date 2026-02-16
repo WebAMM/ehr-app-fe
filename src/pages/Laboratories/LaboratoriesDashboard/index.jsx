@@ -1,12 +1,12 @@
 import Dashboard from "@/components/common/Dashboard";
 import React from "react";
 
-const DoctorDashboard = () => {
+const LaboratoriesDashboard = () => {
   return (
-    <div>
+    <>
       <Dashboard />
-    </div>
+    </>
   );
 };
 
-export default DoctorDashboard;
+export default LaboratoriesDashboard;

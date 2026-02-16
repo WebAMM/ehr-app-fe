@@ -2,9 +2,9 @@ import React, { useMemo } from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 
-import Card from "../../../../components/ui/Card";
-import Input from "../../../../components/ui/Input";
-import Button from "../../../../components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 const isStrongPassword = (password) => {
   if (!password) return false;

@@ -58,12 +58,12 @@ const ProfileSidebar = () => {
   ];
 
   return (
-    <div className="w-[320px] bg-bg rounded-2xl shadow-md border border-border p-6">
-      <div className="flex flex-col items-center text-center mb-8">
+    <div className="w-full md:w-[320px] shrink-0 bg-bg rounded-2xl shadow-md border border-border p-4 sm:p-6">
+      <div className="flex flex-col items-center text-center mb-6 sm:mb-8">
         <img
           src="https://randomuser.me/api/portraits/men/32.jpg"
           alt="Doctor"
-          className="w-24 h-24 rounded-2xl object-cover mb-4"
+          className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover mb-4"
         />
 
         <h2 className="text-xl font-semibold text-primary">Dr. David Patel</h2>
@@ -86,7 +86,7 @@ const ProfileSidebar = () => {
               }
             >
               <Icon size={20} />
-              <span>{item.label}</span>
+              <span className="flex-1 min-w-0 truncate">{item.label}</span>
             </NavLink>
           );
         })}
