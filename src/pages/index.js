@@ -32,6 +32,9 @@ import SubscriptionPage from "./Doctor/SubscriptionPage";
 import DoctorSettings from "./Doctor/DoctorSettings";
 import LaboratoriesDashboard from "./Laboratories/LaboratoriesDashboard";
 import Appointments from "./Laboratories/Appointments";
+import ClinicMembers from "./Laboratories/ClinicMembers";
+import ClinicMessage from "./Laboratories/ClinicMessage";
+import ClinicSubscription from "./Laboratories/ClinicSubscription";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -66,6 +69,9 @@ const WEB_PAGES = {
   SUBSCRIPTION_PAGE: SubscriptionPage,
   DOCTOR_SETTING: DoctorSettings,
   LABORATORIES_DASHBOARD: LaboratoriesDashboard,
-  LABORATORIES_APPOINTMENTS: Appointments
+  LABORATORIES_APPOINTMENTS: Appointments,
+  CLINIC_MEMBERS: ClinicMembers,
+  CLINIC_MESSAGE: ClinicMessage,
+  CLINIC_SUBSCRIPTION: ClinicSubscription,
 };
 export { WEB_PAGES };

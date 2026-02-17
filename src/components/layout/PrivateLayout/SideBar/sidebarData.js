@@ -1,4 +1,4 @@
-import { FiGrid, FiSearch, FiHome, FiActivity, FiCalendar, FiMapPin, FiFileText, FiMessageCircle, FiZap, FiSettings, FiLogOut } from "react-icons/fi";
+import { FiGrid, FiSearch, FiHome, FiActivity, FiCalendar, FiMapPin, FiFileText, FiMessageCircle, FiZap, FiSettings, FiLogOut, FiUsers } from "react-icons/fi";
 
 export const roleToFlow = {
   patient: "patient",
@@ -34,11 +34,12 @@ export const sidebarMenus = {
     { label: "Settings", icon: FiSettings, to: "/doctor-settings" },
     { label: "Logout", icon: FiLogOut, to: "" },
   ],
-  clinic: [
+  clinic: [ 
     { label: "Dashboard", icon: FiGrid, to: "/laboratories-dashboard" },
     { label: "Appointments", icon: FiCalendar, to: "/laboratories-appointments" },
-    { label: "Messages", icon: FiMessageCircle, to: "/clinic/messages" },
-    { label: "Subscription", icon: FiZap, to: "/clinic/subscription" },
+    { label: "Clinic Members", icon: FiUsers, to: "/clinic-members" },
+    { label: "Messages", icon: FiMessageCircle, to: "/clinic-message" },
+    { label: "Subscription", icon: FiZap, to: "/clinic-subscription" },
     { label: "Settings", icon: FiSettings, to: "/clinic/settings" },
     { label: "Logout", icon: FiLogOut, to: "" },
   ],
