@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import PageHeader from "@/components/ui/PageHeader";
 import AppointmentTabs from "./AppointmentTabs";
 import AppointmentCard from "./AppointmentCard";
-
 const dummyAppointments = [
   {
     id: 1,

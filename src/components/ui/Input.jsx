@@ -32,7 +32,6 @@ const Input = ({
   };
 
   const customStyles = {
-    height: height ? `${height}px` : "48px",
     width: width ? `${width}px` : "100%",
   };
 
@@ -42,7 +41,7 @@ const Input = ({
         {label && (
           <label
             htmlFor={name}
-            className="block text-start text-sm font-medium text-gray-700 mb-1"
+            className="block text-start text-xs sm:text-sm font-medium text-gray-700 mb-1"
           >
             {label}
           </label>
@@ -61,7 +60,7 @@ const Input = ({
           name={name}
           required={required}
           disabled={disabled}
-          className={`w-full px-4 py-3 border ${
+          className={`w-full px-2 sm:px-4 py-2 sm:py-3 border h-8 sm:h-12 text-xs sm:text-sm ${
             error
               ? "border-red-500 focus:border-red-500 focus:ring-red-500"
               : "border-gray-300 focus:border-[#0ebe7f] focus:ring-[#0ebe7f]"

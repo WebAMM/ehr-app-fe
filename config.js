@@ -34,6 +34,10 @@ const PATH = {
   DOCTOR_DASHBOARD: "/doctor-dashboard",
   APPOINTMENTS_PAGE: "/appointments",
   DOCTOR_MESSAGES: "/doctor-messages",
+  SUBSCRIPTION_PAGE: "/subscription",
+  DOCTOR_SETTING: "/doctor-settings",
+  LABORATORIES_DASHBOARD: "/laboratories-dashboard",
+  LABORATORIES_APPOINTMENTS: "/laboratories-appointments"
 };
 
 const TOASTER_STYLING_VALUES = {
