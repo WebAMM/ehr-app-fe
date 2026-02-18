@@ -9,9 +9,7 @@ export const loginSchema = Yup.object({
 });
 
 export const registerSchema = Yup.object({
-  phone: Yup.string()
-    .matches(/^[0-9+\-\s]{7,15}$/i, "Enter a valid phone number")
-    .required("Phone number is required"),
+  fullName: Yup.string().required("Full name is required"),
   email: Yup.string().email("Enter a valid email").required("Email is required"),
   password: Yup.string()
     .min(8, "At least 8 characters")
@@ -23,6 +21,16 @@ export const registerSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm your password"),
+  phoneNo: Yup.string()
+    .matches(/^[0-9+\-\s]{7,15}$/i, "Enter a valid phone number")
+    .required("Phone number is required"),
+  countryCode: Yup.string().required("Country code is required"),
+  gender: Yup.string().oneOf(["Male", "Female", "Other"], "Select a valid gender").required("Gender is required"),
+  maritalStatus: Yup.string().oneOf(["Single", "Married", "Divorced", "Widowed"], "Select a valid marital status").required("Marital status is required"),
+  dateOfBirth: Yup.date().required("Date of birth is required"),
+  location: Yup.mixed().required("Please select your location"),
+  longitude: Yup.number().required("Location coordinates are required"),
+  latitude: Yup.number().required("Location coordinates are required"),
   terms: Yup.boolean().oneOf([true], "Please accept the terms"),
 });
 

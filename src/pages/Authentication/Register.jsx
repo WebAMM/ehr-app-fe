@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import { registerSchema } from "./AuthValidation";
 import { Link } from "react-router-dom";
@@ -7,18 +7,71 @@ import { IMAGES } from "@/assets/images";
 import Input from "@/components/ui/Input";
 import Checkbox from "@/components/ui/Checkbox";
 import Button from "@/components/ui/Button";
+import GooglePlaceInput from "@/components/ui/GooglePlaceInput";
+import { useJsApiLoader } from "@react-google-maps/api";
+import { GetPhonecodes } from "react-country-state-city";
 import AuthHero from "./AuthHero";
+import { useUserRegisterMutation } from "@/services";
+import { toastError, toastSuccess } from "@/components/ui/Toast";
 const Register = () => {
   const initialValues = {
-    phone: "",
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    phoneNo: "",
+    countryCode: "",
+    gender: "",
+    maritalStatus: "",
+    dateOfBirth: "",
+    location: "",
+    longitude: "",
+    latitude: "",
     terms: false,
   };
 
-  const handleSubmit = (values, actions) => {
-    console.log("Register form values:", values);
+  const [userRegister, { isLoading, isError, error }] =
+    useUserRegisterMutation();
+
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+  });
+
+  const [countries, setCountries] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    GetPhonecodes()
+      .then((data) => {
+        if (isMounted) setCountries(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (isMounted) setCountries([]);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleSubmit = async (values, actions) => {
+    try {
+      const response = await userRegister(values).unwrap();
+      if (response?.message) {
+        actions.resetForm();
+        toastSuccess(
+          response?.message ||
+            "Registration successful! Please check your email for verification.",
+        );
+      }
+    } catch (error) {
+      toastError(
+        error?.data?.message || "Registration failed. Please try again.",
+      );
+    }
     setTimeout(() => actions.setSubmitting(false), 600);
   };
   return (
@@ -56,19 +109,21 @@ const Register = () => {
                 touched,
                 handleChange,
                 handleBlur,
-                isSubmitting,
+
                 setFieldValue,
               }) => (
                 <Form className="space-y-5">
                   <Input
-                    label="Phone Number"
-                    type="tel"
-                    name="phone"
-                    placeholder="Enter your phone number"
-                    value={values.phone}
+                    label="Full Name"
+                    type="text"
+                    name="fullName"
+                    placeholder="Enter your full name"
+                    value={values.fullName}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.phone && errors.phone ? errors.phone : ""}
+                    error={
+                      touched.fullName && errors.fullName ? errors.fullName : ""
+                    }
                     height={48}
                     className="text-sm"
                   />
@@ -118,6 +173,142 @@ const Register = () => {
                     className="text-sm"
                   />
 
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block mb-2 text-sm font-medium text-gray-700">
+                        Country Code
+                      </label>
+                      <select
+                        name="countryCode"
+                        value={values.countryCode}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className="w-full p-3 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select Country</option>
+                        {countries.map((country) => (
+                          <option
+                            key={country.id}
+                            value={`+${country.phone_code}`}
+                          >
+                            {country.name} (+{country.phone_code})
+                          </option>
+                        ))}
+                      </select>
+                      {touched.countryCode && errors.countryCode && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.countryCode}
+                        </p>
+                      )}
+                    </div>
+
+                    <Input
+                      label="Phone Number"
+                      type="tel"
+                      name="phoneNo"
+                      placeholder="1234567890"
+                      value={values.phoneNo}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={
+                        touched.phoneNo && errors.phoneNo ? errors.phoneNo : ""
+                      }
+                      height={48}
+                      className="text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-700">
+                      Gender
+                    </label>
+                    <select
+                      name="gender"
+                      value={values.gender}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="w-full p-3 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {touched.gender && errors.gender && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.gender}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-700">
+                      Marital Status
+                    </label>
+                    <select
+                      name="maritalStatus"
+                      value={values.maritalStatus}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="w-full p-3 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Marital Status</option>
+                      <option value="Single">Single</option>
+                      <option value="Married">Married</option>
+                      <option value="Divorced">Divorced</option>
+                      <option value="Widowed">Widowed</option>
+                    </select>
+                    {touched.maritalStatus && errors.maritalStatus && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.maritalStatus}
+                      </p>
+                    )}
+                  </div>
+
+                  <Input
+                    label="Date of Birth"
+                    type="date"
+                    name="dateOfBirth"
+                    value={values.dateOfBirth}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={
+                      touched.dateOfBirth && errors.dateOfBirth
+                        ? errors.dateOfBirth
+                        : ""
+                    }
+                    height={48}
+                    className="text-sm"
+                  />
+
+                  {isLoaded ? (
+                    <GooglePlaceInput
+                      name="location"
+                      label="Location"
+                      type="address"
+                      placeholder="Search for your location"
+                      formik={{
+                        values,
+                        setFieldValue,
+                        handleBlur,
+                        touched,
+                        errors,
+                      }}
+                      onPlaceSelect={(data) => {
+                        setFieldValue("location", data);
+                        setFieldValue(
+                          "longitude",
+                          data.location.coordinates[0],
+                        );
+                        setFieldValue("latitude", data.location.coordinates[1]);
+                      }}
+                    />
+                  ) : (
+                    <div className="text-sm text-gray-500">
+                      Loading Google Maps...
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between">
                     <Checkbox
                       name="terms"
@@ -136,11 +327,11 @@ const Register = () => {
                     variant="gradient"
                     size="lg"
                     fullWidth
-                    loading={isSubmitting}
-                    disabled={isSubmitting}
+                    loading={isLoading}
+                    disabled={isLoading}
                     className="shadow-md shadow-[#0ebe7f]/25"
                   >
-                    {isSubmitting ? "Creating account..." : "Register"}
+                    {isLoading ? "Creating account..." : "Register"}
                   </Button>
 
                   <div className="relative flex items-center justify-center">
