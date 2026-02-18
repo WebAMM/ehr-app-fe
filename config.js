@@ -37,7 +37,10 @@ const PATH = {
   SUBSCRIPTION_PAGE: "/subscription",
   DOCTOR_SETTING: "/doctor-settings",
   LABORATORIES_DASHBOARD: "/laboratories-dashboard",
-  LABORATORIES_APPOINTMENTS: "/laboratories-appointments"
+  LABORATORIES_APPOINTMENTS: "/laboratories-appointments",
+  CLINIC_MEMBERS: "/clinic-members",
+  CLINIC_MESSAGE: "/clinic-message",
+  CLINIC_SUBSCRIPTION: "/clinic-subscription",
 };
 
 const TOASTER_STYLING_VALUES = {

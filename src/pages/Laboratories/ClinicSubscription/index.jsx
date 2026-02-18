@@ -1,5 +1,7 @@
 import SubscriptionPlan from "@/components/common/SubscriptionPlan";
-const SubscriptionPage = () => {
+import React from "react";
+
+const ClinicSubscription = () => {
   return (
     <>
       <SubscriptionPlan />
@@ -7,4 +9,4 @@ const SubscriptionPage = () => {
   );
 };
 
-export default SubscriptionPage;
+export default ClinicSubscription;
