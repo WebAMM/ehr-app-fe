@@ -1,17 +1,16 @@
 import Sidebar from "./SideBar/Sidebar";
 import "./SideBar/sidebar.css";
 import Header from "./Header";
-import { useAuthStorage } from "../../../hooks/useAuthStorage";
 import { useState } from "react";
 import clsx from "clsx";
+import { authCookies } from "@/utils/cookieUtils";
 
 export const PrivateLayout = ({ children }) => {
-  const { getRole } = useAuthStorage();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
-
+  const { getAuth } = authCookies;
   const HEADER_HEIGHT = 30;
   return (
     <div className="flex min-h-screen bg-pageBackground">
@@ -24,7 +23,7 @@ export const PrivateLayout = ({ children }) => {
         )}
       >
         <Sidebar
-          role={getRole()}
+          role={getAuth()?.user?.status}
           isOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
         />

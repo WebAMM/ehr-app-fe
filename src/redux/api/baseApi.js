@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Cookies from 'js-cookie';
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_BASE_URL,
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers) => {
     const token = Cookies.get('auth_token');
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
@@ -26,7 +26,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Auth', 'User', 'Doctor', 'Clinic', 'Appointment', 'Message'],
+  tagTypes: ['Auth', "DoctorAuth", "ClinicAuth", 'User', 'Doctor', 'Clinic', 'Appointment', 'Message'],
   endpoints: () => ({}),
 });
 

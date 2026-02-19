@@ -1,13 +1,9 @@
 import Cookies from 'js-cookie';
-
-
 const COOKIE_CONFIG = {
   expires: 7, 
   secure: import.meta.env.NODE_ENV === 'production',
   sameSite: 'strict',
 };
-
-
 export const authCookies = {
   saveAuth: (token, userData) => {
     try {
@@ -50,13 +46,9 @@ export const authCookies = {
     const token = Cookies.get('auth_token');
     return !!token;
   },
-
-
   getToken: () => {
     return Cookies.get('auth_token');
   },
-
-
   getUser: () => {
     try {
       const userDataStr = Cookies.get('user_data');
@@ -66,8 +58,6 @@ export const authCookies = {
       return null;
     }
   },
-
-  // Update user data in cookies (keeping the same token)
   updateUser: (updatedUserData) => {
     try {
       const token = Cookies.get('auth_token');
@@ -83,9 +73,8 @@ export const authCookies = {
   },
 };
 
-// General cookie utilities
 export const cookieUtils = {
-  // Set a cookie with the default configuration
+  
   set: (name, value, options = {}) => {
     const config = { ...COOKIE_CONFIG, ...options };
     return Cookies.set(name, value, config);
@@ -95,23 +84,15 @@ export const cookieUtils = {
   get: (name) => {
     return Cookies.get(name);
   },
-
-  // Remove a cookie
   remove: (name) => {
     return Cookies.remove(name);
   },
-
-  // Check if a cookie exists
   exists: (name) => {
     return Cookies.get(name) !== undefined;
   },
-
-  // Get all cookies
   getAll: () => {
     return Cookies.get();
   },
-
-  // Clear all cookies (use with caution)
   clearAll: () => {
     const allCookies = Cookies.get();
     Object.keys(allCookies).forEach(name => {
@@ -120,7 +101,7 @@ export const cookieUtils = {
   },
 };
 
-// Session management utilities
+
 export const sessionUtils = {
   // Start a user session
   startSession: (token, userData) => {

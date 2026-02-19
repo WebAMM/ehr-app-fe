@@ -5,6 +5,7 @@ import { IMAGES } from "../../../../assets/images";
 
 import { roleToFlow, sidebarMenus } from "./sidebarData";
 import { PanelRightOpen } from "lucide-react";
+import { authCookies } from "@/utils/cookieUtils";
 
 const useOptionalLocation = () => {
   try {
@@ -20,6 +21,7 @@ const Sidebar = ({
 }) => {
   const safeLocation = useOptionalLocation();
   const navigate = useNavigate();
+  const { clearAuth } = authCookies;
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const currentPath =
     safeLocation?.pathname ||
@@ -35,7 +37,7 @@ const Sidebar = ({
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("persist:root");
+    clearAuth();
     navigate("/");
     setIsLogoutModalOpen(false);
   };
