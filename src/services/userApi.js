@@ -1,4 +1,4 @@
-import { baseApi } from '../redux/api/baseApi';
+import { baseApi } from "@/redux"; 
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

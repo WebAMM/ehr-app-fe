@@ -2,13 +2,29 @@ import { baseApi } from "@/redux";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
+    userLogin: builder.mutation({
       query: (credentials) => ({
-        url: '/auth/login',
+        url: '/userAuth/login',
         method: 'POST',
         body: credentials,
       }),
       invalidatesTags: ['Auth'],
+    }),
+    doctorLogin: builder.mutation({
+      query: (credentials) => ({
+        url: '/doctorAuth/login',
+        method: 'POST',
+        body: credentials,
+      }),
+      invalidatesTags: ['DoctorAuth'],
+    }),
+    clinicLogin: builder.mutation({
+      query: (credentials) => ({
+        url: '/clinicAuth/loginClinic',
+        method: 'POST',
+        body: credentials,
+      }),
+      invalidatesTags: ['ClinicAuth'],
     }),
 
     userRegister: builder.mutation({
@@ -18,6 +34,22 @@ export const authApi = baseApi.injectEndpoints({
         body: userData,
       }),
       invalidatesTags: ['Auth'],
+    }),
+    doctorRegister: builder.mutation({
+      query: (userData) => ({
+        url: '/doctorAuth/addDoctor',
+        method: 'POST',
+        body: userData,
+      }),
+      invalidatesTags: ['DoctorAuth'],
+    }),
+    clinicRegister: builder.mutation({
+      query: (userData) => ({
+        url: '/clinicAuth/addClinic',
+        method: 'POST',
+        body: userData,
+      }),
+      invalidatesTags: ['ClinicAuth'],
     }),
 
     forgotPassword: builder.mutation({
@@ -82,8 +114,12 @@ export const authApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useLoginMutation,
+  useUserLoginMutation,
+  useDoctorLoginMutation,
+  useClinicLoginMutation,
   useUserRegisterMutation,
+  useDoctorRegisterMutation,
+  useClinicRegisterMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useVerifyOtpMutation,
@@ -91,4 +127,6 @@ export const {
   useLogoutMutation,
   useRefreshTokenMutation,
   useVerifyTokenQuery,
+  
+
 } = authApi;

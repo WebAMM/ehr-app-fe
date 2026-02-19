@@ -9,7 +9,7 @@ const Button = ({
   disabled = false,
   loading = false,
   onClick,
-  loaderSize,
+  loaderSize = 30,
   className = "cursor-pointer",
   icon: Icon = null,
   iconPosition = "left",
