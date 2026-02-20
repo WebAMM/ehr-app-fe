@@ -2,25 +2,48 @@ import { baseApi } from "@/redux";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUserProfile: builder.query({
-      query: (userId) => `/users/${userId}`,
-      providesTags: (result, error, userId) => [{ type: 'User', id: userId }],
-    }),
-    updateUserProfile: builder.mutation({
-      query: ({ userId, userData }) => ({
-        url: `/users/${userId}`,
-        method: 'PUT',
-        body: userData,
+   
+   searchDoctors: builder.query({
+  query: ({
+    search,
+    specialty,
+    location,
+    page = 1,
+    limit = 10,
+    fullName,
+  }) => {
+    const params = {
+      page,
+      limit,
+    };
+
+    if (search?.trim()) params.search = search;
+    if (specialty?.trim()) params.specialty = specialty;
+    if (location?.trim()) params.location = location;
+    if (fullName?.trim()) params.fullName = fullName;
+
+    return {
+      url: "/doctor/searchDoctors",
+      params,
+    };
+  },
+  providesTags: ["Doctor"],
+}),
+    getDoctorDetails: builder.query({
+      query: ({ userId }) => ({
+        url: `/doctor/getDoctorDetails/${userId}`,
+        method: 'GET',
+        
       }),
-      invalidatesTags: (result, error, { userId }) => [{ type: 'User', id: userId }],
+   providesTags: ["Doctor"],
     }),
-    uploadUserAvatar: builder.mutation({
-      query: ({ userId, formData }) => ({
-        url: `/users/${userId}/avatar`,
-        method: 'POST',
-        body: formData,
+    getDoctorReviews: builder.query({
+      query: ({ userId }) => ({
+        url: `/doctor/doctorReviews/${userId}`,
+        method: 'GET',
+        
       }),
-      invalidatesTags: (result, error, { userId }) => [{ type: 'User', id: userId }],
+   providesTags: ["Doctor"],
     }),
 
     getUserAppointments: builder.query({
@@ -98,13 +121,7 @@ export const userApi = baseApi.injectEndpoints({
     }),
     
     // Search doctors
-    searchDoctors: builder.query({
-      query: ({ search, specialty, location, page = 1, limit = 10 }) => ({
-        url: '/users/search-doctors',
-        params: { search, specialty, location, page, limit },
-      }),
-      providesTags: ['Doctor'],
-    }),
+    
     
     // Get user settings
     getUserSettings: builder.query({
@@ -126,18 +143,9 @@ export const userApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetUserProfileQuery,
-  useUpdateUserProfileMutation,
-  useUploadUserAvatarMutation,
-  useGetUserAppointmentsQuery,
-  useBookAppointmentMutation,
-  useCancelAppointmentMutation,
-  useGetUserMedicalRecordsQuery,
-  useUploadMedicalRecordMutation,
-  useGetUserMessagesQuery,
-  useSendMessageMutation,
-  useGetNearbyClinicsQuery,
   useSearchDoctorsQuery,
-  useGetUserSettingsQuery,
-  useUpdateUserSettingsMutation,
+  useGetDoctorDetailsQuery,
+  useGetDoctorReviewsQuery
+  
+ 
 } = userApi;

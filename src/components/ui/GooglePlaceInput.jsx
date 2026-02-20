@@ -47,7 +47,7 @@ export default function GooglePlaceInput({
       case "establishment":
         formattedData = {
           name: place.name,
-          address: place.formatted_address,
+          address: place.name,
           location: {
             type: "Point",
             coordinates: [lng, lat],
@@ -58,7 +58,8 @@ export default function GooglePlaceInput({
       case "address":
       default:
         formattedData = {
-          address: place.formatted_address,
+          address: place.name ? place.name : "",
+
           location: {
             type: "Point",
             coordinates: [lng, lat],

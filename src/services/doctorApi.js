@@ -167,7 +167,7 @@ export const {
   useAddPrescriptionMutation,
   useGetDoctorMessagesQuery,
   useSendMessageToPatientMutation,
-  useGetDoctorReviewsQuery,
+  
   useGetDoctorEarningsQuery,
   useUploadDoctorDocumentsMutation,
   useGetDoctorSettingsQuery,

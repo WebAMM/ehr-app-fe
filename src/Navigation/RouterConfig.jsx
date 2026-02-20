@@ -15,6 +15,7 @@ import DoctorSettingsBillingHistory from "../pages/Doctor/DoctorSettings/Billing
 import DoctorSettingsReviews from "../pages/Doctor/DoctorSettings/Reviews";
 import DoctorSettingsHelpCenter from "../pages/Doctor/DoctorSettings/HelpCenter";
 import DoctorSettingsNotFound from "../pages/Doctor/DoctorSettings/NotFound";
+
 export const RouterConfig = () => {
   return (
     <div>

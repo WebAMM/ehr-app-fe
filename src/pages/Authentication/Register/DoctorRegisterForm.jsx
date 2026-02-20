@@ -47,6 +47,7 @@ const DoctorRegisterForm = ({ isLoaded }) => {
     longitude: "",
     latitude: "",
     location: "",
+    attachDoc: null,
     terms: false,
   };
 
@@ -99,6 +100,7 @@ const DoctorRegisterForm = ({ isLoaded }) => {
         bloodGroup: values.bloodGroup,
         gender: values.gender,
         phoneNumber: values.phoneNumber,
+        address: values.location?.address || "",
         addAccount: {
           teleMoney: Number(values.teleMoney),
           orangeMoney: Number(values.orangeMoney),
@@ -107,7 +109,24 @@ const DoctorRegisterForm = ({ isLoaded }) => {
         orangeType: values.orangeType,
       };
 
-      const response = await doctorRegister(payload).unwrap();
+      let bodyToSend = payload;
+      if (values.attachDoc) {
+        const formData = new FormData();
+        // Append primitive fields
+        Object.entries(payload).forEach(([k, v]) => {
+          if (v === undefined || v === null) return;
+          if (typeof v === "object") {
+            formData.append(k, JSON.stringify(v));
+          } else {
+            formData.append(k, String(v));
+          }
+        });
+        // Attach file under 'attachDoc' key
+        formData.append("attachDoc", values.attachDoc);
+        bodyToSend = formData;
+      }
+
+      const response = await doctorRegister(bodyToSend).unwrap();
       if (response?.message) {
         actions.resetForm();
         setAvailableDayAndTime(
@@ -240,8 +259,7 @@ const DoctorRegisterForm = ({ isLoaded }) => {
                 <option value="In-Clinic Consultation">
                   In-Clinic Consultation
                 </option>
-                <option value="Online Consultation">Online Consultation</option>
-                <option value="Both">Both</option>
+                <option value="Online Consultation">Video Consultation</option>
               </select>
               {touched.type && errors.type && (
                 <p className="mt-1 text-sm text-red-500">{errors.type}</p>
@@ -425,7 +443,6 @@ const DoctorRegisterForm = ({ isLoaded }) => {
             )}
           </div>
 
-          {/* Available Day's & Time Section */}
           <div>
             <label className="block mb-3 text-sm font-medium text-gray-700">
               Available Day&apos;s & Time
@@ -489,12 +506,11 @@ const DoctorRegisterForm = ({ isLoaded }) => {
             </div>
           </div>
 
-          {/* Location */}
           {isLoaded ? (
             <GooglePlaceInput
               name="location"
               label="Location"
-              type="address"
+              type="establishment"
               placeholder="Search for your location"
               formik={{
                 values,
