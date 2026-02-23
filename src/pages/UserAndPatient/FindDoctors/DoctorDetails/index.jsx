@@ -87,8 +87,8 @@ const DOCTOR_DATA = {
   },
 };
 
-import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   MapPin,
   Star,
@@ -98,16 +98,26 @@ import {
   MapPinCheck,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+
 import StickyHeader from "@/components/ui/StickyHeader";
+import { useGetDoctorDetailsQuery, useGetDoctorReviewsQuery } from "@/services";
+import Map from "./Map";
 
 export default function DoctorDetailsPage() {
-  const { id } = useParams();
+  const location = useLocation();
+  const userId = location.state?.doctorId;
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const doctor = DOCTOR_DATA[id] || DOCTOR_DATA["1"];
-
   const navigate = useNavigate();
+  const { data: doctorData } = useGetDoctorDetailsQuery({ userId: userId });
+  const { data: reviewsData, isLoading: reviewsLoading } =
+    useGetDoctorReviewsQuery({
+      userId: userId,
+    });
+  const reviews = reviewsData?.data.reviews || [];
+  const doctorDetails = doctorData?.data[0];
+  const doctor = DOCTOR_DATA["1"];
+
   const handleAppointmentClick = () => {
     navigate("/doctor-booking-appointment");
   };
@@ -126,80 +136,87 @@ export default function DoctorDetailsPage() {
           <Card className="p-6">
             <div className="flex gap-6">
               <img
-                src={doctor.image}
-                alt={doctor.name}
+                src={doctorDetails?.attachDoc}
+                alt={doctorDetails?.fullName}
                 className="w-28 h-28 rounded-lg object-cover"
               />
 
               <div className="flex-1">
-                <h1 className="text-xl font-bold">{doctor.name}</h1>
-                <p className="text-muted-foreground">{doctor.specialty}</p>
+                <h1 className="text-xl font-bold">{doctorDetails?.fullName}</h1>
+                <p className="text-muted-foreground">
+                  {doctorDetails?.specialty}
+                </p>
 
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">{doctor.rating}</span>
-                  <span className="text-muted-foreground text-sm">
-                    ({doctor.reviewsCount} reviews)
-                  </span>
-                  <span className="text-muted-foreground text-sm">
-                    • {doctor.location}
-                  </span>
+                  <div className="font-medium">
+                    {doctorDetails?.reviews?.averageRating || "N/A"}
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    ({doctorDetails?.reviews?.totalReviews || "N/A"} reviews)
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    • {doctorDetails?.address || "N/A"}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-4 mt-6">
-              <StatItem label="Patients" value={`${doctor.patients}+`} />
-              <StatItem label="Experience" value={`${doctor.experience} yrs`} />
-              <StatItem label="Rating" value={doctor.rating} />
-              <StatItem label="Reviews" value={doctor.reviewsCount} />
+            <div className="grid grid-cols-3 gap-4 mt-6">
+              <StatItem
+                label="Experience"
+                value={`${doctorDetails?.experience || "N/A"} yrs`}
+              />
+              <StatItem
+                label="Rating"
+                value={doctorDetails?.reviews?.averageRating || "N/A"}
+              />
+              <StatItem
+                label="Reviews"
+                value={doctorDetails?.reviews?.totalReviews || "N/A"}
+              />
             </div>
           </Card>
 
-          {/* Practice Details */}
           <Card className="p-6">
             <h2 className="font-semibold mb-4">Practice Details</h2>
+            <div className="flex items-center gap-2 mb-2">
+              <BookOpen className="w-4 h-4 text-secondary" />
+              <span className="font-medium">{doctorDetails?.type}</span>
+            </div>
 
-            {doctor.practiceDetails.map((item, idx) => (
-              <div key={idx} className="mb-6 last:mb-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <BookOpen className="w-4 h-4 text-secondary" />
-                  <span className="font-medium">{item.type}</span>
-                </div>
-
-                <div className="bg-secondary/10 rounded-lg p-4 flex justify-between">
-                  <div className="space-y-1">
-                    {item.times.map((t, i) => (
-                      <p key={i} className="text-sm text-muted-foreground">
-                        {t}
-                      </p>
-                    ))}
+            {doctorDetails?.availableDayAndTime?.length > 0 ? (
+              doctorDetails?.availableDayAndTime?.map((item, idx) => {
+                return item?.available ? (
+                  <div key={idx} className="mb-6 last:mb-0">
+                    <div className="bg-secondary/10 rounded-lg p-4 flex justify-between">
+                      <div className="flex items-center gap-2">
+                        <div>{item?.day}</div>
+                        <p className="text-sm text-muted-foreground">
+                          {item?.openingTime}
+                        </p>
+                        {" - "}
+                        <p className="text-sm text-muted-foreground">
+                          {item?.closingTime}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-
-                  <span className="font-semibold text-secondary">
-                    {item.cya}
-                  </span>
-                </div>
-              </div>
-            ))}
+                ) : null;
+              })
+            ) : (
+              <p className="text-muted-foreground">No available times</p>
+            )}
           </Card>
           <Card className="p-6">
             <h2 className="font-semibold mb-3">About</h2>
             <p className="text-muted-foreground leading-relaxed">
-              {doctor.bio}
+              {doctorDetails?.about}
             </p>
           </Card>
-          <Card className="p-6">
-            <h2 className="font-semibold mb-4">Work Location</h2>
-            <div className="flex gap-2 mb-4">
-              <MapPin className="w-5 h-5 text-secondary" />
-              <p className="text-muted-foreground">{doctor.address}</p>
-            </div>
-            <div className="h-60 bg-gray-200 rounded-lg flex items-center justify-center">
-              Map View
-            </div>
-          </Card>
+          <div>
+            <Map doctorDetails={doctorDetails} />
+          </div>
           <Card className="p-6">
             <h2 className="font-semibold mb-4">Education & Certifications</h2>
             <ul className="space-y-3">
@@ -213,27 +230,60 @@ export default function DoctorDetailsPage() {
           </Card>
           <Card className="p-6">
             <h2 className="font-semibold mb-4">Patient Reviews</h2>
-            {doctor.patientReviews.map((r, idx) => (
-              <div
-                key={idx}
-                className="border-b border-border pb-4 mb-4 last:border-0"
-              >
-                <div className="flex justify-between">
-                  <span className="font-medium">{r.name}</span>
-                  <div className="flex gap-1">
-                    {Array(r.rating)
-                      .fill(0)
-                      .map((_, i) => (
-                        <Star
-                          key={i}
-                          className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                        />
-                      ))}
-                  </div>
-                </div>
-                <p className="text-muted-foreground mt-2">{r.text}</p>
+            {reviewsLoading ? (
+              <div className="text-center text-muted-foreground py-6">
+                Loading reviews...
               </div>
-            ))}
+            ) : reviewsData?.error ? (
+              <div className="text-center text-red-500 py-6">
+                Failed to load reviews. Please try again later.
+              </div>
+            ) : !reviews || reviews.length === 0 ? (
+              <div className="text-center text-muted-foreground py-6">
+                No reviews yet.
+              </div>
+            ) : (
+              reviews.map((r) => (
+                <div
+                  key={r._id}
+                  className="border-b border-border pb-4 mb-4 last:border-0"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">
+                      {r.ratingBy?.name || "Anonymous"}
+                    </span>
+                    <div className="flex gap-1 items-center">
+                      {Array.from({ length: Math.floor(r.rating) }).map(
+                        (_, i) => (
+                          <Star
+                            key={i}
+                            className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                          />
+                        ),
+                      )}
+                      {r.rating % 1 !== 0 && (
+                        <Star
+                          className="w-4 h-4 text-yellow-400"
+                          style={{ fill: "url(#half)" }}
+                        />
+                      )}
+                      <span className="ml-2 text-sm text-muted-foreground">
+                        {r.rating}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground mt-2">
+                    {r.writeYourReview}
+                  </p>
+                </div>
+              ))
+            )}
+            <svg width="0" height="0">
+              <linearGradient id="half">
+                <stop offset="50%" stopColor="#facc15" />
+                <stop offset="50%" stopColor="transparent" />
+              </linearGradient>
+            </svg>
           </Card>
         </div>
         <div className="lg:sticky lg:top-24 h-fit">

@@ -10,8 +10,9 @@ import {
   clearError,
   updateUser,
 } from '../redux';
-import { useLoginMutation, useLogoutMutation } from '../services';
+// import { useLoginMutation, useLogoutMutation } from
 import { authCookies } from '../utils/cookieUtils';
+import { useLogoutMutation, useUserLoginMutation } from '@/services';
 export const useAuth = () => {
   const dispatch = useDispatch();
   const auth = useSelector(selectAuth);
@@ -20,7 +21,7 @@ export const useAuth = () => {
   const loading = useSelector(selectAuthLoading);
   const error = useSelector(selectAuthError);
 
-  const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
+  const [loginMutation, { isLoading: isLoggingIn }] = useUserLoginMutation();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
 
  

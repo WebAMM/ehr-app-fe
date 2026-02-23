@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { PATH } from "../../../config";
 import { PrivateLayout } from "../../components/layout/PrivateLayout";
 import { useSelector } from "react-redux";
-import { selectIsAuthenticated, selectToken } from "../../redux";
+import { selectIsAuthenticated, selectToken } from "@/redux";
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector(selectIsAuthenticated);
