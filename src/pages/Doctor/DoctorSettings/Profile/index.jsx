@@ -1,6 +1,7 @@
 import React from "react";
 
 import Card from "@/components/ui/Card";
+import { authCookies } from "@/utils/cookieUtils";
 
 const Item = ({ label, value }) => (
   <div className="space-y-1">
@@ -10,6 +11,9 @@ const Item = ({ label, value }) => (
 );
 
 const DoctorSettingsProfile = () => {
+  const { getUser } = authCookies;
+  console.log("User data from cookies:", getUser());
+  const user = getUser();
   const doctor = {
     fullName: "Dr. David Patel",
     phoneNumber: "+221 77 123 4567",
@@ -30,13 +34,16 @@ const DoctorSettingsProfile = () => {
         className="space-y-6"
         parentClass="rounded-2xl"
       >
-        <Item label="Full Name" value={doctor.fullName} />
-        <Item label="Phone Number" value={doctor.phoneNumber} />
-        <Item label="Specialty" value={doctor.specialty} />
-        <Item label="Experience" value={doctor.experience} />
-        <Item label="Organization" value={doctor.organization} />
-        <Item label="Consultation Fees" value={doctor.consultationFees} />
-        <Item label="About Me" value={doctor.aboutMe} />
+        <Item label="Full Name" value={user?.fullName || "N/A"} />
+        <Item label="Phone Number" value={user?.phoneNumber || "N/A"} />
+        <Item label="Email Address" value={user?.email || "N/A"} />
+        <Item label="Specialty" value={user?.specialty || "N/A"} />
+        <Item label="Experience" value={user?.experience || "N/A"} />
+        <Item
+          label="Consultation Fees"
+          value={user?.consultationFee || "N/A"}
+        />
+        <Item label="About Me" value={user?.about || "N/A"} />
       </Card>
     </div>
   );

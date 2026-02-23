@@ -79,8 +79,6 @@ export const cookieUtils = {
     const config = { ...COOKIE_CONFIG, ...options };
     return Cookies.set(name, value, config);
   },
-
-  // Get a cookie value
   get: (name) => {
     return Cookies.get(name);
   },
@@ -103,7 +101,6 @@ export const cookieUtils = {
 
 
 export const sessionUtils = {
-  // Start a user session
   startSession: (token, userData) => {
     return authCookies.saveAuth(token, userData);
   },
@@ -117,8 +114,6 @@ export const sessionUtils = {
     authCookies.clearAuth();
     return authCookies.saveAuth(token, userData);
   },
-
-  // Get current session data
   getSessionData: () => {
     return authCookies.getAuth();
   },

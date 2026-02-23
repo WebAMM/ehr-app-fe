@@ -1,93 +1,4 @@
-const DOCTOR_DATA = {
-  1: {
-    name: "Dr. Sarah Johnson",
-    specialty: "Cardiologist",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-    rating: 4.8,
-    reviewsCount: 127,
-    experience: 15,
-    patients: 2400,
-    awards: 12,
-    location: "City Medical Center",
-    bio: "Dr. Sarah Johnson is a highly experienced cardiologist with over 15 years of practice. She specializes in preventive cardiology, heart disease management, and cardiovascular imaging. She is dedicated to providing personalized care to each patient.",
-    education: [
-      "MD - Harvard Medical School",
-      "Fellowship in Cardiology - Johns Hopkins Hospital",
-      "Board Certified in Cardiovascular Disease",
-    ],
-    practiceDetails: [
-      {
-        type: "Video Consultation",
-        times: ["9:00 AM - 11:00 AM", "2:00 PM - 5:00 PM"],
-        cya: "9800 CFA",
-      },
-      {
-        type: "In-Clinic Consultation",
-        times: ["11:00 AM - 1:00 PM", "5:00 PM - 7:00 PM"],
-        cya: "12000 CFA",
-      },
-    ],
-    address: "123 Medical Plaza, Suite 101, Abidjan, Côte d'Ivoire",
-    patientReviews: [
-      {
-        name: "John Doe",
-        rating: 5,
-        text: "Great experience. Dr. Johnson took the time to explain everything clearly.",
-      },
-      {
-        name: "Jane Smith",
-        rating: 5,
-        text: "Highly recommended professional and caring physician.",
-      },
-    ],
-  },
-  2: {
-    name: "Dr. Michael Chen",
-    specialty: "Pediatrician",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-    rating: 4.9,
-    reviewsCount: 98,
-    experience: 12,
-    patients: 1800,
-    awards: 8,
-    location: "Green Health Clinic",
-    bio: "Dr. Michael Chen is a board-certified pediatrician with 12 years of experience caring for children. He specializes in general pediatrics, vaccination, and child development.",
-    education: [
-      "MD - Stanford School of Medicine",
-      "Pediatric Residency - UCSF Medical Center",
-      "Board Certified in Pediatrics",
-    ],
-    practiceDetails: [
-      {
-        type: "Video Consultation",
-        times: ["10:00 AM - 12:00 PM", "3:00 PM - 5:00 PM"],
-        cya: "9000 CFA",
-      },
-      {
-        type: "In-Clinic Consultation",
-        times: ["12:00 PM - 2:00 PM", "5:00 PM - 6:00 PM"],
-        cya: "11000 CFA",
-      },
-    ],
-    address: "456 Health Street, Abidjan, Côte d'Ivoire",
-    patientReviews: [
-      {
-        name: "Maria Garcia",
-        rating: 5,
-        text: "Excellent with children. Very patient and professional.",
-      },
-      {
-        name: "Robert Lee",
-        rating: 5,
-        text: "Best pediatrician we've found. Highly recommended!",
-      },
-    ],
-  },
-};
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   MapPin,
@@ -116,10 +27,11 @@ export default function DoctorDetailsPage() {
     });
   const reviews = reviewsData?.data.reviews || [];
   const doctorDetails = doctorData?.data[0];
-  const doctor = DOCTOR_DATA["1"];
 
   const handleAppointmentClick = () => {
-    navigate("/doctor-booking-appointment");
+    navigate("/doctor-booking-appointment", {
+      state: { doctorDetails: doctorDetails },
+    });
   };
 
   return (
@@ -217,7 +129,7 @@ export default function DoctorDetailsPage() {
           <div>
             <Map doctorDetails={doctorDetails} />
           </div>
-          <Card className="p-6">
+          {/* <Card className="p-6">
             <h2 className="font-semibold mb-4">Education & Certifications</h2>
             <ul className="space-y-3">
               {doctor.education.map((edu, idx) => (
@@ -227,7 +139,7 @@ export default function DoctorDetailsPage() {
                 </li>
               ))}
             </ul>
-          </Card>
+          </Card> */}
           <Card className="p-6">
             <h2 className="font-semibold mb-4">Patient Reviews</h2>
             {reviewsLoading ? (
@@ -289,31 +201,36 @@ export default function DoctorDetailsPage() {
         <div className="lg:sticky lg:top-24 h-fit">
           <Card className="p-6 border border-secondary/30">
             <h3 className="font-semibold mb-4">Book Appointment</h3>
+            {doctorDetails?.type === "In-Clinic Consultation" ? (
+              <div
+                className="flex items-center gap-3 bg-none p-4 rounded-lg mb-4 text-secondary border border-secondary cursor-pointer"
+                onClick={handleAppointmentClick}
+              >
+                <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+                  <MapPinCheck />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">In-Clinic Consultation</p>
+                  <span className=" ">{doctorDetails?.consultationFee} </span>
+                </div>
+              </div>
+            ) : (
+              <div
+                className="flex items-center gap-3 bg-secondary p-4 rounded-lg mb-4 text-text-light cursor-pointer"
+                onClick={handleAppointmentClick}
+              >
+                <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
+                  <Video />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium">Video Consultation</p>
+                  <span className=" text-text-light">
+                    {doctorDetails?.videoConsultationFee}{" "}
+                  </span>
+                </div>
+              </div>
+            )}
 
-            <div
-              className="flex items-center gap-3 bg-secondary p-4 rounded-lg mb-4 text-text-light cursor-pointer"
-              onClick={handleAppointmentClick}
-            >
-              <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
-                <Video />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium">Video Consultation</p>
-                <span className=" text-text-light">9800 CFA</span>
-              </div>
-            </div>
-            <div
-              className="flex items-center gap-3 bg-none p-4 rounded-lg mb-4 text-secondary border border-secondary cursor-pointer"
-              onClick={handleAppointmentClick}
-            >
-              <div className="w-12 h-12 bg-secondary/20 rounded-full flex items-center justify-center">
-                <MapPinCheck />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium">Video Consultation</p>
-                <span className=" ">9800 CFA</span>
-              </div>
-            </div>
             {/* 
             <Button className="w-full py-6 text-lg bg-secondary text-white">
               Book Now
