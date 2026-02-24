@@ -231,7 +231,7 @@ export default function FindDoctors() {
                         Consultation Fee
                       </p>
                       <p className="font-bold text-foreground">
-                        {doctor.fee.toLocaleString()} FCFA
+                        {doctor.fee.toLocaleString()}
                       </p>
                     </div>
                   </div>

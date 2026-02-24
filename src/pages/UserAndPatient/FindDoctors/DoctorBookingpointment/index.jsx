@@ -2,21 +2,8 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import clsx from "clsx";
 import StickyHeader from "@/components/ui/StickyHeader";
-
-const TIMES = [
-  "06:00 AM",
-  "06:30 AM",
-  "07:00 AM",
-  "07:30 AM",
-  "07:40 AM",
-  "08:00 AM",
-  "08:15 PM",
-  "08:30 PM",
-  "08:50 PM",
-  "09:00 PM",
-  "05:00 PM",
-  "05:30 PM",
-];
+import { TIME_CATEGORIES } from "./TimeCatagories";
+import { useLocation } from "react-router-dom";
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -28,6 +15,9 @@ export default function DoctorBookingAppointment() {
     duration: 30,
     selectedTime: null,
   });
+
+  const location = useLocation();
+  console.log("Received doctor details:", location.state?.doctorDetails);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -187,18 +177,18 @@ export default function DoctorBookingAppointment() {
             <h3 className="text-xs sm:text-sm font-medium mb-2">Select Hour</h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2">
-              {TIMES.map((time) => (
+              {TIME_CATEGORIES?.map((slot) => (
                 <button
-                  key={time}
-                  onClick={() => updateBooking("selectedTime", time)}
+                  key={slot.id}
+                  onClick={() => updateBooking("selectedTime", slot.value)}
                   className={clsx(
                     "py-1 sm:py-2 rounded-lg text-xs sm:text-sm transition",
-                    booking.selectedTime === time
+                    booking.selectedTime === slot.value
                       ? "bg-secondary text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200",
                   )}
                 >
-                  {time}
+                  {slot.name}
                 </button>
               ))}
             </div>

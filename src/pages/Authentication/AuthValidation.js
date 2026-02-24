@@ -40,24 +40,11 @@ export const doctorRegisterSchema = Yup.object({
   password: Yup.string()
     .min(8, "At least 8 characters")
     .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm your password"),
   about: Yup.string().required("About is required"),
-  type: Yup.string().required("Consultation type is required"),
-  consultationFee: Yup.string().required("Consultation fee is required"),
-  specialty: Yup.string().required("Specialty is required"),
-  experience: Yup.string().required("Experience is required"),
-  organization: Yup.string().required("Organization is required"),
-  RCCMNIFNumber: Yup.string().required("RCCM/NIF number is required"),
-  authorizationNumber: Yup.string().required("Authorization number is required"),
-  dob: Yup.date().required("Date of birth is required"),
-  bloodGroup: Yup.string().required("Blood group is required"),
-  gender: Yup.string().oneOf(["Male", "Female", "Other"], "Select a valid gender").required("Gender is required"),
-  phoneNumber: Yup.string()
-    .matches(/^[0-9+\-\s]{7,15}$/i, "Enter a valid phone number")
-    .required("Phone number is required"),
-  teleMoney: Yup.string().required("Tele money number is required"),
-  orangeMoney: Yup.string().required("Orange money number is required"),
-  merchantCode: Yup.string().required("Merchant code is required"),
-  orangeType: Yup.string().required("Orange type is required"),
+  attachDoc: Yup.mixed().required("Please upload your document"),
 });
 
 export const clinicRegisterSchema = Yup.object({

@@ -9,12 +9,12 @@ export const doctorApi = baseApi.injectEndpoints({
     }),
 
     updateDoctorProfile: builder.mutation({
-      query: ({ doctorId, doctorData }) => ({
-        url: `/doctors/${doctorId}`,
+      query: ({  doctorData }) => ({
+        url: `/doctor/updateDoctorProfile`,
         method: 'PUT',
         body: doctorData,
       }),
-      invalidatesTags: (result, error, { doctorId }) => [{ type: 'Doctor', id: doctorId }],
+      invalidatesTags:  ['Doctor'],
     }),
 
     getDoctorDashboard: builder.query({
@@ -30,7 +30,7 @@ export const doctorApi = baseApi.injectEndpoints({
       providesTags: ['Appointment'],
     }),
     
-    // Update appointment status
+   
     updateAppointmentStatus: builder.mutation({
       query: ({ doctorId, appointmentId, status, notes }) => ({
         url: `/doctors/${doctorId}/appointments/${appointmentId}`,
@@ -40,13 +40,13 @@ export const doctorApi = baseApi.injectEndpoints({
       invalidatesTags: ['Appointment'],
     }),
     
-    // Get today's appointments
+
     getTodayAppointments: builder.query({
       query: (doctorId) => `/doctors/${doctorId}/appointments/today`,
       providesTags: ['Appointment'],
     }),
     
-    // Set doctor availability
+
     setDoctorAvailability: builder.mutation({
       query: ({ doctorId, availability }) => ({
         url: `/doctors/${doctorId}/availability`,
@@ -56,7 +56,7 @@ export const doctorApi = baseApi.injectEndpoints({
       invalidatesTags: (result, error, { doctorId }) => [{ type: 'Doctor', id: doctorId }],
     }),
     
-    // Get doctor availability
+   
     getDoctorAvailability: builder.query({
       query: (doctorId) => `/doctors/${doctorId}/availability`,
       providesTags: (result, error, doctorId) => [{ type: 'Doctor', id: `${doctorId}-availability` }],
