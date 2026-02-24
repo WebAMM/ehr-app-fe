@@ -78,11 +78,13 @@ const Login = () => {
           );
           userStatus = response.data.clinic.status;
         }
-        const { gender, specialty } = response.data.doctor;
+
         if (userStatus === "clinic" || userStatus === "laboratory") {
           navigate(PATH.LABORATORIES_DASHBOARD);
         } else if (userStatus === "doctor") {
-          if (gender?.trim() && specialty?.trim()) {
+          const doctor = response.data.doctor;
+
+          if (doctor?.gender?.trim() && doctor?.specialty?.trim()) {
             navigate(PATH.DOCTOR_DASHBOARD);
           } else {
             navigate("/doctor-settings/edit");

@@ -3,11 +3,9 @@ import { FaBell } from "react-icons/fa";
 import CustomAvatar from "@/components/ui/Avatar";
 import { Menu, Search, X } from "lucide-react";
 import clsx from "clsx";
+import { selectUser } from "@/redux";
+import { useSelector } from "react-redux";
 export default function Header({ isSidebarOpen, toggleSidebar }) {
-  const user = {
-    name: "John Doe",
-    role: "User",
-  };
   const notifications = [
     {
       id: 1,
@@ -34,6 +32,8 @@ export default function Header({ isSidebarOpen, toggleSidebar }) {
       isRead: false,
     },
   ];
+  const userProfile = useSelector(selectUser);
+  const currentUser = userProfile;
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [handleSearch, setHandleSearch] = useState(false);
   const notificationRef = useRef(null);
@@ -140,18 +140,29 @@ export default function Header({ isSidebarOpen, toggleSidebar }) {
           </div>
 
           <div className="flex items-center space-x-2">
-            <CustomAvatar
-              name={user.name}
-              size="48"
-              round={true}
-              bgColor="#C2184B"
-              fgColor="#fff"
-            />
+            {currentUser?.attachDoc ? (
+              <img
+                src={currentUser?.attachDoc}
+                alt="User Avatar"
+                className="w-12 h-12 rounded-full object-cover"
+              />
+            ) : (
+              <CustomAvatar
+                name={currentUser?.fullName}
+                size="48"
+                round={true}
+                bgColor="#C2184B"
+                fgColor="#fff"
+              />
+            )}
+
             <div className="flex flex-col items-start ml-2">
               <span className="text-sm font-medium text-gray-900">
-                {user.name}
+                {currentUser?.fullName || "User Name"}
               </span>
-              <span className="text-xs text-gray-500">{user.role}</span>
+              <span className="text-xs text-gray-500">
+                {currentUser?.status}
+              </span>
             </div>
           </div>
         </div>

@@ -5,6 +5,9 @@ import * as Yup from "yup";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { useUpdateDoctorPasswordMutation } from "@/services";
+import { authCookies } from "@/utils/cookieUtils";
+import { toastSuccess, toastError } from "@/components/ui/Toast";
 
 const isStrongPassword = (password) => {
   if (!password) return false;
@@ -17,6 +20,10 @@ const isStrongPassword = (password) => {
 };
 
 const DoctorSettingsChangePassword = () => {
+  const { getUser } = authCookies;
+  const doctorId = getUser()?._id;
+  const [updatePassword, { isLoading: isUpdating }] =
+    useUpdateDoctorPasswordMutation({ doctorId });
   const initialValues = {
     currentPassword: "",
     newPassword: "",
@@ -41,6 +48,28 @@ const DoctorSettingsChangePassword = () => {
     [],
   );
 
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      const response = await updatePassword({
+        doctorId,
+        passwordData: {
+          currentPassword: values.currentPassword,
+          newPassword: values.newPassword,
+          confirmNewPassword: values.confirmPassword,
+        },
+      }).unwrap();
+
+      if (response) {
+        toastSuccess(response.message || "Password changed successfully!");
+        resetForm();
+      }
+    } catch (error) {
+      toastError(
+        error?.data?.message || "Failed to update password. Please try again.",
+      );
+    }
+  };
+
   return (
     <div className="w-full">
       <Card
@@ -52,11 +81,7 @@ const DoctorSettingsChangePassword = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
-            // Hook this to your API when ready
-
-            console.log("Change password", values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({
             values,
@@ -110,9 +135,10 @@ const DoctorSettingsChangePassword = () => {
                 variant="gradient"
                 size="lg"
                 fullWidth
-                disabled={isSubmitting}
+                loading={isUpdating}
+                disabled={isUpdating || isSubmitting}
               >
-                Change Password
+                {isUpdating ? "Updating..." : "Change Password"}
               </Button>
             </Form>
           )}

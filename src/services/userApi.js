@@ -64,7 +64,7 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: ['Appointment'],
     }),
     
-    // Cancel appointment
+  
     cancelAppointment: builder.mutation({
       query: ({ userId, appointmentId }) => ({
         url: `/users/${userId}/appointments/${appointmentId}/cancel`,
@@ -73,7 +73,7 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: ['Appointment'],
     }),
     
-    // Get user medical records
+
     getUserMedicalRecords: builder.query({
       query: ({ userId, page = 1, limit = 10 }) => ({
         url: `/users/${userId}/medical-records`,
