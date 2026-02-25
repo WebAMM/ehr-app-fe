@@ -1,7 +1,7 @@
 import React from "react";
-
 import Card from "@/components/ui/Card";
-
+import { useGetDoctorByIdQuery } from "@/services";
+import { authCookies } from "@/utils/cookieUtils";
 const StatusPill = ({ status }) => {
   const styles =
     status === "Receiving"
@@ -25,6 +25,14 @@ const Row = ({ label, value }) => (
 );
 
 const DoctorSettingsBillingHistory = () => {
+  const { getUser } = authCookies;
+  const doctorId = getUser()?._id;
+  const {
+    data: DoctorProfile,
+    isLoading,
+    isError,
+  } = useGetDoctorByIdQuery({ doctorId });
+
   const receivingBalance = "25,000.40 CFA";
 
   const billingHistory = [

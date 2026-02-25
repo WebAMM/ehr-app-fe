@@ -1,8 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
+
+
+const stripLargeFields = (userData) => {
+  const { appointmentId, ...cleanedData } = userData;
+  return cleanedData;
+};
+
 const saveAuthToCookies = (token, userData) => {
   Cookies.set('auth_token', token, { expires: 7, secure: true, sameSite: 'strict' });
-  Cookies.set('user_data', JSON.stringify(userData), { expires: 7, secure: true, sameSite: 'strict' });
+ 
+  const cleanedUserData = stripLargeFields(userData);
+  Cookies.set('user_data', JSON.stringify(cleanedUserData), { expires: 7, secure: true, sameSite: 'strict' });
 };
 const clearAuthFromCookies = () => {
   Cookies.remove('auth_token');

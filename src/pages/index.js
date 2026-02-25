@@ -35,6 +35,7 @@ import Appointments from "./Laboratories/Appointments";
 import ClinicMembers from "./Laboratories/ClinicMembers";
 import ClinicMessage from "./Laboratories/ClinicMessage";
 import ClinicSubscription from "./Laboratories/ClinicSubscription";
+import DoctorProfileRegister from "./Doctor/DoctorProfileRegister";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -73,5 +74,6 @@ const WEB_PAGES = {
   CLINIC_MEMBERS: ClinicMembers,
   CLINIC_MESSAGE: ClinicMessage,
   CLINIC_SUBSCRIPTION: ClinicSubscription,
+  DOCTOR_PROFILE_REGISTER: DoctorProfileRegister,
 };
 export { WEB_PAGES };
