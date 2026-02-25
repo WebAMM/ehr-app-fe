@@ -1,7 +1,7 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import { clinicRegisterSchema } from "../AuthValidation";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
@@ -10,6 +10,8 @@ import { toastError, toastSuccess } from "@/components/ui/Toast";
 const ClinicRegisterForm = () => {
   const [clinicRegister, { isLoading: isClinicLoading }] =
     useClinicRegisterMutation();
+  const navigate = useNavigate();
+
   const clinicInitialValues = {
     fullName: "",
     email: "",
@@ -28,6 +30,7 @@ const ClinicRegisterForm = () => {
       const response = await clinicRegister(payload).unwrap();
       if (response?.message) {
         actions.resetForm();
+        navigate("/sign-in");
         toastSuccess(
           response?.message ||
             "Clinic registration successful! Please check your email for verification.",

@@ -10,6 +10,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { validationSchema } from "./ProfileSchema";
 import { authCookies } from "@/utils/cookieUtils";
 import { selectUser, updateUser } from "@/redux/slices/authSlice";
+import { COUNTRIES } from "./Countries";
 const DAYS_OF_WEEK = [
   "Monday",
   "Tuesday",
@@ -19,6 +20,7 @@ const DAYS_OF_WEEK = [
   "Saturday",
   "Sunday",
 ];
+
 const DoctorProfileUpdateForm = () => {
   const dispatch = useDispatch();
   const fileInputRef = React.useRef(null);
@@ -35,8 +37,8 @@ const DoctorProfileUpdateForm = () => {
     DAYS_OF_WEEK.map((day) => ({
       day,
       available: false,
-      openingTime: "06:00 AM",
-      closingTime: "09:00 PM",
+      openingTime: "06:00",
+      closingTime: "21:00",
     })),
   );
   const [attachDoc, setAttachDoc] = useState(null);
@@ -67,6 +69,7 @@ const DoctorProfileUpdateForm = () => {
   const addAccountData = parseAddAccount(currentUser?.addAccount);
   const initialValues = {
     fullName: currentUser?.fullName || "",
+    countryCode: currentUser?.countryCode || "",
     phoneNumber: currentUser?.phoneNumber || "",
     about: currentUser?.about || "",
     type: currentUser?.type || "",
@@ -94,6 +97,14 @@ const DoctorProfileUpdateForm = () => {
       ),
     );
   };
+
+  const handleTimeChange = (index, timeType, value) => {
+    setAvailableDayAndTime((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, [timeType]: value } : item,
+      ),
+    );
+  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -107,6 +118,7 @@ const DoctorProfileUpdateForm = () => {
     try {
       const formData = new FormData();
       formData.append("fullName", values.fullName);
+      formData.append("countryCode", values.countryCode);
       formData.append("phoneNumber", values.phoneNumber);
       formData.append("about", values.about);
       formData.append("type", values.type);
@@ -147,6 +159,15 @@ const DoctorProfileUpdateForm = () => {
         setAttachDoc(null);
         setImagePreview(null);
         toastSuccess(response?.message || "Profile updated successfully!");
+
+        // if (
+        //   updatedUserData?.isVerified === false ||
+        //   updatedUserData?.isVerified === "false"
+        // ) {
+        //   setTimeout(() => {
+        //     window.location.href = "/pending-verification";
+        //   }, 1000);
+        // }
       }
     } catch (error) {
       toastError(
@@ -214,23 +235,47 @@ const DoctorProfileUpdateForm = () => {
               height={48}
               className="text-sm"
             />
+            <div className="flex items-start gap-4 w-full">
+              <div className="">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Country Code
+                </label>
+                <select
+                  name="countryCode"
+                  value={values.countryCode}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className="w-full p-3 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select Country</option>
+                  {COUNTRIES.map((country) => (
+                    <option key={country.id} value={`+${country.phone_code}`}>
+                      {country.name} (+{country.phone_code})
+                    </option>
+                  ))}
+                </select>
+                {touched.countryCode && errors.countryCode && (
+                  <p className=" text-sm text-red-500">{errors.countryCode}</p>
+                )}
+              </div>
 
-            <Input
-              label="Phone Number"
-              type="tel"
-              name="phoneNumber"
-              placeholder="+1234567890"
-              value={values.phoneNumber}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={
-                touched.phoneNumber && errors.phoneNumber
-                  ? errors.phoneNumber
-                  : ""
-              }
-              height={48}
-              className="text-sm"
-            />
+              <Input
+                label="Phone Number"
+                type="tel"
+                name="phoneNumber"
+                placeholder="1234567890"
+                value={values.phoneNumber}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={
+                  touched.phoneNumber && errors.phoneNumber
+                    ? errors.phoneNumber
+                    : ""
+                }
+                height={48}
+                className="text-sm w-full"
+              />
+            </div>
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
@@ -428,34 +473,44 @@ const DoctorProfileUpdateForm = () => {
               <label className="block mb-3 text-sm font-medium text-gray-700">
                 Available Day&apos;s & Time
               </label>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {availableDayAndTime.map((slot, index) => (
                   <div
                     key={slot.day}
-                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
                   >
-                    <div className="flex items-center gap-3 flex-1">
-                      <input
-                        type="checkbox"
-                        checked={slot.available}
-                        onChange={(e) =>
-                          handleDayAvailabilityChange(index, e.target.checked)
-                        }
-                        className="w-4 h-4 accent-[#0ebe7f] cursor-pointer"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        {slot.day}
-                      </span>
-                    </div>
+                    <input
+                      type="checkbox"
+                      checked={slot.available}
+                      onChange={(e) =>
+                        handleDayAvailabilityChange(index, e.target.checked)
+                      }
+                      className="w-4 h-4 accent-[#0ebe7f] cursor-pointer"
+                    />
+                    <span className="text-sm font-medium text-gray-700 min-w-24">
+                      {slot.day}
+                    </span>
 
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-600">
-                        {slot.openingTime}
-                      </span>
+                    <div className="flex items-center gap-2 flex-1">
+                      <input
+                        type="time"
+                        value={slot.openingTime}
+                        onChange={(e) =>
+                          handleTimeChange(index, "openingTime", e.target.value)
+                        }
+                        disabled={!slot.available}
+                        className="px-2 py-2 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0ebe7f] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
                       <span className="text-gray-400">-</span>
-                      <span className="text-xs text-gray-600">
-                        {slot.closingTime}
-                      </span>
+                      <input
+                        type="time"
+                        value={slot.closingTime}
+                        onChange={(e) =>
+                          handleTimeChange(index, "closingTime", e.target.value)
+                        }
+                        disabled={!slot.available}
+                        className="px-2 py-2 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0ebe7f] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      />
                     </div>
                   </div>
                 ))}
@@ -487,7 +542,7 @@ const DoctorProfileUpdateForm = () => {
               </div>
             )}
 
-            <div>
+            {/* <div>
               <label className="block mb-2 text-sm font-medium text-gray-700">
                 Upload Document
               </label>
@@ -502,7 +557,7 @@ const DoctorProfileUpdateForm = () => {
                   ✓ File selected: {attachDoc.name}
                 </p>
               )}
-            </div>
+            </div> */}
 
             <div className="border border-gray-200 rounded-lg p-4">
               <h3 className="text-sm font-semibold text-gray-800 mb-4">

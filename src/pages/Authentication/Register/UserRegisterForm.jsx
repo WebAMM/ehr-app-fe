@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import { registerSchema } from "../AuthValidation";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import Input from "@/components/ui/Input";
 import Checkbox from "@/components/ui/Checkbox";
@@ -14,6 +14,7 @@ import { toastError, toastSuccess } from "@/components/ui/Toast";
 const UserRegisterForm = ({ isLoaded }) => {
   const [userRegister, { isLoading }] = useUserRegisterMutation();
   const [countries, setCountries] = useState([]);
+  const navigate = useNavigate();
 
   const userInitialValues = {
     fullName: "",
@@ -52,6 +53,7 @@ const UserRegisterForm = ({ isLoaded }) => {
       const response = await userRegister(values).unwrap();
       if (response?.message) {
         actions.resetForm();
+        navigate("/sign-in");
         toastSuccess(
           response?.message ||
             "Registration successful! Please check your email for verification.",

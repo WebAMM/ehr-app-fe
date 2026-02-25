@@ -84,10 +84,17 @@ const Login = () => {
         } else if (userStatus === "doctor") {
           const doctor = response.data.doctor;
 
-          if (doctor?.gender?.trim() && doctor?.specialty?.trim()) {
-            navigate(PATH.DOCTOR_DASHBOARD);
+          if (!doctor?.gender?.trim() && !doctor?.specialty?.trim()) {
+            navigate("/doctor-profile-register");
+          } else if (
+            doctor?.isVerified === false ||
+            (doctor?.isVerified === "false" &&
+              doctor?.gender?.trim() &&
+              doctor?.specialty?.trim())
+          ) {
+            navigate("/pending-verification");
           } else {
-            navigate("/doctor-settings/edit");
+            navigate(PATH.DOCTOR_DASHBOARD);
           }
         } else if (userStatus === "patient" || userStatus === "user") {
           navigate(PATH.USER_AND_PATIENT_DASHBOARD);
