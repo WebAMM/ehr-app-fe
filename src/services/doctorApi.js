@@ -38,6 +38,23 @@ export const doctorApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Doctor'],
     }),
+    getTodaysAppointments: builder.query({
+      query: ({ doctorId, status="pending", page=1, limit=10 }) => ({
+        url: `appointment/getTodaysAppointments?doctorId=${doctorId}&status=${status}&page=${page}&limit=${limit}`,
+        method: 'GET',
+       
+      }),
+      providesTags: ['Appointments'],
+    }),
+    updateStatusAndSendNotification: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/appointment/updateStatusAndSendNotification/${id}`,
+        method: 'PUT',
+        body: body,
+       
+      }),
+     invalidatesTags: ['Appointments'],
+    }),
   
    
   }),
@@ -50,4 +67,6 @@ export const {
   useGetDoctorNotificationsQuery,
   useUpdateDoctorPasswordMutation,  
   useGetDoctorByIdQuery,
+  useGetTodaysAppointmentsQuery,
+  useUpdateStatusAndSendNotificationMutation,
 } = doctorApi;
