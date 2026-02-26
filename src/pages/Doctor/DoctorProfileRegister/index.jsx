@@ -1,4 +1,5 @@
 import DoctorProfileUpdateForm from "@/components/common/DoctorProfileUpdateForm";
+import PendingVerification from "./PendingVerification";
 import React from "react";
 
 const DoctorProfileRegister = () => {

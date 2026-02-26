@@ -13,7 +13,8 @@ export const INITIAL_VALUE = PathName.map((item) => {
     item === "FORGOT_PASSWORD" ||
     item === "OTP_VERIFICATION" ||
     item === "RESET_PASSWORD" ||
-    item === "DOCTOR_PROFILE_REGISTER"
+    item === "DOCTOR_PROFILE_REGISTER" ||
+    item === "PENDING_VERIFICATION"
   ) {
     return { path: PATH[item], page: <Val />, route: "PublicRoute" };
   } else if (item === "LANDING_PAGE") {
