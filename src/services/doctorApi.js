@@ -39,11 +39,16 @@ export const doctorApi = baseApi.injectEndpoints({
       providesTags: ['Doctor'],
     }),
     getTodaysAppointments: builder.query({
-      query: ({ doctorId, status="pending", page=1, limit=10 }) => ({
-        url: `appointment/getTodaysAppointments?doctorId=${doctorId}&status=${status}&page=${page}&limit=${limit}`,
-        method: 'GET',
-       
-      }),
+      query: ({ doctorId, status="pending", page=1, limit=10, date }) => {
+        let url = `appointment/getTodaysAppointments?doctorId=${doctorId}&status=${status}&page=${page}&limit=${limit}`;
+        if (date) {
+          url += `&date=${date}`;
+        }
+        return {
+          url,
+          method: 'GET',
+        };
+      },
       providesTags: ['Appointments'],
     }),
     updateStatusAndSendNotification: builder.mutation({
@@ -55,8 +60,27 @@ export const doctorApi = baseApi.injectEndpoints({
       }),
      invalidatesTags: ['Appointments'],
     }),
-  
-   
+    doctorDemographics: builder.query({
+      query: ({ id,  }) => ({
+        url: `/analytic/doctorDemographics/${id}`,
+        method: 'GET',
+      }),
+    }),
+    doctorBillingHistory: builder.query({
+      query: ({ id, page = 1, limit = 10 }) => ({
+        url: `/subscription/getDoctorBillingHistory/${id}?page=${page}&limit=${limit}`,
+        method: 'GET',
+      }),
+      providesTags: ['Subscription'],
+    }),
+    doctorReceivedPayments: builder.query({
+      query: ({ id, page = 1, limit = 10 }) => ({
+        url: `/subscription/DoctorReceivedPayments/${id}?page=${page}&limit=${limit}`,
+        method: 'GET',
+      }),
+      providesTags: ['Subscription'],
+    }),
+
   }),
   overrideExisting: false,
 });
@@ -69,4 +93,7 @@ export const {
   useGetDoctorByIdQuery,
   useGetTodaysAppointmentsQuery,
   useUpdateStatusAndSendNotificationMutation,
+  useDoctorDemographicsQuery,
+  useDoctorBillingHistoryQuery,
+  useDoctorReceivedPaymentsQuery,
 } = doctorApi;

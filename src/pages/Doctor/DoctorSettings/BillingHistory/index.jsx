@@ -1,202 +1,136 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "@/components/ui/Card";
-import { useGetDoctorByIdQuery } from "@/services";
+import ToggleTabs from "@/components/common/ToggleTabs";
 import { authCookies } from "@/utils/cookieUtils";
-const StatusPill = ({ status }) => {
-  const styles =
-    status === "Receiving"
-      ? "bg-secondary/10 text-secondary"
-      : "bg-blue/10 text-blue";
-
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${styles}`}
-    >
-      {status}
-    </span>
-  );
-};
-
-const Row = ({ label, value }) => (
-  <div className="flex items-start justify-between gap-6 text-sm">
-    <span className="text-gray-600">{label}</span>
-    <span className="text-text text-right wrap-break-word">{value}</span>
-  </div>
-);
+import {
+  useDoctorBillingHistoryQuery,
+  useDoctorReceivedPaymentsQuery,
+} from "@/services";
+import { TabContent } from "./TabContent";
 
 const DoctorSettingsBillingHistory = () => {
   const { getUser } = authCookies;
   const doctorId = getUser()?._id;
+  const [activeTab, setActiveTab] = useState("Receiving Payments");
+  const [billingCurrentPage, setBillingCurrentPage] = useState(1);
+  const [receivingCurrentPage, setReceivingCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
   const {
-    data: DoctorProfile,
-    isLoading,
-    isError,
-  } = useGetDoctorByIdQuery({ doctorId });
+    data: billingData,
+    isLoading: billingIsLoading,
+    isError: billingIsError,
+  } = useDoctorBillingHistoryQuery({
+    id: doctorId,
+    page: billingCurrentPage,
+    limit: itemsPerPage,
+  });
+
+  const {
+    data: doctorReceivedPaymentsData,
+    isLoading: receivingIsLoading,
+    isError: receivingIsError,
+  } = useDoctorReceivedPaymentsQuery({
+    id: doctorId,
+    page: receivingCurrentPage,
+    limit: itemsPerPage,
+  });
 
   const receivingBalance = "25,000.40 CFA";
 
-  const billingHistory = [
-    {
-      id: "b1",
+  const transformedPayments =
+    billingData?.data?.payments?.map((payment) => ({
+      id: payment.appointmentId,
       title: "Subscription",
-      date: "1 September, 2024 at 11:30 PM",
-      status: "Receiving",
-      reference: "194571349",
-      details: [
-        { label: "Plan Payment Date", value: "New Payment" },
-        { label: "Payment to", value: "DranMoney" },
-        { label: "Account Name", value: "Edwar" },
-        { label: "Account Number", value: "+33790206128" },
+      date: new Date(payment.createdAt).toLocaleString(),
+      status: payment.status,
+      reference: payment.appointmentId,
+      amount: payment.subscription,
+      lines: [
+        { label: "Appointment ID", value: payment.appointmentId },
+        {
+          label: "Payment Method",
+          value: payment.accountDetails?.paymentMethod || "-",
+        },
       ],
-      amount: "3000 CFA",
-    },
-    {
-      id: "b2",
-      title: "Subscription",
-      date: "1 September, 2024 at 11:30 PM",
-      status: "Paid",
-      reference: "15661147",
-      details: [
-        { label: "Plan Payment Date", value: "New Payment" },
-        { label: "Payment to", value: "DranMoney" },
-        { label: "Account Name", value: "Edwar" },
-        { label: "Account Number", value: "+33790206128" },
-      ],
-      amount: "3000 CFA",
-    },
-  ];
+    })) || [];
 
-  const receivingPayments = [
-    {
-      id: "p1",
-      title: "In Safe Concravde",
-      date: "1st September, 2024 at 11:30 PM",
-      status: "Receiving",
-      reference: "15651146",
-      amount: "3000 CFA",
+  const transformedReceivedPayments =
+    doctorReceivedPaymentsData?.data?.approvedPayments?.map((payment) => ({
+      id: payment.claimRequestId,
+      title: "Approved Payment",
+      date: new Date(payment.createdAt).toLocaleString(),
+      status: payment.status,
+      reference: payment.claimRequestId,
+      amount: payment.amountPaid,
       lines: [
-        { label: "Appointment ID", value: "" },
-        { label: "Payment Method", value: "Cash" },
+        { label: "Claim Request ID", value: payment.claimRequestId },
+        {
+          label: "Payment Method",
+          value: payment.paymentMethod || "-",
+        },
       ],
+    })) || [];
+
+  const tabs = {
+    "Receiving Payments": {
+      title: "Approved Payments",
+      isLoading: receivingIsLoading,
+      isError: receivingIsError,
+      errorMessage: "Error loading received payments",
+      items: transformedReceivedPayments,
+      totalRecords: doctorReceivedPaymentsData?.data?.count || 0,
+      currentPage: receivingCurrentPage,
+      totalPages: doctorReceivedPaymentsData?.data?.pages || 1,
+      onPrevious: () =>
+        setReceivingCurrentPage(Math.max(1, receivingCurrentPage - 1)),
+      onNext: () =>
+        setReceivingCurrentPage(
+          Math.min(
+            doctorReceivedPaymentsData?.data?.pages || 1,
+            receivingCurrentPage + 1,
+          ),
+        ),
     },
-    {
-      id: "p2",
-      title: "In Safe Concravde",
-      date: "1st September, 2024 at 11:30 PM",
-      status: "Receiving",
-      reference: "15651147",
-      amount: "3000 CFA",
-      lines: [
-        { label: "Appointment ID", value: "" },
-        { label: "Payment Method", value: "Cash" },
-      ],
+    "Billing History": {
+      title: "Billing History",
+      isLoading: billingIsLoading,
+      isError: billingIsError,
+      errorMessage: "Error loading billing history",
+      items: transformedPayments,
+      totalRecords: billingData?.data?.count || 0,
+      currentPage: billingCurrentPage,
+      totalPages: billingData?.data?.pages || 1,
+      onPrevious: () =>
+        setBillingCurrentPage(Math.max(1, billingCurrentPage - 1)),
+      onNext: () =>
+        setBillingCurrentPage(
+          Math.min(billingData?.data?.pages || 1, billingCurrentPage + 1),
+        ),
     },
-  ];
+  };
+
+  const activeTabData = tabs[activeTab];
 
   return (
     <div className="w-full">
       <Card padding="lg" shadow="sm" parentClass="rounded-2xl">
-        <div className="rounded-2xl bg-linear-to-r from-secondary to-primary p-5 text-white">
+        {/* <div className="rounded-2xl bg-linear-to-r from-secondary to-primary p-5 text-white">
           <p className="text-sm opacity-90">Receiving Balance</p>
           <p className="mt-1 text-xl font-semibold">{receivingBalance}</p>
+        </div> */}
+
+        {/* <Card parentClass="mt-8 rounded-xl" paddingClasses="lg"> */}
+        <ToggleTabs
+          tabs={["Receiving Payments", "Billing History"]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+
+        <div className="mt-6">
+          <TabContent {...activeTabData} />
         </div>
-
-        <Card parentClass="mt-8 rounded-xl" paddingClasses="lg">
-          <h2 className="text-sm font-semibold text-text">Billing History</h2>
-
-          <div className="mt-3 space-y-4">
-            {billingHistory.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-2xl border border-border bg-bg p-4"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-text">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">{item.date}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <StatusPill status={item.status} />
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      {item.reference}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-gray-600">
-                      Billing Details
-                    </p>
-                    <div className="space-y-2">
-                      {item.details.map((d) => (
-                        <Row key={d.label} label={d.label} value={d.value} />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex md:justify-end md:items-end">
-                    <div className="mt-2 md:mt-0">
-                      <p className="text-xs text-gray-600">Amount</p>
-                      <p className="text-sm font-semibold text-secondary mt-1 text-right">
-                        {item.amount}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card parentClass="mt-8 rounded-xl" paddingClasses="lg">
-          <h2 className="text-sm font-semibold text-text">
-            Receiving Payments
-          </h2>
-
-          <div className="mt-3 space-y-4">
-            {receivingPayments.map((p) => (
-              <div
-                key={p.id}
-                className="rounded-2xl border border-border bg-bg p-4"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-semibold text-text">{p.title}</p>
-                    <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <StatusPill status={p.status} />
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      {p.reference}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    {p.lines.map((line) => (
-                      <Row
-                        key={line.label}
-                        label={line.label}
-                        value={line.value || "-"}
-                      />
-                    ))}
-                    <Row label="Amount" value={p.amount} />
-                  </div>
-
-                  <div className="flex md:justify-end md:items-end">
-                    <p className="text-sm font-semibold text-secondary">
-                      {p.amount}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+        {/* </Card> */}
       </Card>
     </div>
   );
