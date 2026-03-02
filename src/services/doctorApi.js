@@ -80,6 +80,34 @@ export const doctorApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Subscription'],
     }),
+    doctorConsultationStats: builder.query({
+      query: ({ id, }) => ({
+        url: `/analytic/getConsultationStats/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Analytics'],
+    }),
+   totalDoctorAppointments: builder.query({
+      query: ({ id, }) => ({
+        url: `/analytic/totalDoctorAppointments/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Appointments'],
+    }),
+   totalDoctorPatients: builder.query({
+      query: ({ id, }) => ({
+        url: `/analytic/doctorPatient/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Patients'],
+    }),
+   getDoctorPayments: builder.query({
+      query: ({ id, }) => ({
+        url: `/analytic/getDoctorPayments/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Subscription'],
+    }),
 
   }),
   overrideExisting: false,
@@ -96,4 +124,8 @@ export const {
   useDoctorDemographicsQuery,
   useDoctorBillingHistoryQuery,
   useDoctorReceivedPaymentsQuery,
+  useDoctorConsultationStatsQuery,
+  useTotalDoctorAppointmentsQuery,
+  useTotalDoctorPatientsQuery,
+  useGetDoctorPaymentsQuery
 } = doctorApi;

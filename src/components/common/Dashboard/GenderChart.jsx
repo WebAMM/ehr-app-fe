@@ -1,11 +1,14 @@
 import React from "react";
 import Card from "@/components/ui/Card";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { useDoctorDemographicsQuery } from "@/services";
+import {
+  useDoctorDemographicsQuery,
+  useGetClinicDemographicsQuery,
+} from "@/services";
 import { authCookies } from "@/utils/cookieUtils";
 
-import { MdError } from "react-icons/md";
 import { LoaderCenter } from "@/components/ui/Loader";
+import Error from "@/components/ui/Error";
 
 const COLORS = {
   Male: "#10B981",
@@ -15,21 +18,31 @@ const COLORS = {
 
 const GenderChart = () => {
   const { getUser } = authCookies;
-  const doctorId = getUser()?._id;
-  const {
-    data: demographicsData,
-    isLoading,
-    isError,
-    error,
-  } = useDoctorDemographicsQuery({
-    id: doctorId,
-  });
+  const Id = getUser()?._id;
+  const role = getUser()?.status;
+  const doctorQuery = useDoctorDemographicsQuery(
+    { id: Id },
+    { skip: role !== "doctor" },
+  );
+
+  const clinicQuery = useGetClinicDemographicsQuery(
+    { id: Id },
+    { skip: role !== "clinic" },
+  );
+
+  const isDoctor = role === "doctor";
+  const { data, isLoading, isError, error, refetch } = isDoctor
+    ? doctorQuery
+    : clinicQuery;
+
+  const demographicsData = data;
+
   const chartData = React.useMemo(() => {
     if (!demographicsData?.data || !Array.isArray(demographicsData.data)) {
       return [];
     }
     return demographicsData.data
-      .filter((item) => item.gender && item.total > 0)
+      .filter((item) => item.gender)
       .map((item) => ({
         name: item.gender,
         value: item.total,
@@ -51,10 +64,10 @@ const GenderChart = () => {
           <LoaderCenter />
         </div>
       ) : isError ? (
-        <div className="flex flex-col items-center justify-center py-12 text-red-600">
-          <MdError className="text-2xl mb-2" />
-          <p className="text-sm">{error?.message || "Failed to load data"}</p>
-        </div>
+        <Error
+          message={error?.message || "Failed to load demographic data"}
+          refetch={refetch}
+        />
       ) : chartData.length === 0 ? (
         <div className="flex items-center justify-center py-12 text-text opacity-60">
           <p className="text-sm">No demographic data available</p>
@@ -66,7 +79,7 @@ const GenderChart = () => {
               <ResponsiveContainer>
                 <PieChart>
                   <Pie
-                    data={chartData}
+                    data={chartData.filter((item) => item.total > 0)}
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
@@ -74,9 +87,11 @@ const GenderChart = () => {
                     dataKey="value"
                     stroke="none"
                   >
-                    {chartData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
+                    {chartData
+                      .filter((item) => item.total > 0)
+                      .map((entry, index) => (
+                        <Cell key={index} fill={entry.color} />
+                      ))}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
@@ -96,7 +111,9 @@ const GenderChart = () => {
                   ></span>
                   <span className="text-text">{item.name}</span>
                 </div>
-                <span className="text-text font-medium">
+                <span
+                  className={`text-text font-medium ${item.total === 0 ? "opacity-50" : ""}`}
+                >
                   {item.percentage.toFixed(2)}%
                 </span>
               </div>
