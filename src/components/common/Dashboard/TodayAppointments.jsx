@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "@/components/ui/Card";
 import CustomAvatar from "@/components/ui/Avatar";
 import { authCookies } from "@/utils/cookieUtils";
-import { useGetTodaysAppointmentsQuery } from "@/services";
-
-import { MdError } from "react-icons/md";
+import {
+  useGetClinicTodayAppointmentsQuery,
+  useGetTodaysAppointmentsQuery,
+} from "@/services";
+import Error from "@/components/ui/Error";
 import { LoaderCenter } from "@/components/ui/Loader";
 
 const statusStyles = {
@@ -17,22 +19,51 @@ const statusStyles = {
 
 const TodayAppointments = () => {
   const { getUser } = authCookies;
-  const [limit, setLimit] = useState(10);
+  const role = getUser()?.status;
+  const limit = 10;
   const doctorId = getUser()?._id;
   const today = new Date().toISOString().split("T")[0];
   const {
     data: appointmentsData,
     isLoading: appointmentsLoading,
-    isError,
-    error,
-  } = useGetTodaysAppointmentsQuery({
-    doctorId: doctorId,
-    page: 1,
-    date: today,
-    limit,
-  });
+    isError: doctorError,
+    error: doctorErrorMsg,
+    refetch: refetchDoctorAppointments,
+  } = useGetTodaysAppointmentsQuery(
+    {
+      doctorId: doctorId,
+      page: 1,
+      date: today,
+      limit,
+    },
+    { skip: role !== "doctor" },
+  );
 
-  const appointments = appointmentsData?.data || [];
+  const {
+    data: clinicAppointments,
+    isLoading: clinicAppointmentsLoading,
+    isError: clinicError,
+    error: clinicErrorMsg,
+    refetch: refetchClinicAppointments,
+  } = useGetClinicTodayAppointmentsQuery(
+    {
+      id: doctorId,
+      date: today,
+    },
+    { skip: role !== "clinic" },
+  );
+
+  const isLoading = appointmentsLoading || clinicAppointmentsLoading;
+  const hasError = doctorError || clinicError;
+  const errorMsg =
+    doctorErrorMsg?.message ||
+    clinicErrorMsg?.message ||
+    "Failed to load appointments";
+
+  const isDoctor = role === "doctor";
+  const appointments = isDoctor
+    ? appointmentsData?.data || []
+    : clinicAppointments?.data || [];
 
   const formatStatus = (status) => {
     return status.charAt(0).toUpperCase() + status.slice(1);
@@ -46,17 +77,18 @@ const TodayAppointments = () => {
       shadow="sm"
       className="space-y-4"
     >
-      {appointmentsLoading ? (
+      {isLoading ? (
         <div className="flex justify-center items-center py-8">
           <LoaderCenter />
         </div>
-      ) : isError ? (
-        <div className="flex flex-col items-center justify-center py-8 text-red-600">
-          <MdError className="text-2xl mb-2" />
-          <p className="text-sm">
-            {error?.message || "Failed to load appointments"}
-          </p>
-        </div>
+      ) : hasError ? (
+        <Error
+          message={errorMsg}
+          refetch={() => {
+            if (doctorError) refetchDoctorAppointments();
+            if (clinicError) refetchClinicAppointments();
+          }}
+        />
       ) : appointments?.length === 0 ? (
         <div className="flex items-center justify-center py-8 text-text opacity-60">
           <p className="text-sm">No appointments today</p>

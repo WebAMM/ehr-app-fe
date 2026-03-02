@@ -15,7 +15,11 @@ const StatsCard = ({ icon, iconColor, bgColor, value, label, growth }) => {
         <p className="text-sm text-text opacity-70">{label}</p>
       </div>
 
-      <p className="text-xs text-green-500 font-medium">↗ {growth} this week</p>
+      {growth && (
+        <p className="text-xs text-green-500 font-medium">
+          ↗ {growth} this week
+        </p>
+      )}
     </Card>
   );
 };
