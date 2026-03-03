@@ -32,10 +32,13 @@ export const clinicApi = baseApi.injectEndpoints({
       providesTags: ['Clinic'],
     }),
     getClinicTodayAppointments: builder.query({
-      query: ({ id, date }) => {
+      query: ({ id, date, status="pending" }) => {
         let url = `/appointment/todaysClinicAppointments?clinicId=${id}`;
         if (date) {
           url += `&date=${date}`;
+        }
+        if (status) {
+          url += `&status=${status}`;
         }
         return { url, method: 'GET' };
       },

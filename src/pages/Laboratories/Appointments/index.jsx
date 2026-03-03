@@ -3,58 +3,49 @@ import PageHeader from "@/components/ui/PageHeader";
 import AppointmentFilters from "./AppointmentFilters";
 import AppointmentCalendar from "./AppointmentCalendar";
 import AppointmentList from "./AppointmentList";
-
-const APPOINTMENTS = [
-  {
-    id: "1",
-    initials: "ZK",
-    name: "Zaire Kanumba",
-    patientId: "156513146",
-    doctor: "Dr. David Patel",
-    specialty: "Cardiologist",
-    time: "10:00 AM",
-    fee: "1,500 CFA",
-    status: "Confirmed",
-  },
-  {
-    id: "2",
-    initials: "AD",
-    name: "Amadou Diop",
-    patientId: "156513147",
-    doctor: "Dr. Sarah Johnson",
-    specialty: "Pediatrician",
-    time: "11:30 AM",
-    fee: "2,000 CFA",
-    status: "Confirmed",
-  },
-  {
-    id: "3",
-    initials: "FS",
-    name: "Fatou Sall",
-    patientId: "156513148",
-    doctor: "Dr. David Patel",
-    specialty: "Cardiologist",
-    time: "02:00 PM",
-    fee: "1,500 CFA",
-    status: "Cancelled",
-  },
-  {
-    id: "4",
-    initials: "IK",
-    name: "Ibrahim Kane",
-    patientId: "156513149",
-    doctor: "Dr. Emily Chen",
-    specialty: "Dermatologist",
-    time: "03:30 PM",
-    fee: "1,800 CFA",
-    status: "Confirmed",
-  },
-];
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
+import { LoaderCenter } from "@/components/ui/Loader";
+import Error from "@/components/ui/Error";
+import { useGetClinicTodayAppointmentsQuery } from "@/services";
+import { authCookies } from "@/utils/cookieUtils";
+import { Calendar, Search, X } from "lucide-react";
 
 const Appointments = () => {
-  const [activeTab, setActiveTab] = useState("All");
-  const [monthDate] = useState(() => new Date(2026, 0, 1));
-  const [selectedDay, setSelectedDay] = useState(16);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [monthDate, setMonthDate] = useState(() => new Date(2026, 0, 1));
+  const [selectedDay, setSelectedDay] = useState();
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+
+  const { getUser } = authCookies;
+  const role = getUser()?.status;
+  const doctorId = getUser()?._id;
+  const handlePreviousMonth = () => {
+    setMonthDate(
+      new Date(monthDate.getFullYear(), monthDate.getMonth() - 1, 1),
+    );
+  };
+  const handleNextMonth = () => {
+    setMonthDate(
+      new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1),
+    );
+  };
+  const {
+    data: clinicAppointments,
+    isLoading: clinicAppointmentsLoading,
+    isError: clinicError,
+    error: clinicErrorMsg,
+    isFetching: clinicAppointmentsFetching,
+  } = useGetClinicTodayAppointmentsQuery(
+    {
+      id: doctorId,
+      date: selectedDay,
+      limit: 100,
+      page: 1,
+      status: activeTab,
+    },
+    { skip: role !== "clinic" },
+  );
 
   const headerDateText = useMemo(() => {
     const date = new Date(
@@ -70,10 +61,41 @@ const Appointments = () => {
     });
   }, [monthDate, selectedDay]);
 
+  const handleDateSelect = (day) => {
+    setSelectedDay(day);
+    setShowCalendarModal(false);
+  };
+
   const visibleAppointments = useMemo(() => {
-    if (activeTab === "All") return APPOINTMENTS;
-    return APPOINTMENTS.filter((a) => a.status === activeTab);
-  }, [activeTab]);
+    if (!clinicAppointments?.data) return [];
+
+    const appointmentsData =
+      clinicAppointments.data.appointments || clinicAppointments.data || [];
+
+    let appointments = appointmentsData?.map((appointment) => ({
+      id: appointment._id,
+      initials: appointment.patientDetails.patientName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase(),
+      name: appointment.patientDetails.patientName,
+      patientId: appointment._id,
+      doctor: appointment.slotId?.clinicDoctorId || "N/A",
+      specialty: appointment.patientDetails.problem,
+      time: appointment.slotId?.time || "N/A",
+      fee: appointment.payment?.amount
+        ? `${appointment.payment.amount} CFA`
+        : "N/A",
+      status:
+        appointment.status.charAt(0).toUpperCase() +
+        appointment.status.slice(1),
+      patientDetails: appointment.patientDetails,
+      cancellationReason: appointment.cancellationReason,
+    }));
+
+    return appointments;
+  }, [clinicAppointments]);
 
   return (
     <div className="p-4 sm:p-6 space-y-6 bg-pageBackground min-h-screen">
@@ -82,21 +104,58 @@ const Appointments = () => {
         subtitle="Manage all clinic appointments"
         size="lg"
       />
-
-      <AppointmentFilters activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <AppointmentCalendar
-          monthDate={monthDate}
-          selectedDay={selectedDay}
+      <div className="flex justify-between md:gap-3 max-md:flex-wrap">
+        <AppointmentFilters
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
           setSelectedDay={setSelectedDay}
         />
 
+        <div className="flex justify-end gap-3 w-48 ">
+          <Button
+            variant="secondary"
+            size="md"
+            icon={Calendar}
+            onClick={() => setShowCalendarModal(true)}
+            className="rounded-lg"
+          >
+            Filter by Date
+          </Button>
+        </div>
+      </div>
+
+      {clinicAppointmentsLoading || clinicAppointmentsFetching ? (
+        <div className="flex justify-center items-center py-20">
+          <LoaderCenter />
+        </div>
+      ) : clinicError ? (
+        <Error
+          message={clinicErrorMsg?.message || "Failed to load appointments"}
+        />
+      ) : (
         <AppointmentList
           visibleAppointments={visibleAppointments}
           headerDateText={headerDateText}
         />
-      </div>
+      )}
+      <Modal
+        isOpen={showCalendarModal}
+        onClose={() => setShowCalendarModal(false)}
+        title="Select Date"
+        size="md"
+      >
+        <div className="relative p-4">
+          <div className="mt-4">
+            <AppointmentCalendar
+              monthDate={monthDate}
+              selectedDay={selectedDay}
+              setSelectedDay={handleDateSelect}
+              onPreviousMonth={handlePreviousMonth}
+              onNextMonth={handleNextMonth}
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
