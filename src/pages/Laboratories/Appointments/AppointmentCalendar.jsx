@@ -19,8 +19,13 @@ const buildCalendarDays = (monthDate) => {
   while (cells.length % 7 !== 0) cells.push(null);
   return cells;
 };
-
-const AppointmentCalendar = ({ monthDate, selectedDay, setSelectedDay }) => {
+const AppointmentCalendar = ({
+  monthDate,
+  selectedDay,
+  setSelectedDay,
+  onPreviousMonth,
+  onNextMonth,
+}) => {
   const monthLabel = monthDate.toLocaleDateString(undefined, {
     month: "long",
     year: "numeric",
@@ -32,29 +37,14 @@ const AppointmentCalendar = ({ monthDate, selectedDay, setSelectedDay }) => {
     <Card padding="md" shadow="sm" className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-text">Calendar</h3>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="w-8 h-8 grid place-items-center rounded-lg hover:bg-gray-100"
-            aria-label="Previous"
-          >
-            <ChevronLeft className="w-4 h-4 text-gray-600" />
-          </button>
-          <button
-            type="button"
-            className="w-8 h-8 grid place-items-center rounded-lg hover:bg-gray-100"
-            aria-label="Next"
-          >
-            <ChevronRight className="w-4 h-4 text-gray-600" />
-          </button>
-        </div>
       </div>
 
       <div className="rounded-xl border border-border p-3">
         <div className="flex items-center justify-between mb-3">
           <button
             type="button"
-            className="w-8 h-8 grid place-items-center rounded-lg hover:bg-gray-100"
+            onClick={onPreviousMonth}
+            className="w-8 h-8 grid place-items-center rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Previous month"
           >
             <ChevronLeft className="w-4 h-4 text-gray-500" />
@@ -64,7 +54,8 @@ const AppointmentCalendar = ({ monthDate, selectedDay, setSelectedDay }) => {
           </div>
           <button
             type="button"
-            className="w-8 h-8 grid place-items-center rounded-lg hover:bg-gray-100"
+            onClick={onNextMonth}
+            className="w-8 h-8 grid place-items-center rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Next month"
           >
             <ChevronRight className="w-4 h-4 text-gray-500" />
@@ -100,23 +91,6 @@ const AppointmentCalendar = ({ monthDate, selectedDay, setSelectedDay }) => {
               </button>
             );
           })}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-gray-600">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-secondary" />
-            <span>Today</span>
-          </div>
-          <span>12</span>
-        </div>
-        <div className="flex items-center justify-between text-xs text-gray-600">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-            <span>Upcoming</span>
-          </div>
-          <span>7</span>
         </div>
       </div>
     </Card>

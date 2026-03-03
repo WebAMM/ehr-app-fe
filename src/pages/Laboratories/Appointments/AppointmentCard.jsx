@@ -1,65 +1,232 @@
 import React from "react";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import AppointmentDetailModal from "./AppointmentDetailModal";
+import DeclineAppointmentModal from "./DeclineAppointmentModal";
+import { CheckCircle, X, Eye, Phone, AlertCircle } from "lucide-react";
+import CustomAvatar from "@/components/ui/Avatar";
+import { useUpdateStatusAndSendNotificationMutation } from "@/services";
+import { authCookies } from "@/utils/cookieUtils";
+import { toastError, toastSuccess } from "@/components/ui/Toast";
 
 const getStatusBadgeClasses = (status) => {
-  if (status === "Cancelled") return "bg-red-50 text-red-500";
-  return "bg-secondary/10 text-secondary";
+  const lowerStatus = status?.toLowerCase();
+  if (lowerStatus === "cancelled")
+    return "bg-red-50 text-red-700 border border-red-200";
+  if (lowerStatus === "confirmed")
+    return "bg-blue-50 text-blue-700 border border-blue-200";
+  if (lowerStatus === "completed")
+    return "bg-green-50 text-green-700 border border-green-200";
+  return "bg-yellow-50 text-yellow-700 border border-yellow-200";
 };
 
 const AppointmentCard = ({ appointment }) => {
-  const showReschedule = appointment.status !== "Completed";
+  const statusLower = appointment.status?.toLowerCase();
+  const [imageError, setImageError] = React.useState(false);
+  const [showDetailModal, setShowDetailModal] = React.useState(false);
+  const [showDeclineModal, setShowDeclineModal] = React.useState(false);
+  const { getUser } = authCookies;
 
-  return (
-    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center text-xs font-semibold shrink-0">
-            {appointment.initials}
-          </div>
-          <div className="min-w-0">
-            <div className="font-semibold text-sm text-text truncate">
-              {appointment.name}
-            </div>
-            <div className="text-xs text-gray-500">
-              ID: {appointment.patientId}
-            </div>
-            <div className="text-xs text-gray-500">{appointment.doctor}</div>
-            <div className="text-xs text-gray-400">{appointment.specialty}</div>
-          </div>
-        </div>
+  const Id = getUser()?._id;
+  const [updateStatusAndSendNotification, { isLoading: isUpdating }] =
+    useUpdateStatusAndSendNotificationMutation();
 
-        <div className="text-right shrink-0">
-          <div className="text-xs text-gray-700 font-medium">
-            {appointment.time}
-          </div>
-          <div className="text-sm font-semibold text-secondary">
-            {appointment.fee}
-          </div>
-          <span
-            className={`inline-flex px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium mt-1 ${getStatusBadgeClasses(
-              appointment.status,
-            )}`}
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      const response = await updateStatusAndSendNotification({
+        id: id,
+        body: { status: newStatus },
+      }).unwrap();
+      if (response) {
+        toastSuccess(
+          response.message || `Appointment status updated to ${newStatus}`,
+        );
+      }
+    } catch (error) {
+      toastError(error?.data?.message || "Failed to update appointment status");
+    }
+  };
+
+  const handleDeclineSubmit = async (reason) => {
+    try {
+      const response = await updateStatusAndSendNotification({
+        id: appointment.id,
+        body: {
+          status: "cancelled",
+          cancellationReason: reason,
+        },
+      }).unwrap();
+      if (response) {
+        toastSuccess(response.message || "Appointment declined successfully");
+        setShowDeclineModal(false);
+      }
+    } catch (error) {
+      toastError(error?.data?.message || "Failed to decline appointment");
+    }
+  };
+
+  const renderActionButtons = () => {
+    const showCancel =
+      statusLower !== "cancelled" && statusLower !== "completed";
+
+    let primaryButton = null;
+
+    switch (statusLower) {
+      case "pending":
+        primaryButton = (
+          <Button
+            variant="secondary"
+            size="md"
+            className="rounded-xl"
+            icon={CheckCircle}
+            onClick={() => handleStatusUpdate(appointment.id, "confirmed")}
+            disabled={isUpdating}
           >
-            {appointment.status}
-          </span>
-        </div>
-      </div>
+            {isUpdating ? "Confirming..." : "Confirm"}
+          </Button>
+        );
+        break;
 
-      <div className="flex gap-2">
+      case "confirmed":
+        primaryButton = (
+          <Button
+            variant="secondary"
+            size="md"
+            className="rounded-xl"
+            icon={CheckCircle}
+            onClick={() => handleStatusUpdate(appointment.id, "completed")}
+            disabled={isUpdating}
+          >
+            {isUpdating ? "Completing..." : "Complete"}
+          </Button>
+        );
+        break;
+
+      default:
+        primaryButton = null;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-2 pt-2">
+        {primaryButton && primaryButton}
         <Button
-          variant="secondary"
+          variant="grayOutline"
           size="md"
-          className={showReschedule ? "flex-1 rounded-xl" : "w-full rounded-xl"}
+          className="rounded-xl"
+          icon={Eye}
+          onClick={() => setShowDetailModal(true)}
         >
           View Details
         </Button>
-
-        {showReschedule && (
-          <Button variant="grayOutline" size="md" className="rounded-xl">
-            Reschedule
+        {showCancel && (
+          <Button
+            variant="grayOutline"
+            size="md"
+            className="rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+            icon={X}
+            title="Cancel appointment"
+            onClick={() => setShowDeclineModal(true)}
+            disabled={isUpdating}
+          >
+            {isUpdating ? "Cancelling..." : "Cancel"}
           </Button>
         )}
       </div>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between gap-4 pb-3 border-b border-gray-100">
+        <div className="flex items-start gap-3 min-w-0 flex-1">
+          {appointment?.patientDetails?.attachDoc && !imageError ? (
+            <img
+              src={appointment.patientDetails.attachDoc}
+              alt={appointment?.patientDetails?.patientName}
+              className="w-16 h-16 rounded-full object-cover border border-gray-200"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <CustomAvatar name={appointment?.patientDetails?.patientName} />
+          )}
+
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-sm text-text">
+              {appointment.name}
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Patient ID: {appointment.patientId}
+            </p>
+          </div>
+        </div>
+
+        <span
+          className={`inline-flex px-3 py-1 rounded-full text-[10px] font-semibold shrink-0 ${getStatusBadgeClasses(appointment.status)}`}
+        >
+          {appointment.status}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <p className="text-xs text-gray-500">Gender</p>
+          <p className="text-sm font-medium text-text">
+            {appointment?.patientDetails?.gender || "—"}
+          </p>
+        </div>
+
+        <div className="space-y-1">
+          <p className="text-xs text-gray-500">Contact</p>
+          <p className="text-sm font-medium text-text flex items-center gap-1 ">
+            <Phone className="w-3 h-3" />
+            {appointment?.patientDetails?.patientMobileNo || "—"}
+          </p>
+        </div>
+      </div>
+      <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+        <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+          Appointment Details
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <p className="text-xs text-gray-500">Date & Time</p>
+            <p className="text-sm font-medium text-text">{appointment.time}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Duration</p>
+            <p className="text-sm font-medium text-text">30 mins</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Problem/Reason</p>
+            <p className="text-sm font-medium text-text">
+              {appointment?.patientDetails?.problem || "—"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {renderActionButtons()}
+
+      <Modal
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        title="Appointment Details"
+        size="lg"
+      >
+        <div className="max-h-[70vh] overflow-y-auto pr-4 custom-scrollbar">
+          <AppointmentDetailModal
+            appointment={appointment}
+            imageError={imageError}
+            setImageError={setImageError}
+          />
+        </div>
+      </Modal>
+
+      <DeclineAppointmentModal
+        isOpen={showDeclineModal}
+        onClose={() => setShowDeclineModal(false)}
+        onSubmit={handleDeclineSubmit}
+        isLoading={isUpdating}
+      />
     </div>
   );
 };

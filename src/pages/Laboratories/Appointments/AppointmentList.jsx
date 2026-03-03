@@ -14,9 +14,11 @@ const AppointmentList = ({ visibleAppointments, headerDateText }) => {
         <h3 className="text-sm font-semibold text-text">
           Appointments ({visibleAppointments.length})
         </h3>
-        <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-          {headerDateText}
-        </div>
+        {headerDateText !== "Invalid Date" && (
+          <div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+            {headerDateText}
+          </div>
+        )}
       </div>
 
       <div className="space-y-4">
