@@ -43,6 +43,7 @@ const PATH = {
   CLINIC_SUBSCRIPTION: "/clinic-subscription",
  DOCTOR_PROFILE_REGISTER: "/doctor-profile-register",
   PENDING_VERIFICATION: "/pending-verification",
+  CLINIC_AND_LAB_UPDATE: "/clinic-and-lab-update",
 };
 
 const TOASTER_STYLING_VALUES = {

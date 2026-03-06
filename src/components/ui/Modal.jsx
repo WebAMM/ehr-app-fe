@@ -43,7 +43,8 @@ const Modal = memo(
     const sizeClasses = {
       sm: "max-w-sm",
       md: "max-w-md",
-      lg: "max-w-lg",
+      lg: "max-w-2xl",
+      xl: "max-w-4xl",
     };
 
     return createPortal(

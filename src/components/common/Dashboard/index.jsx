@@ -89,7 +89,7 @@ const Dashboard = () => {
     { id: getUser()?._id },
     { skip: role !== "clinic" },
   );
-  console.log("Clinic Claim Requests Data:", clinicClaimRequestsData);
+
   const isAnyLoading =
     consultationLoading ||
     appointmentsLoading ||
