@@ -13,18 +13,19 @@ const PendingVerification = () => {
         {/* Doctor Profile Card */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mb-12">
           <div className="flex items-start gap-6">
-            {/* Profile Image */}
-            <div className="relative">
-              <img
-                src={doctor?.attachDoc || "/default-doctor-avatar.png"}
-                alt={doctor?.fullName}
-                className="w-24 h-24 rounded-2xl object-cover"
-              />
-              <CheckCircle
-                className="absolute bottom-0 right-0 w-6 h-6 text-[#0ebe7f] bg-white rounded-full"
-                fill="#0ebe7f"
-              />
-            </div>
+            {doctor?.attachDoc && (
+              <div className="relative">
+                <img
+                  src={doctor?.attachDoc || "/default-doctor-avatar.png"}
+                  alt={doctor?.fullName}
+                  className="w-24 h-24 rounded-2xl object-cover"
+                />
+                <CheckCircle
+                  className="absolute bottom-0 right-0 w-6 h-6 text-[#0ebe7f] bg-white rounded-full"
+                  fill="#0ebe7f"
+                />
+              </div>
+            )}
 
             {/* Profile Info */}
             <div className="flex-1">
@@ -32,9 +33,11 @@ const PendingVerification = () => {
                 {doctor?.fullName}
               </h2>
               <p className="text-lg text-gray-600 mt-1">{doctor?.specialty}</p>
-              <p className="text-sm text-gray-500 mt-2">
-                {doctor?.dob || "Not provided"}
-              </p>
+              {doctor?.dob && (
+                <p className="text-sm text-gray-500 mt-2">
+                  {doctor?.dob || "Not provided"}
+                </p>
+              )}
 
               {/* Pending Badge */}
               <div className="mt-3 inline-block">

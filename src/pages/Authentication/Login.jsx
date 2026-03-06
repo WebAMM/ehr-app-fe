@@ -60,7 +60,7 @@ const Login = () => {
               user: response.data.user,
             }),
           );
-          userStatus = response.data.user.status;
+          userStatus = response?.data?.user?.status;
         } else if (values.role === "doctor") {
           dispatch(
             loginSuccess({
@@ -68,7 +68,7 @@ const Login = () => {
               user: response.data.doctor,
             }),
           );
-          userStatus = response.data.doctor.status;
+          userStatus = response?.data?.doctor?.status;
         } else if (values.role === "clinic") {
           dispatch(
             loginSuccess({
@@ -76,11 +76,25 @@ const Login = () => {
               user: response.data.clinic,
             }),
           );
-          userStatus = response.data.clinic.status;
+          userStatus = response?.data?.clinic?.status;
         }
 
         if (userStatus === "clinic" || userStatus === "laboratory") {
-          navigate(PATH.LABORATORIES_DASHBOARD);
+          const clinicOrLab =
+            response?.data?.clinic || response?.data?.laboratory;
+          if (
+            clinicOrLab?.availableDayAndTime.length === 0 ||
+            clinicOrLab?.isVerified === false
+          ) {
+            navigate("/clinic-and-lab-update");
+          } else if (
+            clinicOrLab?.isVerified === "false" &&
+            clinicOrLab.availableDayAndTime.length > 0
+          ) {
+            navigate("/pending-verification");
+          } else {
+            navigate(PATH.LABORATORIES_DASHBOARD);
+          }
         } else if (userStatus === "doctor") {
           const doctor = response.data.doctor;
 

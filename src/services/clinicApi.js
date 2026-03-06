@@ -45,9 +45,11 @@ export const clinicApi = baseApi.injectEndpoints({
       providesTags: ['Appointments'],
     }),
     getClinicDoctorsDetails: builder.query({
-      query: ({ id }) => {
-        let url = `/clinic/getClinicDoctorsDetails/${id}`;
-      
+      query: ({ id, limit=100, page=1, search="" }) => {
+        let url = `/clinic/getClinicDoctorsDetails/${id}?limit=${limit}&page=${page}`;
+      if (search) {
+          url += `&search=${search}`;
+        }
         return { url, method: 'GET' };
       },
       providesTags: ['Doctors'],
@@ -59,11 +61,41 @@ export const clinicApi = baseApi.injectEndpoints({
       }),
       
     }),
-    
+    addClinicDoctor: builder.mutation({
+      query: ({ doctorData }) => ({
+        url: '/clinicDoctor/addClinicDoctor',
+        method: 'POST',
+        body: doctorData,
+      }),
+      invalidatesTags: ['Doctors'],
+    }),
+    updateClinicDoctorProfile: builder.mutation({
+      query: ({ doctorData, id }) => ({
+        url: `/clinicDoctor/updateClinicDoctorProfile/${id}`,
+        method: 'PUT',
+        body: doctorData,
+      }),
+      invalidatesTags: ['Doctors'],
+    }),
+    removeClinicDoctor: builder.mutation({
+      query: ({ clinicDoctorId, clinicId }) => ({
+        url: `/clinic/removeClinicDoctor/${clinicId}`,
+        method: 'DELETE',
+        body: { clinicDoctorId },
+      }),
+      invalidatesTags: ['Doctors'],
+    }),
+    updateClinicProfile: builder.mutation({
+      query: (body) => ({
+        url: `/clinic/updateClinicProfile`,
+        method: 'PUT',
+        body: body,
+      }),
+      invalidatesTags: ['Clinic'],
+    }),
   }),
   overrideExisting: false,
 });
-
 export const {
   useGetClinicPaymentsQuery,
   useGetClinicDemographicsQuery,
@@ -72,4 +104,8 @@ export const {
   useGetClinicClaimRequestsQuery,
   useGetClinicTodayAppointmentsQuery,
   useGetClinicDoctorsDetailsQuery,
+  useAddClinicDoctorMutation,
+  useUpdateClinicDoctorProfileMutation,
+  useRemoveClinicDoctorMutation,
+  useUpdateClinicProfileMutation,
 } = clinicApi;

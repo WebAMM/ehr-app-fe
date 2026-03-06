@@ -37,6 +37,7 @@ import ClinicMessage from "./Laboratories/ClinicMessage";
 import ClinicSubscription from "./Laboratories/ClinicSubscription";
 import DoctorProfileRegister from "./Doctor/DoctorProfileRegister";
 import PendingVerification from "./Doctor/DoctorProfileRegister/PendingVerification";
+import ClinicAndLabUpdate from "./Laboratories/ClinicAndLabUpdate";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -77,5 +78,6 @@ const WEB_PAGES = {
   CLINIC_SUBSCRIPTION: ClinicSubscription,
   DOCTOR_PROFILE_REGISTER: DoctorProfileRegister,
   PENDING_VERIFICATION: PendingVerification,
+  CLINIC_AND_LAB_UPDATE: ClinicAndLabUpdate,
 };
 export { WEB_PAGES };

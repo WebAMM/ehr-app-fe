@@ -1,251 +1,93 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import {
-  Mail,
-  MapPin,
-  MoreVertical,
-  Pencil,
-  Phone,
-  Plus,
-  Search,
-  Star,
-  Trash2,
-} from "lucide-react";
-
-const TABS = ["All", "Doctors", "Staff"];
-
-const membersSeed = [
-  {
-    id: "doc-1",
-    type: "doctor",
-    name: "Dr. David Patel",
-    role: "Cardiologist",
-    meta: "MBBS, FCP (Internal Medicine)",
-    rating: 4.9,
-    reviews: 245,
-    patients: 254,
-    email: "david.patel@trackasante.sn",
-    phone: "+221 76 987 6543",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=256&h=256&fit=crop",
-  },
-  {
-    id: "doc-2",
-    type: "doctor",
-    name: "Dr. Sarah Johnson",
-    role: "Pediatrician",
-    meta: "MBBS, MD (Pediatrics)",
-    rating: 4.8,
-    reviews: 198,
-    patients: 198,
-    email: "sarah.johnson@trackasante.sn",
-    phone: "+221 77 629 0522",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=256&h=256&fit=crop",
-  },
-  {
-    id: "doc-3",
-    type: "doctor",
-    name: "Dr. Emily Chen",
-    role: "Dermatologist",
-    meta: "MBBS, MD (Dermatology)",
-    rating: 4.8,
-    reviews: 124,
-    patients: 176,
-    email: "emily.chen@trackasante.sn",
-    phone: "+221 75 237 9052",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1594824804732-ca8db723f8fa?w=256&h=256&fit=crop",
-  },
-  {
-    id: "doc-4",
-    type: "doctor",
-    name: "Dr. Michael Brown",
-    role: "Orthopedic Surgeon",
-    meta: "MBBS, MS (Orthopedics)",
-    rating: 4.7,
-    reviews: 87,
-    patients: 156,
-    email: "michael.brown@trackasante.sn",
-    phone: "+221 78 239 9654",
-    status: "On Leave",
-    image:
-      "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=256&h=256&fit=crop",
-  },
-  {
-    id: "staff-1",
-    type: "staff",
-    name: "Aminata Diallo",
-    role: "Nurse",
-    meta: "BSc Nursing",
-    rating: null,
-    reviews: null,
-    patients: null,
-    email: "aminata.diallo@trackasante.sn",
-    phone: "+221 77 550 8265",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=256&h=256&fit=crop",
-  },
-  {
-    id: "staff-2",
-    type: "staff",
-    name: "Ousmane Sow",
-    role: "Receptionist",
-    meta: "Diploma in Healthcare Administration",
-    rating: null,
-    reviews: null,
-    patients: null,
-    email: "ousmane.sow@trackasante.sn",
-    phone: "+221 76 372 9056",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=256&h=256&fit=crop",
-  },
-];
-
-const StatusPill = ({ status }) => {
-  const isOnLeave = status?.toLowerCase() === "on leave";
-  return (
-    <span
-      className={
-        "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium " +
-        (isOnLeave
-          ? "bg-warning/10 text-warning"
-          : "bg-secondary/10 text-secondary")
-      }
-    >
-      {status}
-    </span>
-  );
-};
-
-const MemberCard = ({ member }) => {
-  const showRating = typeof member.rating === "number";
-
-  return (
-    <div className="bg-bg border border-border rounded-xl p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0">
-          <img
-            src={member.image}
-            alt={member.name}
-            className="w-12 h-12 rounded-lg object-cover bg-border shrink-0"
-            onError={(e) => {
-              e.currentTarget.src =
-                "https://via.placeholder.com/96x96/cccccc/666666?text=Avatar";
-            }}
-          />
-
-          <div className="min-w-0">
-            <p className="font-semibold text-text truncate">{member.name}</p>
-            <p className="text-sm text-text opacity-70 truncate">
-              {member.role}
-            </p>
-            <p className="text-xs text-text opacity-60 truncate mt-0.5">
-              {member.meta}
-            </p>
-
-            {showRating && (
-              <div className="flex items-center gap-1 text-xs text-text opacity-80 mt-2">
-                <Star className="w-3.5 h-3.5 text-warning fill-warning" />
-                <span className="font-medium opacity-100">{member.rating}</span>
-                <span className="opacity-70">({member.reviews} reviews)</span>
-                {typeof member.patients === "number" && (
-                  <>
-                    <span className="opacity-40">•</span>
-                    <span className="opacity-70">
-                      {member.patients} patients
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
-
-            <div className="mt-2 space-y-1">
-              <div className="flex items-center gap-2 text-xs text-text opacity-70">
-                <Mail className="w-3.5 h-3.5 opacity-70" />
-                <span className="truncate">{member.email}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-text opacity-70">
-                <Phone className="w-3.5 h-3.5 opacity-70" />
-                <span className="truncate">{member.phone}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="p-1.5 rounded-lg hover:bg-muted transition text-text opacity-60 hover:opacity-100"
-          aria-label="More actions"
-        >
-          <MoreVertical className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="mt-4 flex items-center justify-between">
-        <StatusPill status={member.status} />
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="p-1.5 rounded-lg hover:bg-muted transition text-text opacity-60 hover:opacity-100"
-            aria-label="Edit"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            className="p-1.5 rounded-lg hover:bg-muted transition text-red-600/80 hover:text-red-600"
-            aria-label="Delete"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
+import Modal from "@/components/ui/Modal";
+import { MapPin, Plus, Search } from "lucide-react";
+import { authCookies } from "@/utils/cookieUtils";
+import { useGetClinicDoctorsDetailsQuery } from "@/services";
+import { MemberCard } from "./MemberCard";
+import { LoaderCenter } from "@/components/ui/Loader";
+import useModal from "@/hooks/useModal";
+import AddClinicDoctorForm from "./AddClinicDoctorForm";
 const ClinicMembers = () => {
-  const [activeTab, setActiveTab] = useState(TABS[0]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [limit, setLimit] = useState(10);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 1000);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
+  const { isOpen, openModal, closeModal } = useModal();
 
-  const filteredMembers = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return membersSeed.filter((m) => {
-      const matchTab =
-        activeTab === "All" ||
-        (activeTab === "Doctors" && m.type === "doctor") ||
-        (activeTab === "Staff" && m.type === "staff");
+  const { getUser } = authCookies;
+  const role = getUser()?.status;
+  const { data, isLoading, error, refetch, isFetching } =
+    useGetClinicDoctorsDetailsQuery(
+      { id: getUser()?._id, limit: limit, page: 1, search: debouncedSearch },
+      { skip: role !== "clinic" },
+    );
+  const handleAddSuccess = () => {
+    refetch();
+  };
 
-      if (!matchTab) return false;
-      if (!q) return true;
+  const clinicDoctors = useMemo(() => {
+    if (!data?.data?.clinicDoctors) return [];
+    return data?.data?.clinicDoctors.map((doctor) => ({
+      id: doctor._id,
+      type: "doctor",
+      name: doctor.fullName,
+      role: doctor.specialty,
+      meta: doctor.experience,
+      rating: null,
+      reviews: null,
+      patients: null,
+      email: doctor.email || "N/A",
+      phone: doctor.phoneNumber,
+      status: "Active",
+      image:
+        doctor.attachDoc ||
+        "https://via.placeholder.com/96x96/cccccc/666666?text=Avatar",
+      consultationFee: doctor.consultationFee,
+      location: doctor.location,
+      gender: doctor.gender,
+      about: doctor.about,
+      availableDayAndTime: doctor.availableDayAndTime || [],
+      RCCMNIFNumber: doctor.RCCMNIFNumber || "",
+      authorizationNumber: doctor.authorizationNumber || "",
+      dob: doctor.dob || "",
+      bloodGroup: doctor.bloodGroup || "",
+      organization: doctor.organization || "",
+      clinicId: doctor.clinicId || [],
+      createdAt: doctor.createdAt || "",
+      updatedAt: doctor.updatedAt || "",
+    }));
+  }, [data]);
 
-      const haystack = [
-        m.name,
-        m.role,
-        m.meta,
-        m.email,
-        m.phone,
-        m.status,
-        m.type,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+  if (isLoading) {
+    return (
+      <div className="p-4 sm:p-6 space-y-6 bg-pageBackground min-h-screen">
+        <div className="flex items-center justify-center h-64">
+          <LoaderCenter />
+        </div>
+      </div>
+    );
+  }
 
-      return haystack.includes(q);
-    });
-  }, [activeTab, search]);
-
-  const doctors = filteredMembers.filter((m) => m.type === "doctor");
-  const staff = filteredMembers.filter((m) => m.type === "staff");
+  if (error) {
+    return (
+      <div className="p-4 sm:p-6 space-y-6 bg-pageBackground min-h-screen">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-red-600">
+            Error loading clinic doctors: {error.message}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 space-y-6 bg-pageBackground min-h-screen">
@@ -257,7 +99,7 @@ const ClinicMembers = () => {
           </p>
         </div>
 
-        <Button variant="secondary" size="sm" icon={Plus}>
+        <Button variant="secondary" size="sm" icon={Plus} onClick={openModal}>
           Add New Member
         </Button>
       </div>
@@ -269,71 +111,67 @@ const ClinicMembers = () => {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search"
+              placeholder="Search by name, specialty, experience, phone, location or gender..."
               className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-bg text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
             />
-          </div>
-
-          <div className="inline-flex items-center gap-1 p-1 border border-border rounded-lg bg-bg">
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className={
-                    "px-3 py-1.5 text-xs font-medium rounded-md transition " +
-                    (isActive
-                      ? "bg-secondary text-white"
-                      : "text-text opacity-70 hover:opacity-100")
-                  }
-                >
-                  {tab}
-                </button>
-              );
-            })}
           </div>
         </div>
       </Card>
 
-      {(activeTab === "All" || activeTab === "Doctors") && (
-        <Card padding="md" shadow="none">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-text">
-                Doctors ({doctors.length})
-              </p>
-              <div className="hidden sm:flex items-center gap-2 text-xs text-text opacity-60">
-                <MapPin className="w-4 h-4" />
-                <span>Clinic Members</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {doctors.map((m) => (
-                <MemberCard key={m.id} member={m} />
-              ))}
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {(activeTab === "All" || activeTab === "Staff") && (
-        <Card padding="md" shadow="none">
-          <div className="space-y-4">
+      <Card padding="md" shadow="none">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-text">
-              Staff Members ({staff.length})
+              Doctors {data.data?.pagination?.totalRecords || 0}
             </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {staff.map((m) => (
-                <MemberCard key={m.id} member={m} />
-              ))}
+            <div className="hidden sm:flex items-center gap-2 text-xs text-text opacity-60">
+              <MapPin className="w-4 h-4" />
+              <span>Clinic Members</span>
             </div>
           </div>
-        </Card>
-      )}
+
+          {clinicDoctors.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-text opacity-60">
+                {search ? "No doctors found" : "No doctors available"}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {clinicDoctors.map((doctor) => (
+                <MemberCard
+                  key={doctor.id}
+                  member={doctor}
+                  onRefresh={refetch}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
+
+      <Modal
+        isOpen={isOpen}
+        onClose={closeModal}
+        title="Add New Clinic Doctor"
+        size="lg"
+        className="max-w-4xl"
+      >
+        <AddClinicDoctorForm
+          onClose={closeModal}
+          onSuccess={handleAddSuccess}
+        />
+      </Modal>
+
+      <div className="text-center py-4">
+        <button
+          className="text-sm text-secondary underline cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          onClick={() => setLimit(limit + 10)}
+          disabled={data.data.pagination.totalRecords <= limit || isFetching}
+        >
+          {isFetching ? "Loading..." : "Show More"}
+        </button>
+      </div>
     </div>
   );
 };

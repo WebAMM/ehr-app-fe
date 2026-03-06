@@ -14,7 +14,8 @@ export const INITIAL_VALUE = PathName.map((item) => {
     item === "OTP_VERIFICATION" ||
     item === "RESET_PASSWORD" ||
     item === "DOCTOR_PROFILE_REGISTER" ||
-    item === "PENDING_VERIFICATION"
+    item === "PENDING_VERIFICATION" ||
+    item === "CLINIC_AND_LAB_UPDATE"
   ) {
     return { path: PATH[item], page: <Val />, route: "PublicRoute" };
   } else if (item === "LANDING_PAGE") {

@@ -10,7 +10,8 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { validationSchema } from "./ProfileSchema";
 import { authCookies } from "@/utils/cookieUtils";
 import { selectUser, updateUser } from "@/redux/slices/authSlice";
-import { COUNTRIES } from "./Countries";
+import { COUNTRIES } from "@/constant/Countries";
+
 const DAYS_OF_WEEK = [
   "Monday",
   "Tuesday",
@@ -159,15 +160,6 @@ const DoctorProfileUpdateForm = () => {
         setAttachDoc(null);
         setImagePreview(null);
         toastSuccess(response?.message || "Profile updated successfully!");
-
-        // if (
-        //   updatedUserData?.isVerified === false ||
-        //   updatedUserData?.isVerified === "false"
-        // ) {
-        //   setTimeout(() => {
-        //     window.location.href = "/pending-verification";
-        //   }, 1000);
-        // }
       }
     } catch (error) {
       toastError(
@@ -248,7 +240,7 @@ const DoctorProfileUpdateForm = () => {
                   className="w-full p-3 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Country</option>
-                  {COUNTRIES.map((country) => (
+                  {COUNTRIES?.map((country) => (
                     <option key={country.id} value={`+${country.phone_code}`}>
                       {country.name} (+{country.phone_code})
                     </option>
