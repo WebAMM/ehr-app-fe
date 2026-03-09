@@ -140,9 +140,13 @@ export default function Header({ isSidebarOpen, toggleSidebar }) {
           </div>
 
           <div className="flex items-center space-x-2">
-            {currentUser?.attachDoc ? (
+            {currentUser?.attachDoc || currentUser?.logo ? (
               <img
-                src={currentUser?.attachDoc}
+                src={
+                  currentUser?.attachDoc ||
+                  currentUser?.logo ||
+                  "/default-avatar.png"
+                }
                 alt="User Avatar"
                 className="w-12 h-12 rounded-full object-cover"
               />

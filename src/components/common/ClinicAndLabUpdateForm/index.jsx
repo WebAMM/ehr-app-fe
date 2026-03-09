@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/redux";
 import { authCookies } from "@/utils/cookieUtils";
+const GOOGLE_MAPS_LIBRARIES = ["places"];
 const DAYS_OF_WEEK = [
   "Monday",
   "Tuesday",
@@ -22,6 +23,17 @@ const DAYS_OF_WEEK = [
   "Saturday",
   "Sunday",
 ];
+
+const DAY_NAME_MAP = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  thrusday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
+};
 
 const PlaceField = ({
   label,
@@ -104,35 +116,51 @@ const PlaceField = ({
   );
 };
 
-const ClinicUpdateSchema = Yup.object({
-  typeOfHealthCenter: Yup.string()
-    .oneOf(["clinic", "laboratory"], "Select a valid type")
-    .required("Type of health center is required"),
-  about: Yup.string().required("About is required"),
-  logo: Yup.mixed().optional(),
-  gallery: Yup.array().optional(),
-  city: Yup.string().required("City is required"),
-  state: Yup.string().required("State is required"),
-  zipCode: Yup.string().required("Zip code is required"),
-  website: Yup.string().url("Enter a valid URL").optional(),
-  RCCMIFNumber: Yup.string().required("RCCMIF number is required"),
-  phoneNumber: Yup.string().required("Phone number is required"),
-  countryCode: Yup.string().required("Country code is required"),
-
-  status: Yup.string(),
-  addAccount: Yup.object({
-    teleMoney: Yup.string(),
-    orangeMoney: Yup.string(),
-  }),
-  availableDayAndTime: Yup.array().of(
-    Yup.object({
-      day: Yup.string().required("Day is required"),
-      openingTime: Yup.string().required("Opening time is required"),
-      closingTime: Yup.string().required("Closing time is required"),
-      available: Yup.boolean(),
+const createClinicUpdateSchema = ({
+  hideTypeField = false,
+  showIdentityFields = false,
+} = {}) =>
+  Yup.object({
+    typeOfHealthCenter: hideTypeField
+      ? Yup.string().notRequired()
+      : Yup.string()
+          .oneOf(["clinic", "laboratory"], "Select a valid type")
+          .required("Type of health center is required"),
+    fullName: showIdentityFields
+      ? Yup.string().trim().required("Full name is required")
+      : Yup.string().trim(),
+    email: showIdentityFields
+      ? Yup.string().email("Enter a valid email").required("Email is required")
+      : Yup.string().email("Enter a valid email"),
+    about: showIdentityFields
+      ? Yup.string().trim()
+      : Yup.string().trim().required("About is required"),
+    logo: Yup.mixed().nullable().optional(),
+    gallery: Yup.array().optional(),
+    existingGallery: Yup.array().optional(),
+    city: Yup.string().required("City is required"),
+    state: Yup.string().required("State is required"),
+    zipCode: Yup.string().required("Zip code is required"),
+    website: Yup.string().url("Enter a valid URL").optional(),
+    RCCMNIFNumber: Yup.string()
+      .required("RCCM / NIF number is required")
+      .optional(),
+    phoneNumber: Yup.string().required("Phone number is required"),
+    countryCode: Yup.string().required("Country code is required"),
+    status: Yup.string(),
+    addAccount: Yup.object({
+      teleMoney: Yup.string().optional(),
+      orangeMoney: Yup.string().optional(),
     }),
-  ),
-});
+    availableDayAndTime: Yup.array().of(
+      Yup.object({
+        day: Yup.string().required("Day is required"),
+        openingTime: Yup.string().required("Opening time is required"),
+        closingTime: Yup.string().required("Closing time is required"),
+        available: Yup.boolean(),
+      }),
+    ),
+  });
 
 const convertTo12HourFormat = (time24) => {
   const [hours, minutes] = time24.split(":");
@@ -143,7 +171,88 @@ const convertTo12HourFormat = (time24) => {
   return `${hour}:${minute}${ampm}`;
 };
 
-const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
+const convertTo24HourFormat = (time) => {
+  if (!time) return "00:00";
+  const cleaned = time.trim().toLowerCase();
+
+  if (/^\d{1,2}:\d{2}$/.test(cleaned)) {
+    const [h, m] = cleaned.split(":");
+    return `${String(parseInt(h, 10)).padStart(2, "0")}:${m}`;
+  }
+  const match = cleaned.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/);
+  if (!match) return "00:00";
+  let hour = parseInt(match[1], 10);
+  const minute = match[2] ? parseInt(match[2], 10) : 0;
+  const period = match[3];
+  if (period === "pm" && hour !== 12) hour += 12;
+  if (period === "am" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+};
+
+const parseAddAccount = (addAccount) => {
+  if (!addAccount) return { teleMoney: "", orangeMoney: "" };
+
+  try {
+    const parsed =
+      typeof addAccount === "string" ? JSON.parse(addAccount) : addAccount;
+
+    return {
+      teleMoney: parsed?.teleMoney || "",
+      orangeMoney: parsed?.orangeMoney || "",
+    };
+  } catch {
+    return { teleMoney: "", orangeMoney: "" };
+  }
+};
+
+const normalizeCountryCode = (countryCode) => {
+  if (!countryCode) return "";
+
+  const trimmed = String(countryCode).trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("+")) return trimmed;
+
+  return /^\d+$/.test(trimmed) ? `+${trimmed}` : trimmed;
+};
+
+const normalizeDayName = (day) =>
+  DAY_NAME_MAP[
+    String(day || "")
+      .trim()
+      .toLowerCase()
+  ];
+
+const normalizeAvailabilitySlots = (slots = []) => {
+  const normalizedSlots = new Map();
+
+  slots.forEach((slot) => {
+    const day = normalizeDayName(slot?.day);
+    if (!day || normalizedSlots.has(day)) return;
+
+    normalizedSlots.set(day, {
+      day,
+      available: Boolean(slot?.available),
+      openingTime: convertTo24HourFormat(slot?.openingTime || "06:00"),
+      closingTime: convertTo24HourFormat(slot?.closingTime || "21:00"),
+    });
+  });
+
+  return DAYS_OF_WEEK.map(
+    (day) =>
+      normalizedSlots.get(day) || {
+        day,
+        available: false,
+        openingTime: "06:00",
+        closingTime: "21:00",
+      },
+  );
+};
+
+const ClinicAndLabUpdateForm = ({
+  initialData = {},
+  hideTypeField = false,
+  showIdentityFields = false,
+}) => {
   const [updateClinicProfile, { isLoading }] = useUpdateClinicProfileMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -152,79 +261,173 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    libraries: GOOGLE_MAPS_LIBRARIES,
   });
+  const validationSchema = createClinicUpdateSchema({
+    hideTypeField,
+    showIdentityFields,
+  });
+  const normalizedAddAccount = parseAddAccount(initialData.addAccount);
+  const normalizedAvailability = normalizeAvailabilitySlots(
+    initialData.availableDayAndTime,
+  );
 
   const initialValues = {
     typeOfHealthCenter: initialData.typeOfHealthCenter || "clinic",
+    fullName: initialData.fullName || "",
+    email: initialData.email || "",
     logo: null,
     about: initialData.about || "",
     gallery: [],
-    city: "",
-    state: "",
-    address: "",
-    zipCode: "",
-    website: "",
-    RCCMIFNumber: "",
+    existingGallery: Array.isArray(initialData.gallery)
+      ? initialData.gallery
+      : [],
+    city: initialData.city || "",
+    state: initialData.state || "",
+    address: initialData.address || "",
+    location: initialData.address || "",
+    zipCode: initialData.zipCode || "",
+    website: initialData.website || "",
+    RCCMNIFNumber: initialData.RCCMNIFNumber || initialData.RCCMIFNumber || "",
     addAccount: {
-      teleMoney: "",
-      orangeMoney: "",
+      teleMoney: normalizedAddAccount.teleMoney,
+      orangeMoney: normalizedAddAccount.orangeMoney,
     },
-    phoneNumber: "",
-    longitude: "",
-    latitude: "",
-    availableDayAndTime: initialData?.availableDayAndTime?.length
-      ? initialData.availableDayAndTime
-      : DAYS_OF_WEEK.map((day) => ({
-          day,
-          available: false,
-          openingTime: "06:00",
-          closingTime: "21:00",
-        })),
-    countryCode: initialData.countryCode || "",
+    phoneNumber: initialData.phoneNumber || "",
+    longitude: initialData.location?.coordinates?.[0] || "",
+    latitude: initialData.location?.coordinates?.[1] || "",
+    availableDayAndTime: normalizedAvailability,
+    countryCode: normalizeCountryCode(initialData.countryCode),
     status: initialData.status || "",
   };
   const handleSubmit = async (values) => {
     try {
       const formData = new FormData();
-      formData.append("typeOfHealthCenter", values.typeOfHealthCenter);
-      formData.append("about", values.about);
-      formData.append("city", values.city);
-      formData.append("state", values.state);
-      formData.append("address", values.address);
-      formData.append("zipCode", values.zipCode);
-      formData.append("website", values.website);
-      formData.append("RCCMIFNumber", values.RCCMIFNumber);
-      formData.append("phoneNumber", values.phoneNumber);
-      formData.append("countryCode", values.countryCode);
-      formData.append("longitude", values.longitude);
-      formData.append("latitude", values.latitude);
-      formData.append("status", "clinic");
-      formData.append("addAccount[teleMoney]", values.addAccount.teleMoney);
-      formData.append("addAccount[orangeMoney]", values.addAccount.orangeMoney);
+
+      const appendIfChanged = (fieldName, nextValue, previousValue) => {
+        if (String(nextValue ?? "") !== String(previousValue ?? "")) {
+          formData.append(fieldName, nextValue ?? "");
+        }
+      };
+
+      const normalizedAddress =
+        values.address ||
+        values.location?.address ||
+        (typeof values.location === "string" ? values.location : "") ||
+        "";
+      const normalizedCountryCodeValue = normalizeCountryCode(
+        values.countryCode,
+      );
+      const normalizedStatus =
+        values.status ||
+        values.typeOfHealthCenter ||
+        initialValues.status ||
+        "clinic";
+
+      appendIfChanged(
+        "typeOfHealthCenter",
+        values.typeOfHealthCenter,
+        initialValues.typeOfHealthCenter,
+      );
+
+      if (showIdentityFields) {
+        appendIfChanged("fullName", values.fullName, initialValues.fullName);
+        appendIfChanged("email", values.email, initialValues.email);
+      }
+
+      appendIfChanged("about", values.about, initialValues.about);
+      appendIfChanged("city", values.city, initialValues.city);
+      appendIfChanged("state", values.state, initialValues.state);
+      appendIfChanged("address", normalizedAddress, initialValues.address);
+      appendIfChanged("zipCode", values.zipCode, initialValues.zipCode);
+      appendIfChanged("website", values.website, initialValues.website);
+      appendIfChanged(
+        "RCCMNIFNumber",
+        values.RCCMNIFNumber,
+        initialValues.RCCMNIFNumber,
+      );
+      appendIfChanged(
+        "RCCMIFNumber",
+        values.RCCMNIFNumber,
+        initialValues.RCCMNIFNumber,
+      );
+      appendIfChanged(
+        "phoneNumber",
+        values.phoneNumber,
+        initialValues.phoneNumber,
+      );
+      appendIfChanged(
+        "countryCode",
+        normalizedCountryCodeValue,
+        initialValues.countryCode,
+      );
+      appendIfChanged("longitude", values.longitude, initialValues.longitude);
+      appendIfChanged("latitude", values.latitude, initialValues.latitude);
+      appendIfChanged("status", normalizedStatus, initialValues.status);
+
+      if (
+        JSON.stringify(values.addAccount) !==
+        JSON.stringify(initialValues.addAccount)
+      ) {
+        formData.append(
+          "addAccount[teleMoney]",
+          values.addAccount.teleMoney || "",
+        );
+        formData.append(
+          "addAccount[orangeMoney]",
+          values.addAccount.orangeMoney || "",
+        );
+      }
+
       if (values.logo) {
         formData.append("logo", values.logo);
+      }
+
+      if (
+        JSON.stringify(values.existingGallery) !==
+        JSON.stringify(initialValues.existingGallery)
+      ) {
+        values.existingGallery.forEach((url) => {
+          formData.append("existingGallery", url);
+        });
       }
 
       values.gallery.forEach((file) => {
         if (file) formData.append("gallery", file);
       });
 
-      values.availableDayAndTime.forEach((slot, i) => {
-        formData.append(
-          `availableDayAndTime[${i}][day]`,
-          slot.day.toLowerCase(),
-        );
-        formData.append(
-          `availableDayAndTime[${i}][openingTime]`,
-          convertTo12HourFormat(slot.openingTime),
-        );
-        formData.append(
-          `availableDayAndTime[${i}][closingTime]`,
-          convertTo12HourFormat(slot.closingTime),
-        );
-        formData.append(`availableDayAndTime[${i}][available]`, slot.available);
-      });
+      const normalizedCurrentAvailability = normalizeAvailabilitySlots(
+        values.availableDayAndTime,
+      );
+      if (
+        JSON.stringify(normalizedCurrentAvailability) !==
+        JSON.stringify(initialValues.availableDayAndTime)
+      ) {
+        normalizedCurrentAvailability.forEach((slot, i) => {
+          formData.append(
+            `availableDayAndTime[${i}][day]`,
+            slot.day.toLowerCase(),
+          );
+          formData.append(
+            `availableDayAndTime[${i}][openingTime]`,
+            convertTo12HourFormat(slot.openingTime),
+          );
+          formData.append(
+            `availableDayAndTime[${i}][closingTime]`,
+            convertTo12HourFormat(slot.closingTime),
+          );
+          formData.append(
+            `availableDayAndTime[${i}][available]`,
+            slot.available,
+          );
+        });
+      }
+
+      if (Array.from(formData.keys()).length === 0) {
+        toastError("No changes to update.");
+        return;
+      }
+
       const response = await updateClinicProfile(formData).unwrap();
 
       if (response.message) {
@@ -244,7 +447,7 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={ClinicUpdateSchema}
+      validationSchema={validationSchema}
       onSubmit={handleSubmit}
       enableReinitialize
     >
@@ -257,32 +460,58 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
         setFieldValue,
       }) => (
         <Form className="space-y-6">
-          {/* Type of Health Center */}
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-              Type of Health Center <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="typeOfHealthCenter"
-              value={values.typeOfHealthCenter}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={`w-full px-4 py-2 sm:py-3 border h-8 sm:h-12 text-xs sm:text-sm rounded-lg outline-none focus:ring-2 focus:ring-opacity-50 transition-all bg-white ${
-                touched.typeOfHealthCenter && errors.typeOfHealthCenter
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:border-[#0ebe7f] focus:ring-[#0ebe7f]"
-              }`}
-            >
-              <option value="">Select type</option>
-              <option value="clinic">Clinic</option>
-              <option value="laboratory">Laboratory</option>
-            </select>
-            {touched.typeOfHealthCenter && errors.typeOfHealthCenter && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.typeOfHealthCenter}
-              </p>
-            )}
-          </div>
+          {showIdentityFields && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Full Name *"
+                name="fullName"
+                placeholder="e.g. Health Care Clinique"
+                value={values.fullName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={
+                  touched.fullName && errors.fullName ? errors.fullName : ""
+                }
+              />
+              <Input
+                label="Email *"
+                name="email"
+                type="email"
+                placeholder="e.g. clinic@example.com"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.email && errors.email ? errors.email : ""}
+              />
+            </div>
+          )}
+          {!hideTypeField && (
+            <div>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                Type of Health Center <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="typeOfHealthCenter"
+                value={values.typeOfHealthCenter}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full px-4 py-2 sm:py-3 border h-8 sm:h-12 text-xs sm:text-sm rounded-lg outline-none focus:ring-2 focus:ring-opacity-50 transition-all bg-white ${
+                  touched.typeOfHealthCenter && errors.typeOfHealthCenter
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-[#0ebe7f] focus:ring-[#0ebe7f]"
+                }`}
+              >
+                <option value="">Select type</option>
+                <option value="clinic">Clinic</option>
+                <option value="laboratory">Laboratory</option>
+              </select>
+              {touched.typeOfHealthCenter && errors.typeOfHealthCenter && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.typeOfHealthCenter}
+                </p>
+              )}
+            </div>
+          )}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Logo
@@ -302,9 +531,10 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
             >
               <FaUpload className="text-gray-400" size={14} />
               <span className="text-sm text-gray-500">
-                {values.logo ? values.logo.name : "Click to upload logo"}
+                {values.logo ? values.logo.name : "Click to upload a new logo"}
               </span>
             </div>
+            {/* New file selected — show blob preview */}
             {values.logo && (
               <div className="mt-4 flex items-center gap-4">
                 <div className="relative w-24 h-24 rounded-lg border border-gray-300 overflow-hidden bg-gray-50">
@@ -316,7 +546,7 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-2">
-                    <span className="font-medium">Preview:</span>{" "}
+                    <span className="font-medium">New logo:</span>{" "}
                     {values.logo.name}
                   </p>
                   <button
@@ -329,12 +559,27 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
                 </div>
               </div>
             )}
+            {!values.logo && initialData.logo && (
+              <div className="mt-4 flex items-center gap-4">
+                <div className="relative w-24 h-24 rounded-lg border border-gray-300 overflow-hidden bg-gray-50">
+                  <img
+                    src={initialData.logo}
+                    alt="Current logo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p className="text-sm text-gray-500">
+                  Current logo — upload a new one to replace it
+                </p>
+              </div>
+            )}
           </div>
 
           {/* About */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-              About <span className="text-red-500">*</span>
+              About{" "}
+              {!showIdentityFields && <span className="text-red-500">*</span>}
             </label>
             <textarea
               name="about"
@@ -377,15 +622,64 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
               <FaUpload className="text-gray-400" size={14} />
               <span className="text-sm text-gray-500">
                 {values.gallery.length > 0
-                  ? `${values.gallery.length} file(s) selected`
+                  ? `${values.gallery.length} new file(s) selected`
                   : "Click to upload gallery images"}
               </span>
             </div>
+
+            {/* Existing server images */}
+            {values.existingGallery.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-medium text-gray-700 mb-3">
+                  Current Gallery ({values.existingGallery.length} image
+                  {values.existingGallery.length === 1 ? "" : "s"})
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {values.existingGallery.map((url, i) => (
+                    <div key={url} className="relative group">
+                      <div className="relative w-full aspect-square rounded-lg border border-gray-300 overflow-hidden bg-gray-50">
+                        <img
+                          src={url}
+                          alt={`Gallery ${i + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setFieldValue(
+                                "existingGallery",
+                                values.existingGallery.filter(
+                                  (_, idx) => idx !== i,
+                                ),
+                              )
+                            }
+                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+                            title="Remove image"
+                          >
+                            <FaTrash size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFieldValue("existingGallery", [])}
+                  className="mt-2 text-sm font-medium text-red-500 hover:text-red-700 flex items-center gap-1"
+                >
+                  <FaTrash size={12} /> Remove All Existing
+                </button>
+              </div>
+            )}
+
+            {/* Newly added files */}
             {values.gallery.length > 0 && (
               <div className="mt-4 space-y-4">
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-3">
-                    Gallery Preview ({values.gallery.length} image
+                    New Uploads ({values.gallery.length} image
                     {values.gallery.length === 1 ? "" : "s"})
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -394,7 +688,7 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
                         <div className="relative w-full aspect-square rounded-lg border border-gray-300 overflow-hidden bg-gray-50">
                           <img
                             src={URL.createObjectURL(file)}
-                            alt={`Gallery ${i + 1}`}
+                            alt={`New ${i + 1}`}
                             className="w-full h-full object-cover"
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -426,7 +720,7 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
                     onClick={() => setFieldValue("gallery", [])}
                     className="text-sm font-medium text-red-500 hover:text-red-700 flex items-center gap-1"
                   >
-                    <FaTrash size={12} /> Clear All
+                    <FaTrash size={12} /> Clear New
                   </button>
                   <button
                     type="button"
@@ -441,28 +735,55 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <PlaceField
-              label="City *"
-              type="city"
-              placeholder="Search city"
-              error={touched.city && errors.city ? errors.city : ""}
-              onPlaceSelect={(data) => {
-                setFieldValue("city", data.name || "");
-                setFieldValue("latitude", data.location.coordinates[1]);
-                setFieldValue("longitude", data.location.coordinates[0]);
-              }}
-              value={values.city}
-              onChange={(val) => setFieldValue("city", val)}
-            />
-            <PlaceField
-              label="State *"
-              type="(regions)"
-              placeholder="Search state / region"
-              error={touched.state && errors.state ? errors.state : ""}
-              onPlaceSelect={(data) => setFieldValue("state", data.name || "")}
-              value={values.state}
-              onChange={(val) => setFieldValue("state", val)}
-            />
+            {isLoaded ? (
+              <>
+                <PlaceField
+                  label="City *"
+                  type="city"
+                  placeholder="Search city"
+                  error={touched.city && errors.city ? errors.city : ""}
+                  onPlaceSelect={(data) => {
+                    setFieldValue("city", data.name || "");
+                    setFieldValue("latitude", data.location.coordinates[1]);
+                    setFieldValue("longitude", data.location.coordinates[0]);
+                  }}
+                  value={values.city}
+                  onChange={(val) => setFieldValue("city", val)}
+                />
+                <PlaceField
+                  label="State *"
+                  type="(regions)"
+                  placeholder="Search state / region"
+                  error={touched.state && errors.state ? errors.state : ""}
+                  onPlaceSelect={(data) =>
+                    setFieldValue("state", data.name || "")
+                  }
+                  value={values.state}
+                  onChange={(val) => setFieldValue("state", val)}
+                />
+              </>
+            ) : (
+              <>
+                <Input
+                  label="City *"
+                  name="city"
+                  placeholder="Loading..."
+                  value={values.city}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.city && errors.city ? errors.city : ""}
+                />
+                <Input
+                  label="State *"
+                  name="state"
+                  placeholder="Loading..."
+                  value={values.state}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.state && errors.state ? errors.state : ""}
+                />
+              </>
+            )}
             <Input
               label="Zip Code *"
               name="zipCode"
@@ -487,15 +808,15 @@ const ClinicAndLabUpdateForm = ({ initialData = {} }) => {
 
           {/* RCCMIF Number */}
           <Input
-            label="RCCMIF Number *"
-            name="RCCMIFNumber"
+            label="RCCM / NIF Number *"
+            name="RCCMNIFNumber"
             placeholder="e.g. RC123456"
-            value={values.RCCMIFNumber}
+            value={values.RCCMNIFNumber}
             onChange={handleChange}
             onBlur={handleBlur}
             error={
-              touched.RCCMIFNumber && errors.RCCMIFNumber
-                ? errors.RCCMIFNumber
+              touched.RCCMNIFNumber && errors.RCCMNIFNumber
+                ? errors.RCCMNIFNumber
                 : ""
             }
           />
