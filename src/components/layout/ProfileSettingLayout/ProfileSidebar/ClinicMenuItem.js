@@ -1,4 +1,4 @@
-import { User, Palette, Bell, Shield, CreditCard, Edit } from "lucide-react";
+import { User, Palette, Bell, Shield, CreditCard, Edit, Star } from "lucide-react";
 
 export const clinicMenuItems = [
   {
@@ -13,12 +13,7 @@ export const clinicMenuItems = [
     icon: Edit,
     path: "/clinic-settings/profile-edit",
   },
-  {
-    id: "appearance",
-    label: "Appearance",
-    icon: Palette,
-    path: "/clinic-settings/appearance",
-  },
+ 
   {
     id: "notifications",
     label: "Notifications",
@@ -36,5 +31,11 @@ export const clinicMenuItems = [
     label: "Billing",
     icon: CreditCard,
     path: "/clinic-settings/billing",
+  },
+  {
+    id: "reviews",
+    label: "Reviews",
+    icon: Star,
+    path: "/clinic-settings/reviews",
   },
 ];

@@ -93,6 +93,81 @@ export const clinicApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Clinic'],
     }),
+    updateClinicPassword: builder.mutation({
+      query: ({ clinicId, passwordData }) => ({
+        url: `/clinic/updateClinicPassword/${clinicId}`,
+        method: 'PUT',
+        body: passwordData,
+      }),
+      invalidatesTags: ['Clinic'],
+    }),
+    getClinicNotifications: builder.query({
+      query: ({ clinicId }) => ({
+        url: `/notification/clinicNotifications?clinicId=${clinicId}`,
+        method: 'GET', 
+      }),
+      providesTags: ['Notifications'],
+    }),
+    markNotificationsAsRead: builder.mutation({
+      query: ({ id }) => ({
+        url: `/notification/markAsRead/${id}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['Notifications'],
+    }),
+    removeNotification: builder.mutation({
+      query: ({ id }) => ({
+        url: `/notification/removeNotification/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Notifications'],
+    }),
+    // getClinicBillingHistory: builder.query({
+    //   query: () => ({
+    //     url: `/clinic/getBillingHistory`,
+    //     method: 'GET',
+    //   }),
+    //   providesTags: ['Subscription'],
+    // }),
+    getClinicReceivedPayments: builder.query({
+      query: ({ clinicId }) => ({
+        url: `/subscription/getClinicReceivedPayments/${clinicId}`,
+        method: 'GET',
+      }),
+      providesTags: ['Subscription'],
+    }),
+    getClinicBillingHistory: builder.query({
+      query: ({ clinicId }) => ({
+        url: `/subscription/getClinicBillingHistory/${clinicId}`,
+        method: 'GET',
+      }),
+      providesTags: ['Subscription'],
+    }),
+   
+    subscribeWithOrangeMoney: builder.mutation({
+      query: ({ body }) => ({
+        url: `/subscription/subscribeWithOrangeMoney`,
+        method: 'POST',
+        body: body,
+      }),
+      invalidatesTags: ['Subscription'],
+    }),
+    addSubscription: builder.mutation({
+      query: ({ body }) => ({
+        url: `subscription/addSubscription`,
+        method: 'POST',
+        body: body,
+      }),
+      invalidatesTags: ['Subscription'],
+    }),
+   
+    getClinicReviews: builder.query({
+      query: ({ id }) => ({
+        url: `/clinic/getClinicReviews/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Reviews'],
+    }),
   }),
   overrideExisting: false,
 });
@@ -108,4 +183,14 @@ export const {
   useUpdateClinicDoctorProfileMutation,
   useRemoveClinicDoctorMutation,
   useUpdateClinicProfileMutation,
+  useUpdateClinicPasswordMutation,
+  useGetClinicNotificationsQuery,
+  useMarkNotificationsAsReadMutation,
+  useRemoveNotificationMutation,
+  useGetClinicBillingHistoryQuery,
+  useGetClinicReceivedPaymentsQuery,
+  useGetClinicReviewsQuery,
+  useSubscribeWithOrangeMoneyMutation,
+  useAddSubscriptionMutation,
+
 } = clinicApi;

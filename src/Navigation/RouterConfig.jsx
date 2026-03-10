@@ -23,6 +23,7 @@ import ClinicSettingsSecurity from "../pages/Laboratories/ClinicSettings/Securit
 import ClinicSettingsBilling from "../pages/Laboratories/ClinicSettings/Billing";
 import ClinicSettingsNotFound from "../pages/Laboratories/ClinicSettings/NotFound";
 import EditClinicProfile from "@/pages/Laboratories/ClinicSettings/EditClinicProfile";
+import ClinicReview from "@/pages/Laboratories/ClinicSettings/ClinicReview";
 
 export const RouterConfig = () => {
   return (
@@ -71,6 +72,7 @@ export const RouterConfig = () => {
           <Route path="profile-edit" element={<EditClinicProfile />} />
           <Route path="security" element={<ClinicSettingsSecurity />} />
           <Route path="billing" element={<ClinicSettingsBilling />} />
+          <Route path="reviews" element={<ClinicReview />} />
           <Route path="*" element={<ClinicSettingsNotFound />} />
         </Route>
 
