@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import {
+  useAddSubscriptionMutation,
+  useSubscribeWithOrangeMoneyMutation,
+} from "@/services";
 
 const SubscriptionPlan = () => {
   const [selectedPayment, setSelectedPayment] = useState("orange");
+  // const [subscriptionWithOrangeMoney, { isLoading: isSubscribing }] =
+  //   useSubscribeWithOrangeMoneyMutation();
+  // const [addSubscription, { isLoading: isAddingSubscription }] =
+  //   useAddSubscriptionMutation();
+  //  useSubscribeWithOrangeMoneyMutation,
+  // useAddSubscriptionMutation,
 
   return (
     <div className="bg-pageBackground p-5">
@@ -16,8 +26,8 @@ const SubscriptionPlan = () => {
             <p className="text-xs opacity-70 mb-3">For Doctor's</p>
 
             <div className="flex items-end gap-2">
-              <h1 className="text-3xl font-bold">20,000 CFA</h1>
-              <span className="text-sm opacity-80">/3 Month</span>
+              <h1 className="text-3xl font-bold">9,000 CFA</h1>
+              <span className="text-sm opacity-80">/Year</span>
             </div>
           </div>
         </div>
@@ -43,7 +53,7 @@ const SubscriptionPlan = () => {
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 space-y-3">
           <h3 className="font-semibold">Start Your Free Trial</h3>
           <p className="text-sm text-gray-600">
-            Get 90 days of free access to all premium features. No credit card
+            Get 7 days of free access to all premium features. No credit card
             required.
           </p>
 
@@ -76,7 +86,7 @@ const SubscriptionPlan = () => {
               >
                 <div>
                   <p className="font-medium">{method.name}</p>
-                  <p className="text-sm text-gray-500">{method.number}</p>
+                  {/* <p className="text-sm text-gray-500">{method.number}</p> */}
                 </div>
 
                 <div
@@ -91,25 +101,11 @@ const SubscriptionPlan = () => {
             ))}
           </div>
         </Card>
-        <Card>
-          <h3 className="font-semibold mb-4">Billing Details</h3>
 
-          <div className="flex justify-between text-sm mb-3">
-            <span className="text-gray-500">Next Payment on</span>
-            <span>Mar 27, 2023</span>
-          </div>
-
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Total Amount</span>
-            <span className="text-emerald-600 font-semibold">20,000 CFA</span>
-          </div>
-        </Card>
-
-        {/* Terms */}
         <div className="flex items-start gap-2 text-sm">
           <input type="checkbox" className="mt-1" />
           <p>
-            By clicking "Sign Up," you agree to our{" "}
+            By clicking you agree to our{" "}
             <span className="text-emerald-600 font-medium">
               Terms and Conditions
             </span>
