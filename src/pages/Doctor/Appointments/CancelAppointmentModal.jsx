@@ -62,13 +62,6 @@ const CancelAppointmentModal = ({ isOpen, onClose, appointmentId }) => {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="lg">
       <div className="relative w-full">
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
         <div className="pr-8 space-y-6">
           <div>
             <h2 className="text-2xl font-bold text-text mb-2">

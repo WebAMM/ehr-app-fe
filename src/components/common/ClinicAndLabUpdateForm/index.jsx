@@ -149,7 +149,6 @@ const createClinicUpdateSchema = ({
     countryCode: Yup.string().required("Country code is required"),
     status: Yup.string(),
     addAccount: Yup.object({
-      teleMoney: Yup.string().optional(),
       orangeMoney: Yup.string().optional(),
     }),
     availableDayAndTime: Yup.array().of(
@@ -190,18 +189,17 @@ const convertTo24HourFormat = (time) => {
 };
 
 const parseAddAccount = (addAccount) => {
-  if (!addAccount) return { teleMoney: "", orangeMoney: "" };
+  if (!addAccount) return { orangeMoney: "" };
 
   try {
     const parsed =
       typeof addAccount === "string" ? JSON.parse(addAccount) : addAccount;
 
     return {
-      teleMoney: parsed?.teleMoney || "",
       orangeMoney: parsed?.orangeMoney || "",
     };
   } catch {
-    return { teleMoney: "", orangeMoney: "" };
+    return { orangeMoney: "" };
   }
 };
 
@@ -290,7 +288,6 @@ const ClinicAndLabUpdateForm = ({
     website: initialData.website || "",
     RCCMNIFNumber: initialData.RCCMNIFNumber || initialData.RCCMIFNumber || "",
     addAccount: {
-      teleMoney: normalizedAddAccount.teleMoney,
       orangeMoney: normalizedAddAccount.orangeMoney,
     },
     phoneNumber: initialData.phoneNumber || "",
@@ -369,10 +366,6 @@ const ClinicAndLabUpdateForm = ({
         JSON.stringify(values.addAccount) !==
         JSON.stringify(initialValues.addAccount)
       ) {
-        formData.append(
-          "addAccount[teleMoney]",
-          values.addAccount.teleMoney || "",
-        );
         formData.append(
           "addAccount[orangeMoney]",
           values.addAccount.orangeMoney || "",
@@ -884,15 +877,7 @@ const ClinicAndLabUpdateForm = ({
 
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-gray-700">Add Account</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
-                label="Tele Money"
-                name="addAccount.teleMoney"
-                placeholder="Tele Money account number"
-                value={values.addAccount.teleMoney}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
               <Input
                 label="Orange Money"
                 name="addAccount.orangeMoney"
