@@ -122,13 +122,7 @@ export const clinicApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Notifications'],
     }),
-    // getClinicBillingHistory: builder.query({
-    //   query: () => ({
-    //     url: `/clinic/getBillingHistory`,
-    //     method: 'GET',
-    //   }),
-    //   providesTags: ['Subscription'],
-    // }),
+   
     getClinicReceivedPayments: builder.query({
       query: ({ clinicId }) => ({
         url: `/subscription/getClinicReceivedPayments/${clinicId}`,

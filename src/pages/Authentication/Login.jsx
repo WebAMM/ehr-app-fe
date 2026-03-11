@@ -50,9 +50,11 @@ const Login = () => {
           password: values.password,
         }).unwrap();
       }
+      console.log("Login response:", response);
       let userStatus;
       if (response?.data?.token) {
         toastSuccess(response.message || "Login successful!");
+
         if (values.role === "user") {
           dispatch(
             loginSuccess({
@@ -206,7 +208,7 @@ const Login = () => {
                     >
                       <option value="user">User</option>
                       <option value="doctor">Doctor</option>
-                      <option value="clinic">Clinic</option>
+                      <option value="clinic">Clinic/Laboratory</option>
                     </select>
                   </div>
 

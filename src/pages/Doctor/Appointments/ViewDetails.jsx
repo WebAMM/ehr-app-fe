@@ -1,26 +1,11 @@
 import Button from "@/components/ui/Button";
-import {
-  Calendar,
-  Clock,
-  Video,
-  MapPin,
-  MoreVertical,
-  X,
-  Download,
-} from "lucide-react";
+import { Calendar, Clock, Video, MapPin, Download } from "lucide-react";
 import React from "react";
 import { handleDownload } from "./handleDownload";
 
-const ViewDetails = ({ setShowDetailsModal, data, setShowCancelModal }) => {
+const ViewDetails = ({ data, setShowCancelModal }) => {
   return (
     <div className="relative w-full">
-      <button
-        onClick={() => setShowDetailsModal(false)}
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-      >
-        <X className="w-6 h-6" />
-      </button>
-
       <div className="mb-6 pr-8">
         <h2 className="text-2xl font-bold text-text mb-2">
           Appointment Details

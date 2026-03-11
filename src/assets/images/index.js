@@ -13,6 +13,7 @@ import Virus from "./virus.png";
 import CTScan from "./CTScan.png";
 import MRIScan from "./MRIScan.png";
 import Ultrasound from "./ultrasound.png";
+import OrangeMoneylogo from "./Orange-Money-logo.jpg";
 
 
 export const IMAGES = {
@@ -31,6 +32,7 @@ export const IMAGES = {
   CT_SCAN: CTScan,
   MRI_SCAN: MRIScan,
   ULTRASOUND: Ultrasound,
+  ORANGE_MONEY_LOGO: OrangeMoneylogo,
 };
 
-export { Blood as BLOOD, BloodSugar as BLOOD_SUGAR, Camera as CAMERA, Virus as VIRUS, CTScan as CT_SCAN, MRIScan as MRI_SCAN, Ultrasound as ULTRASOUND };
+export { Blood as BLOOD, BloodSugar as BLOOD_SUGAR, Camera as CAMERA, Virus as VIRUS, CTScan as CT_SCAN, MRIScan as MRI_SCAN, Ultrasound as ULTRASOUND, OrangeMoneylogo as ORANGE_MONEY_LOGO };

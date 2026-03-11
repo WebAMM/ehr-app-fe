@@ -1,20 +1,41 @@
 import React, { useState } from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import {
-  useAddSubscriptionMutation,
-  useSubscribeWithOrangeMoneyMutation,
-} from "@/services";
+import { useAddSubscriptionMutation } from "@/services";
+import OrangePayModel from "@/Models/OrangePayModel";
+import { authCookies } from "@/utils/cookieUtils";
+
+import { toastError, toastSuccess } from "@/components/ui/Toast";
 
 const SubscriptionPlan = () => {
   const [selectedPayment, setSelectedPayment] = useState("orange");
-  // const [subscriptionWithOrangeMoney, { isLoading: isSubscribing }] =
-  //   useSubscribeWithOrangeMoneyMutation();
-  // const [addSubscription, { isLoading: isAddingSubscription }] =
-  //   useAddSubscriptionMutation();
-  //  useSubscribeWithOrangeMoneyMutation,
-  // useAddSubscriptionMutation,
+  const [isOrangePayModelOpen, setIsOrangePayModelOpen] = useState(false);
+  const { getUser } = authCookies;
+  const user = getUser();
+  const userId = user?._id;
+  const userType = user?.status;
 
+  const [addSubscription, { isLoading: isAddingSubscription }] =
+    useAddSubscriptionMutation();
+  const handleSubscribe = async () => {
+    if (selectedPayment === "orange") {
+      setIsOrangePayModelOpen(true);
+      return;
+    }
+    try {
+      const payload = {
+        subscription: userType === "clinic" ? "144,000" : "9,000",
+        type: "yearly",
+        paymentMethod: "cash",
+      };
+      const response = await addSubscription({ body: payload }).unwrap();
+      if (response.success) {
+        toastSuccess(response.message || "Subscription successful!");
+      }
+    } catch (error) {
+      toastError(error.data?.message || "Error subscribing. Please try again.");
+    }
+  };
   return (
     <div className="bg-pageBackground p-5">
       <div className="max-w-5xl  space-y-6">
@@ -26,7 +47,9 @@ const SubscriptionPlan = () => {
             <p className="text-xs opacity-70 mb-3">For Doctor's</p>
 
             <div className="flex items-end gap-2">
-              <h1 className="text-3xl font-bold">9,000 CFA</h1>
+              <h1 className="text-3xl font-bold">
+                {userType === "clinic" ? "72,000" : "9,000"} CFA
+              </h1>
               <span className="text-sm opacity-80">/Year</span>
             </div>
           </div>
@@ -118,8 +141,8 @@ const SubscriptionPlan = () => {
             Start 7 Days Free Trial
           </Button>
 
-          <Button variant="grayOutline" fullWidth>
-            Subscribe
+          <Button variant="grayOutline" fullWidth onClick={handleSubscribe}>
+            {isAddingSubscription ? "Processing..." : "Subscribe"}
           </Button>
         </div>
 
@@ -136,6 +159,10 @@ const SubscriptionPlan = () => {
           </span>
         </div>
       </div>
+      <OrangePayModel
+        isOpen={isOrangePayModelOpen}
+        onClose={() => setIsOrangePayModelOpen(false)}
+      />
     </div>
   );
 };
