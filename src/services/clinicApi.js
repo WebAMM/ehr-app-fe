@@ -154,6 +154,14 @@ export const clinicApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Subscription'],
     }),
+    startPayment: builder.mutation({
+      query: ({ body }) => ({
+        url: `/payment/startPayment`,
+        method: 'POST',
+        body: body,
+      }),
+      invalidatesTags: ['Subscription'],
+    }),
    
     getClinicReviews: builder.query({
       query: ({ id }) => ({
@@ -186,5 +194,6 @@ export const {
   useGetClinicReviewsQuery,
   useSubscribeWithOrangeMoneyMutation,
   useAddSubscriptionMutation,
+  useStartPaymentMutation,
 
 } = clinicApi;

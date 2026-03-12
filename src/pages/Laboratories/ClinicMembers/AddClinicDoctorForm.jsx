@@ -3,6 +3,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import SearchableSelect from "@/components/ui/SearchableSelect";
 
 import { toastError, toastSuccess } from "@/components/ui/Toast";
 import { authCookies } from "@/utils/cookieUtils";
@@ -14,6 +15,20 @@ import {
   useUpdateClinicDoctorProfileMutation,
 } from "@/services";
 import { COUNTRIES } from "@/constant/Countries";
+
+const SPECIALTY_OPTIONS = [
+  "Cardiology",
+  "Dermatology",
+  "Neurology",
+  "Orthopedics",
+  "Pediatrics",
+  "Psychiatry",
+  "General Medicine",
+  "Gynecology",
+  "Ophthalmology",
+  "ENT",
+];
+
 const DAYS_OF_WEEK = [
   "Monday",
   "Tuesday",
@@ -25,7 +40,7 @@ const DAYS_OF_WEEK = [
 ];
 const validationSchema = Yup.object({
   fullName: Yup.string().required("Full name is required"),
-  countryCode: Yup.string().required("Country code is required"),
+
   phoneNumber: Yup.string().required("Phone number is required"),
   about: Yup.string().required("About is required"),
   consultationFee: Yup.string().required("Consultation fee is required"),
@@ -73,7 +88,7 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
 
   const initialValues = {
     fullName: doctorData?.name || "",
-    countryCode: doctorData?.countryCode || "",
+
     phoneNumber: doctorData?.phone || "",
     about: doctorData?.about || "",
     consultationFee: doctorData?.consultationFee || "",
@@ -128,8 +143,7 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
       if (isEditMode) {
         if (hasChanged("fullName"))
           formData.append("fullName", values.fullName);
-        if (hasChanged("countryCode"))
-          formData.append("countryCode", values.countryCode);
+
         if (hasChanged("phoneNumber"))
           formData.append("phoneNumber", values.phoneNumber);
         if (hasChanged("about")) formData.append("about", values.about);
@@ -158,7 +172,7 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
       } else {
         // In add mode, send all fields
         formData.append("fullName", values.fullName);
-        formData.append("countryCode", values.countryCode);
+
         formData.append("phoneNumber", values.phoneNumber);
         formData.append("about", values.about);
         formData.append("consultationFee", values.consultationFee);
@@ -176,7 +190,6 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
         );
       }
 
-      // Always check availability changes and file changes
       if (
         JSON.stringify(availableDayAndTime) !==
         JSON.stringify(doctorData?.availableDayAndTime || [])
@@ -302,7 +315,7 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
                 height={40}
               />
 
-              <div>
+              {/* <div>
                 <label className="block mb-2 text-sm font-medium text-gray-700">
                   Country Code
                 </label>
@@ -325,7 +338,7 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
                     {errors.countryCode}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               <Input
                 label="Phone Number"
@@ -342,35 +355,17 @@ const AddClinicDoctorForm = ({ onClose, onSuccess, doctorData }) => {
                 }
                 height={40}
               />
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Specialty
-                </label>
-                <select
-                  name="specialty"
-                  value={values.specialty}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className="w-full p-2.5 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Specialty</option>
-                  <option value="Cardiology">Cardiology</option>
-                  <option value="Dermatology">Dermatology</option>
-                  <option value="Neurology">Neurology</option>
-                  <option value="Orthopedics">Orthopedics</option>
-                  <option value="Pediatrics">Pediatrics</option>
-                  <option value="Psychiatry">Psychiatry</option>
-                  <option value="General Medicine">General Medicine</option>
-                  <option value="Gynecology">Gynecology</option>
-                  <option value="Ophthalmology">Ophthalmology</option>
-                  <option value="ENT">ENT</option>
-                </select>
-                {touched.specialty && errors.specialty && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.specialty}
-                  </p>
-                )}
-              </div>
+              <SearchableSelect
+                label="Specialty"
+                name="specialty"
+                options={SPECIALTY_OPTIONS}
+                value={values.specialty}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Search or select specialty"
+                error={errors.specialty}
+                touched={touched.specialty}
+              />
 
               <Input
                 label="Experience"

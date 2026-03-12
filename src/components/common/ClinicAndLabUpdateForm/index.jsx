@@ -9,10 +9,11 @@ import { toastSuccess, toastError } from "@/components/ui/Toast";
 import { useUpdateClinicProfileMutation } from "@/services";
 import GooglePlaceInput from "@/components/ui/GooglePlaceInput";
 import { COUNTRIES } from "@/constant/Countries";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/redux";
 import { authCookies } from "@/utils/cookieUtils";
+import { convertTo24HourFormat } from "@/utils/convertTo24HourFormat";
 const GOOGLE_MAPS_LIBRARIES = ["places"];
 const DAYS_OF_WEEK = [
   "Monday",
@@ -170,24 +171,6 @@ const convertTo12HourFormat = (time24) => {
   return `${hour}:${minute}${ampm}`;
 };
 
-const convertTo24HourFormat = (time) => {
-  if (!time) return "00:00";
-  const cleaned = time.trim().toLowerCase();
-
-  if (/^\d{1,2}:\d{2}$/.test(cleaned)) {
-    const [h, m] = cleaned.split(":");
-    return `${String(parseInt(h, 10)).padStart(2, "0")}:${m}`;
-  }
-  const match = cleaned.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/);
-  if (!match) return "00:00";
-  let hour = parseInt(match[1], 10);
-  const minute = match[2] ? parseInt(match[2], 10) : 0;
-  const period = match[3];
-  if (period === "pm" && hour !== 12) hour += 12;
-  if (period === "am" && hour === 12) hour = 0;
-  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-};
-
 const parseAddAccount = (addAccount) => {
   if (!addAccount) return { orangeMoney: "" };
 
@@ -232,6 +215,7 @@ const normalizeAvailabilitySlots = (slots = []) => {
       available: Boolean(slot?.available),
       openingTime: convertTo24HourFormat(slot?.openingTime || "06:00"),
       closingTime: convertTo24HourFormat(slot?.closingTime || "21:00"),
+      ...(slot?._id ? { _id: slot._id } : {}),
     });
   });
 
@@ -252,6 +236,8 @@ const ClinicAndLabUpdateForm = ({
   showIdentityFields = false,
 }) => {
   const [updateClinicProfile, { isLoading }] = useUpdateClinicProfileMutation();
+  const location = useLocation();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logoRef = useRef(null);
@@ -413,6 +399,9 @@ const ClinicAndLabUpdateForm = ({
             `availableDayAndTime[${i}][available]`,
             slot.available,
           );
+          if (slot._id) {
+            formData.append(`availableDayAndTime[${i}][_id]`, slot._id);
+          }
         });
       }
 
@@ -428,7 +417,9 @@ const ClinicAndLabUpdateForm = ({
         dispatch(updateUser(updatedUserData));
         authCookies.updateUser(updatedUserData);
         toastSuccess(response?.message || "Profile updated successfully!");
-        navigate("/sign-in");
+        if (location.pathname !== "/clinic-settings/profile-edit") {
+          navigate("/sign-in");
+        }
       }
     } catch (error) {
       toastError(

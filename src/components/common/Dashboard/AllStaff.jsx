@@ -72,18 +72,8 @@ const AllStaff = () => {
       parentClass="bg-white rounded-2xl w-full"
       className="space-y-6"
     >
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-800">All Staff</h2>
-
-        <Button
-          variant="secondary"
-          size="sm"
-          icon={Plus}
-          className="rounded-xl px-4 py-2"
-        >
-          Add New
-        </Button>
       </div>
 
       {isLoading ? (

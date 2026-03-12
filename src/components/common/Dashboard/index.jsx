@@ -20,6 +20,7 @@ import {
   useDoctorConsultationStatsQuery,
   useGetClinicAppointmentsQuery,
   useGetClinicClaimRequestsQuery,
+  useGetClinicDoctorsDetailsQuery,
   useGetClinicPatientCountQuery,
   useTotalDoctorAppointmentsQuery,
   useTotalDoctorPatientsQuery,
@@ -50,6 +51,7 @@ const Dashboard = () => {
     },
     { skip: role !== "doctor" },
   );
+
   const {
     data: totalPatients,
     isLoading: patientsLoading,
@@ -61,7 +63,14 @@ const Dashboard = () => {
     },
     { skip: role !== "doctor" },
   );
-
+  const {
+    data: clinicDoctorsData,
+    isLoading: clinicDoctorsLoading,
+    error: clinicDoctorsError,
+  } = useGetClinicDoctorsDetailsQuery(
+    { id: getUser()?._id },
+    { skip: role !== "clinic" },
+  );
   const {
     data: clinicAppointmentsData,
     isLoading: clinicAppointmentsLoading,
@@ -71,6 +80,7 @@ const Dashboard = () => {
     { id: getUser()?._id },
     { skip: role !== "clinic" },
   );
+
   const {
     data: clinicPatientCountData,
     isLoading: clinicPatientCountLoading,
@@ -95,6 +105,7 @@ const Dashboard = () => {
     appointmentsLoading ||
     patientsLoading ||
     clinicAppointmentsLoading ||
+    clinicDoctorsLoading ||
     clinicPatientCountLoading ||
     clinicClaimRequestsLoading;
 
@@ -184,9 +195,8 @@ const Dashboard = () => {
       icon: UserCheck,
       iconClassName: "text-green-600",
       bgColor: "bg-green-100",
-      value: "12",
+      value: clinicDoctorsData?.data?.pagination?.totalRecords || 0,
       label: "Doctors",
-      growth: "37.8%",
     },
   ];
 
