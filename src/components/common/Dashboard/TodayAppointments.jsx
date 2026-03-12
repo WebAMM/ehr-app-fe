@@ -16,7 +16,6 @@ const statusStyles = {
   completed: "bg-blue-100 text-blue-600",
   ongoing: "bg-purple-100 text-purple-600",
 };
-
 const TodayAppointments = () => {
   const { getUser } = authCookies;
   const role = getUser()?.status;

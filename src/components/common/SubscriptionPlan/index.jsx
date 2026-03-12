@@ -1,39 +1,102 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { useAddSubscriptionMutation } from "@/services";
+import {
+  useAddSubscriptionMutation,
+  useStartPaymentMutation,
+} from "@/services";
 import OrangePayModel from "@/Models/OrangePayModel";
 import { authCookies } from "@/utils/cookieUtils";
-
-import { toastError, toastSuccess } from "@/components/ui/Toast";
 
 const SubscriptionPlan = () => {
   const [selectedPayment, setSelectedPayment] = useState("orange");
   const [isOrangePayModelOpen, setIsOrangePayModelOpen] = useState(false);
   const { getUser } = authCookies;
   const user = getUser();
-  const userId = user?._id;
+  // const userId = user?._id;
   const userType = user?.status;
 
   const [addSubscription, { isLoading: isAddingSubscription }] =
     useAddSubscriptionMutation();
+
+  const [startPayment, { isLoading: isStartingPayment }] =
+    useStartPaymentMutation();
   const handleSubscribe = async () => {
     if (selectedPayment === "orange") {
       setIsOrangePayModelOpen(true);
       return;
     }
     try {
-      const payload = {
-        subscription: userType === "clinic" ? "144,000" : "9,000",
-        type: "yearly",
-        paymentMethod: "cash",
-      };
-      const response = await addSubscription({ body: payload }).unwrap();
-      if (response.success) {
-        toastSuccess(response.message || "Subscription successful!");
+      const result = await Swal.fire({
+        title: "Confirm Subscription",
+        text: `Subscribe for ${userType === "clinic" ? "144,000" : "9,000"} CFA per year?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#10b981",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, subscribe!",
+      });
+
+      if (result.isConfirmed) {
+        const payload = {
+          subscription: userType === "clinic" ? "144,000" : "9,000",
+          type: "yearly",
+          paymentMethod: "cash",
+        };
+        const response = await addSubscription({ body: payload }).unwrap();
+        if (response.success) {
+          Swal.fire({
+            title: "Success!",
+            text: response.message || "Subscription successful!",
+            icon: "success",
+            confirmButtonColor: "#10b981",
+          });
+        }
       }
     } catch (error) {
-      toastError(error.data?.message || "Error subscribing. Please try again.");
+      Swal.fire({
+        title: "Error",
+        text: error.data?.message || "Error subscribing. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
+    }
+  };
+  const handleStartPayment = async () => {
+    try {
+      const result = await Swal.fire({
+        title: "Claim Free Trial",
+        text: "Get 7 days of free access to all premium features. No credit card required.",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#10b981",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, claim it!",
+      });
+
+      if (result.isConfirmed) {
+        const payload = {
+          paymentMethod: "none",
+        };
+        const response = await startPayment({ body: payload }).unwrap();
+        if (response.success) {
+          Swal.fire({
+            title: "Success!",
+            text: response.message || "Free trial claimed successfully!",
+            icon: "success",
+            confirmButtonColor: "#10b981",
+          });
+        }
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text:
+          error.data?.message || "Error claiming free trial. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
   return (
@@ -48,7 +111,7 @@ const SubscriptionPlan = () => {
 
             <div className="flex items-end gap-2">
               <h1 className="text-3xl font-bold">
-                {userType === "clinic" ? "72,000" : "9,000"} CFA
+                {userType === "clinic" ? "144,000" : "9,000"} CFA
               </h1>
               <span className="text-sm opacity-80">/Year</span>
             </div>
@@ -80,7 +143,12 @@ const SubscriptionPlan = () => {
             required.
           </p>
 
-          <Button variant="success" size="md">
+          <Button
+            variant="success"
+            size="md"
+            onClick={handleStartPayment}
+            loading={isStartingPayment}
+          >
             Claim 7 Days Free Trial
           </Button>
         </div>
@@ -137,7 +205,12 @@ const SubscriptionPlan = () => {
         </div>
 
         <div className="flex gap-4">
-          <Button variant="success" fullWidth>
+          <Button
+            variant="success"
+            fullWidth
+            onClick={handleStartPayment}
+            loading={isStartingPayment}
+          >
             Start 7 Days Free Trial
           </Button>
 

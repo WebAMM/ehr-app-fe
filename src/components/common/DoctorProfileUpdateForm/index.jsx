@@ -11,7 +11,31 @@ import { validationSchema } from "./ProfileSchema";
 import { authCookies } from "@/utils/cookieUtils";
 import { selectUser, updateUser } from "@/redux/slices/authSlice";
 import { COUNTRIES } from "@/constant/Countries";
+import SearchableSelect from "@/components/ui/SearchableSelect";
+import { convertTo24HourFormat } from "@/utils/convertTo24HourFormat";
 
+const DAY_NAME_MAP = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  thrusday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
+};
+const SPECIALTY_OPTIONS = [
+  "Cardiology",
+  "Dermatology",
+  "Neurology",
+  "Orthopedics",
+  "Pediatrics",
+  "Psychiatry",
+  "General Medicine",
+  "Gynecology",
+  "Ophthalmology",
+  "ENT",
+];
 const DAYS_OF_WEEK = [
   "Monday",
   "Tuesday",
@@ -33,17 +57,52 @@ const DoctorProfileUpdateForm = () => {
   const [updateDoctorProfile, { isLoading }] = useUpdateDoctorProfileMutation();
   const user = useSelector(selectUser);
   const currentUser = user;
-
-  const [availableDayAndTime, setAvailableDayAndTime] = useState(
-    DAYS_OF_WEEK.map((day) => ({
-      day,
-      available: false,
-      openingTime: "06:00",
-      closingTime: "21:00",
-    })),
-  );
   const [attachDoc, setAttachDoc] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const convertTo12HourFormat = (time24) => {
+    const [hours, minutes] = time24.split(":");
+    let hour = parseInt(hours, 10);
+    const minute = minutes;
+    const ampm = hour >= 12 ? "pm" : "am";
+    hour = hour % 12 || 12;
+    return `${hour}:${minute}${ampm}`;
+  };
+  const normalizeDayName = (day) =>
+    DAY_NAME_MAP[
+      String(day || "")
+        .trim()
+        .toLowerCase()
+    ];
+
+  const normalizeAvailabilitySlots = (slots = []) => {
+    const normalizedSlots = new Map();
+
+    slots.forEach((slot) => {
+      const day = normalizeDayName(slot?.day);
+      if (!day || normalizedSlots.has(day)) return;
+
+      normalizedSlots.set(day, {
+        day,
+        available: Boolean(slot?.available),
+        openingTime: convertTo24HourFormat(slot?.openingTime || "06:00"),
+        closingTime: convertTo24HourFormat(slot?.closingTime || "21:00"),
+        ...(slot?._id ? { _id: slot._id } : {}),
+      });
+    });
+
+    return DAYS_OF_WEEK.map(
+      (day) =>
+        normalizedSlots.get(day) || {
+          day,
+          available: false,
+          openingTime: "06:00",
+          closingTime: "21:00",
+        },
+    );
+  };
+  const normalizedAvailability = normalizeAvailabilitySlots(
+    currentUser?.availableDayAndTime,
+  );
 
   const formatDateForInput = (dateString) => {
     if (!dateString) return "1980-05-15";
@@ -55,18 +114,18 @@ const DoctorProfileUpdateForm = () => {
     }
   };
   const parseAddAccount = (addAccount) => {
-    if (!addAccount) return { teleMoney: "", orangeMoney: "" };
+    if (!addAccount) return { orangeMoney: "" };
     try {
       const parsed =
         typeof addAccount === "string" ? JSON.parse(addAccount) : addAccount;
       return {
-        teleMoney: parsed?.teleMoney || "",
         orangeMoney: parsed?.orangeMoney || "",
       };
     } catch {
-      return { teleMoney: "", orangeMoney: "" };
+      return { orangeMoney: "" };
     }
   };
+
   const addAccountData = parseAddAccount(currentUser?.addAccount);
   const initialValues = {
     fullName: currentUser?.fullName || "",
@@ -85,27 +144,12 @@ const DoctorProfileUpdateForm = () => {
     longitude: currentUser?.location?.coordinates[0] || "",
     latitude: currentUser?.location?.coordinates[1] || "",
     location: currentUser?.address || null,
-    teleMoney: addAccountData.teleMoney,
+    availableDayAndTime: normalizedAvailability,
     orangeMoney: addAccountData.orangeMoney,
     merchantCode: currentUser?.merchantCode || "",
     attachDoc: currentUser?.attachDoc || null,
   };
 
-  const handleDayAvailabilityChange = (index, value) => {
-    setAvailableDayAndTime((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, available: value } : item,
-      ),
-    );
-  };
-
-  const handleTimeChange = (index, timeType, value) => {
-    setAvailableDayAndTime((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, [timeType]: value } : item,
-      ),
-    );
-  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -118,37 +162,94 @@ const DoctorProfileUpdateForm = () => {
   const handleDoctorUpdate = async (values, actions) => {
     try {
       const formData = new FormData();
-      formData.append("fullName", values.fullName);
-      formData.append("countryCode", values.countryCode);
-      formData.append("phoneNumber", values.phoneNumber);
-      formData.append("about", values.about);
-      formData.append("type", values.type);
-      formData.append("consultationFee", values.consultationFee);
-      formData.append("specialty", values.specialty);
-      formData.append("experience", values.experience);
+      let hasChanges = false;
+      const simpleFields = [
+        "fullName",
+        "countryCode",
+        "phoneNumber",
+        "about",
+        "type",
+        "consultationFee",
+        "specialty",
+        "experience",
+        "authorizationNumber",
+        "dob",
+        "bloodGroup",
+        "gender",
+        "merchantCode",
+      ];
+      simpleFields.forEach((field) => {
+        if (
+          String(values[field] ?? "") !== String(initialValues[field] ?? "")
+        ) {
+          formData.append(field, values[field]);
+          hasChanges = true;
+        }
+      });
+      if (String(values.longitude) !== String(initialValues.longitude)) {
+        formData.append("longitude", parseFloat(values.longitude) || 0);
+        hasChanges = true;
+      }
+      if (String(values.latitude) !== String(initialValues.latitude)) {
+        formData.append("latitude", parseFloat(values.latitude) || 0);
+        hasChanges = true;
+      }
+      const newAddress = values.location?.address || "";
+      const oldAddress = currentUser?.address || "";
+      if (newAddress !== oldAddress) {
+        formData.append("address", newAddress);
+        hasChanges = true;
+      }
+      const normalizedCurrentAvailability = normalizeAvailabilitySlots(
+        values.availableDayAndTime,
+      );
+      if (
+        JSON.stringify(normalizedCurrentAvailability) !==
+        JSON.stringify(initialValues.availableDayAndTime)
+      ) {
+        normalizedCurrentAvailability.forEach((slot, i) => {
+          formData.append(
+            `availableDayAndTime[${i}][day]`,
+            slot.day.toLowerCase(),
+          );
+          formData.append(
+            `availableDayAndTime[${i}][openingTime]`,
+            convertTo12HourFormat(slot.openingTime),
+          );
+          formData.append(
+            `availableDayAndTime[${i}][closingTime]`,
+            convertTo12HourFormat(slot.closingTime),
+          );
+          formData.append(
+            `availableDayAndTime[${i}][available]`,
+            slot.available,
+          );
+          if (slot._id) {
+            formData.append(`availableDayAndTime[${i}][_id]`, slot._id);
+          }
+        });
+        hasChanges = true;
+      }
 
-      formData.append("authorizationNumber", values.authorizationNumber);
-      formData.append("dob", values.dob);
-      formData.append("bloodGroup", values.bloodGroup);
-      formData.append("gender", values.gender);
-      formData.append("longitude", parseFloat(values.longitude) || 0);
-      formData.append("latitude", parseFloat(values.latitude) || 0);
-      formData.append("address", values.location?.address || "");
-      formData.append("merchantCode", values.merchantCode);
-      formData.append(
-        "availableDayAndTime",
-        JSON.stringify(availableDayAndTime),
-      );
-      formData.append(
-        "addAccount",
-        JSON.stringify({
-          teleMoney: Number(values.teleMoney),
-          orangeMoney: Number(values.orangeMoney),
-        }),
-      );
+      if (String(values.orangeMoney) !== String(initialValues.orangeMoney)) {
+        formData.append(
+          "addAccount",
+          JSON.stringify({ orangeMoney: Number(values.orangeMoney) }),
+        );
+        hasChanges = true;
+      }
+
       if (attachDoc) {
         formData.append("attachDoc", attachDoc);
+        hasChanges = true;
       }
+
+      if (!hasChanges) {
+        toastError("No changes detected.");
+        actions.setSubmitting(false);
+        return;
+      }
+
       const response = await updateDoctorProfile({
         doctorData: formData,
       }).unwrap();
@@ -265,7 +366,7 @@ const DoctorProfileUpdateForm = () => {
                     : ""
                 }
                 height={48}
-                className="text-sm w-full"
+                className="text-sm w-full flex-1"
               />
             </div>
 
@@ -333,35 +434,17 @@ const DoctorProfileUpdateForm = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
-                  Specialty
-                </label>
-                <select
-                  name="specialty"
-                  value={values.specialty}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className="w-full p-2.5 text-gray-700 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Specialty</option>
-                  <option value="Cardiology">Cardiology</option>
-                  <option value="Dermatology">Dermatology</option>
-                  <option value="Neurology">Neurology</option>
-                  <option value="Orthopedics">Orthopedics</option>
-                  <option value="Pediatrics">Pediatrics</option>
-                  <option value="Psychiatry">Psychiatry</option>
-                  <option value="General Medicine">General Medicine</option>
-                  <option value="Gynecology">Gynecology</option>
-                  <option value="Ophthalmology">Ophthalmology</option>
-                  <option value="ENT">ENT</option>
-                </select>
-                {touched.specialty && errors.specialty && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.specialty}
-                  </p>
-                )}
-              </div>
+              <SearchableSelect
+                label="Specialty"
+                name="specialty"
+                options={SPECIALTY_OPTIONS}
+                value={values.specialty}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Search or select specialty"
+                error={errors.specialty}
+                touched={touched.specialty}
+              />
 
               <Input
                 label="Experience"
@@ -463,47 +546,64 @@ const DoctorProfileUpdateForm = () => {
 
             <div>
               <label className="block mb-3 text-sm font-medium text-gray-700">
-                Available Day&apos;s & Time
+                Available Days & Time
               </label>
               <div className="space-y-3">
-                {availableDayAndTime.map((slot, index) => (
+                {values.availableDayAndTime?.map((day, index) => (
                   <div
-                    key={slot.day}
-                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+                    key={day.day}
+                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
                   >
-                    <input
-                      type="checkbox"
-                      checked={slot.available}
-                      onChange={(e) =>
-                        handleDayAvailabilityChange(index, e.target.checked)
-                      }
-                      className="w-4 h-4 accent-[#0ebe7f] cursor-pointer"
-                    />
-                    <span className="text-sm font-medium text-gray-700 min-w-24">
-                      {slot.day}
-                    </span>
-
-                    <div className="flex items-center gap-2 flex-1">
+                    <div className="flex items-center gap-2 w-32">
                       <input
-                        type="time"
-                        value={slot.openingTime}
-                        onChange={(e) =>
-                          handleTimeChange(index, "openingTime", e.target.value)
-                        }
-                        disabled={!slot.available}
-                        className="px-2 py-2 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0ebe7f] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        type="checkbox"
+                        checked={day.available}
+                        onChange={(e) => {
+                          const updated = values?.availableDayAndTime.map(
+                            (item, i) =>
+                              i === index
+                                ? { ...item, available: e.target.checked }
+                                : item,
+                          );
+                          setFieldValue("availableDayAndTime", updated);
+                        }}
+                        className="w-4 h-4"
                       />
-                      <span className="text-gray-400">-</span>
-                      <input
-                        type="time"
-                        value={slot.closingTime}
-                        onChange={(e) =>
-                          handleTimeChange(index, "closingTime", e.target.value)
-                        }
-                        disabled={!slot.available}
-                        className="px-2 py-2 text-xs border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0ebe7f] disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      />
+                      <span className="text-sm font-medium">{day.day}</span>
                     </div>
+                    {day.available && (
+                      <div className="flex items-center gap-2 flex-1">
+                        <input
+                          type="time"
+                          value={day.openingTime}
+                          onChange={(e) => {
+                            const updated = values.availableDayAndTime.map(
+                              (item, i) =>
+                                i === index
+                                  ? { ...item, openingTime: e.target.value }
+                                  : item,
+                            );
+                            setFieldValue("availableDayAndTime", updated);
+                          }}
+                          className="p-2 border border-gray-300 rounded text-sm"
+                        />
+                        <span className="text-sm">to</span>
+                        <input
+                          type="time"
+                          value={day.closingTime}
+                          onChange={(e) => {
+                            const updated = values.availableDayAndTime.map(
+                              (item, i) =>
+                                i === index
+                                  ? { ...item, closingTime: e.target.value }
+                                  : item,
+                            );
+                            setFieldValue("availableDayAndTime", updated);
+                          }}
+                          className="p-2 border border-gray-300 rounded text-sm"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -557,7 +657,7 @@ const DoctorProfileUpdateForm = () => {
               </h3>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <Input
+                  {/* <Input
                     label="Tele Money"
                     type="text"
                     name="teleMoney"
@@ -572,7 +672,7 @@ const DoctorProfileUpdateForm = () => {
                     }
                     height={48}
                     className="text-sm"
-                  />
+                  /> */}
 
                   <Input
                     label="Orange Money"
@@ -590,9 +690,6 @@ const DoctorProfileUpdateForm = () => {
                     height={48}
                     className="text-sm"
                   />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
                   <Input
                     label="Merchant Code"
                     type="text"
@@ -609,7 +706,9 @@ const DoctorProfileUpdateForm = () => {
                     height={48}
                     className="text-sm"
                   />
+                </div>
 
+                <div className="grid grid-cols-2 gap-4">
                   {/* <div>
                     <label className="block mb-2 text-sm font-medium text-gray-700">
                       Orange Type
