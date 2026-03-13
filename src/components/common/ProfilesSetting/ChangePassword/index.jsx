@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import {
   useUpdateDoctorPasswordMutation,
   useUpdateClinicPasswordMutation,
+  useUpdateUserPasswordMutation,
 } from "@/services";
 import { authCookies } from "@/utils/cookieUtils";
 import { toastSuccess, toastError } from "@/components/ui/Toast";
@@ -28,15 +29,20 @@ const ProfileChangePassword = () => {
   const userRole = user?.role;
   const userStatus = user?.status;
   const isClinic = userStatus === "clinic" || userRole === "clinic";
+  const isDoctor = userStatus === "doctor" || userRole === "doctor";
 
   const [updateDoctorPassword, { isLoading: isDoctorUpdating }] =
     useUpdateDoctorPasswordMutation({ doctorId: userId });
   const [updateClinicPassword, { isLoading: isClinicUpdating }] =
     useUpdateClinicPasswordMutation({ clinicId: userId });
+  const [updateUserPassword, { isLoading: isUserUpdating }] =
+    useUpdateUserPasswordMutation({ id: userId });
 
   const [updatePassword, { isLoading: isUpdating }] = isClinic
     ? [updateClinicPassword, { isLoading: isClinicUpdating }]
-    : [updateDoctorPassword, { isLoading: isDoctorUpdating }];
+    : isDoctor
+      ? [updateDoctorPassword, { isLoading: isDoctorUpdating }]
+      : [updateUserPassword, { isLoading: isUserUpdating }];
   const initialValues = {
     currentPassword: "",
     newPassword: "",
@@ -72,14 +78,23 @@ const ProfileChangePassword = () => {
               confirmNewPassword: values.confirmPassword,
             },
           }
-        : {
-            doctorId: userId,
-            passwordData: {
-              currentPassword: values.currentPassword,
-              newPassword: values.newPassword,
-              confirmNewPassword: values.confirmPassword,
-            },
-          };
+        : isDoctor
+          ? {
+              doctorId: userId,
+              passwordData: {
+                currentPassword: values.currentPassword,
+                newPassword: values.newPassword,
+                confirmNewPassword: values.confirmPassword,
+              },
+            }
+          : {
+              userId: userId,
+              passwordData: {
+                currentPassword: values.currentPassword,
+                newPassword: values.newPassword,
+                confirmNewPassword: values.confirmPassword,
+              },
+            };
 
       const response = await updatePassword(payload).unwrap();
 

@@ -26,7 +26,7 @@ export const registerSchema = Yup.object({
     .required("Phone number is required"),
   countryCode: Yup.string().required("Country code is required"),
   gender: Yup.string().oneOf(["Male", "Female", "Other"], "Select a valid gender").required("Gender is required"),
-  maritalStatus: Yup.string().oneOf(["Single", "Married", "Divorced", "Widowed"], "Select a valid marital status").required("Marital status is required"),
+  maritalStatus: Yup.string().oneOf(["Single", "Married", "Divorced", "Widowed"], "Select a valid marital status").optional(),
   dateOfBirth: Yup.date().required("Date of birth is required"),
   location: Yup.mixed().required("Please select your location"),
   longitude: Yup.number().required("Location coordinates are required"),
@@ -77,4 +77,25 @@ export const resetPasswordSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm your password"),
+});
+
+export const userUpdateSchema = Yup.object({
+  fullName: Yup.string().required("Full name is required"),
+  email: Yup.string().email("Enter a valid email").required("Email is required"),
+  phoneNo: Yup.string()
+    .matches(/^[0-9+\-\s]{7,15}$/i, "Enter a valid phone number")
+    .required("Phone number is required"),
+  countryCode: Yup.string().required("Country code is required"),
+  gender: Yup.string().oneOf(["Male", "Female", "Other"], "Select a valid gender").required("Gender is required"),
+  maritalStatus: Yup.string()
+    .oneOf(["Single", "Married", "Divorced", "Widowed"], "Select a valid marital status")
+    .optional(),
+  dateOfBirth: Yup.date().required("Date of birth is required"),
+  bloodGroup: Yup.string().oneOf(
+    ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", ""],
+    "Select a valid blood group",
+  ),
+  weight: Yup.string()
+    .matches(/^[0-9]+(\.[0-9]{1,2})?$/, "Enter a valid weight")
+    .typeError("Weight must be a number"),
 });

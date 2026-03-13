@@ -5,14 +5,15 @@ import { ORANGE_MONEY_LOGO } from "@/assets/images";
 import { useSubscribeWithOrangeMoneyMutation } from "@/services";
 import { authCookies } from "@/utils/cookieUtils";
 import { toastError, toastSuccess } from "@/components/ui/Toast";
-const OrangePayModel = ({ isOpen, onClose, amount = "" }) => {
+const OrangePayModel = ({ isOpen, onClose }) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [subscriptionWithOrangeMoney, { isLoading: isSubscribing }] =
     useSubscribeWithOrangeMoneyMutation();
   const { getUser } = authCookies;
   const user = getUser();
   const userId = user?._id;
-  const userType = user?.status;
+  const status = user?.status;
+  const userType = status === "patient" ? "user" : status;
   const handlePayNow = async () => {
     const payload = {
       [userType + "Id"]: userId,
@@ -52,7 +53,12 @@ const OrangePayModel = ({ isOpen, onClose, amount = "" }) => {
       <div>
         <h2 className="text-xl font-semibold mb-2">Please Submit Your</h2>
         <h1 className="text-4xl font-bold mb-2">
-          {userType === "clinic" ? "144,000" : "9,000"} CFA
+          {userType === "clinic"
+            ? "144,000"
+            : userType === "doctor"
+              ? "9,000"
+              : "3,000"}{" "}
+          CFA
         </h1>
         <h6 className="text-base mb-4">Pay for respective Account</h6>
 

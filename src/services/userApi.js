@@ -1,5 +1,5 @@
 import { baseApi } from "@/redux"; 
-
+import { use } from "react";
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
    
@@ -45,99 +45,32 @@ export const userApi = baseApi.injectEndpoints({
       }),
    providesTags: ["Doctor"],
     }),
-
-    getUserAppointments: builder.query({
-      query: ({ userId, status, page = 1, limit = 10 }) => ({
-        url: `/users/${userId}/appointments`,
-        params: { status, page, limit },
+    getUserById: builder.query({
+      query: () => ({
+        url: `/user/getUserById`,
+        method: 'GET',
       }),
-      providesTags: ['Appointment'],
+   providesTags: ["User"],
     }),
-    
-
-    bookAppointment: builder.mutation({
-      query: ({ userId, appointmentData }) => ({
-        url: `/users/${userId}/appointments`,
+    updateUserProfile: builder.mutation({
+      query: (userData) => ({
+        url: `/user/updateUserProfile`,
+        method: 'PUT',
+        body: userData,
+      }),
+   invalidatesTags: ["User"],
+    }),
+    updateUserPassword: builder.mutation({
+      query: ({ userId, passwordData }) => ({
+        url: `/user/updateUserPassword/${userId}`,
         method: 'POST',
-        body: appointmentData,
+        body: passwordData,
       }),
-      invalidatesTags: ['Appointment'],
+   invalidatesTags: ["User"],
     }),
-    
+
+   
   
-    cancelAppointment: builder.mutation({
-      query: ({ userId, appointmentId }) => ({
-        url: `/users/${userId}/appointments/${appointmentId}/cancel`,
-        method: 'PUT',
-      }),
-      invalidatesTags: ['Appointment'],
-    }),
-    
-
-    getUserMedicalRecords: builder.query({
-      query: ({ userId, page = 1, limit = 10 }) => ({
-        url: `/users/${userId}/medical-records`,
-        params: { page, limit },
-      }),
-      providesTags: ['User'],
-    }),
-    
-    // Upload medical record
-    uploadMedicalRecord: builder.mutation({
-      query: ({ userId, formData }) => ({
-        url: `/users/${userId}/medical-records`,
-        method: 'POST',
-        body: formData,
-      }),
-      invalidatesTags: ['User'],
-    }),
-    
-    // Get user messages
-    getUserMessages: builder.query({
-      query: ({ userId, page = 1, limit = 20 }) => ({
-        url: `/users/${userId}/messages`,
-        params: { page, limit },
-      }),
-      providesTags: ['Message'],
-    }),
-    
-    // Send message
-    sendMessage: builder.mutation({
-      query: ({ userId, messageData }) => ({
-        url: `/users/${userId}/messages`,
-        method: 'POST',
-        body: messageData,
-      }),
-      invalidatesTags: ['Message'],
-    }),
-    
-    // Get nearby clinics
-    getNearbyClinics: builder.query({
-      query: ({ lat, lng, radius = 10, specialty }) => ({
-        url: '/users/nearby-clinics',
-        params: { lat, lng, radius, specialty },
-      }),
-      providesTags: ['Clinic'],
-    }),
-    
-    // Search doctors
-    
-    
-    // Get user settings
-    getUserSettings: builder.query({
-      query: (userId) => `/users/${userId}/settings`,
-      providesTags: (result, error, userId) => [{ type: 'User', id: `${userId}-settings` }],
-    }),
-    
-    // Update user settings
-    updateUserSettings: builder.mutation({
-      query: ({ userId, settings }) => ({
-        url: `/users/${userId}/settings`,
-        method: 'PUT',
-        body: settings,
-      }),
-      invalidatesTags: (result, error, { userId }) => [{ type: 'User', id: `${userId}-settings` }],
-    }),
   }),
   overrideExisting: false,
 });
@@ -145,7 +78,8 @@ export const userApi = baseApi.injectEndpoints({
 export const {
   useSearchDoctorsQuery,
   useGetDoctorDetailsQuery,
-  useGetDoctorReviewsQuery
-  
- 
+  useGetDoctorReviewsQuery,
+  useGetUserByIdQuery,
+  useUpdateUserProfileMutation,
+  useUpdateUserPasswordMutation,
 } = userApi;

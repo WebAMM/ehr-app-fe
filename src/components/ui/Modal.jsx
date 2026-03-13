@@ -80,7 +80,7 @@ const Modal = memo(
               {primaryButton && (
                 <button
                   onClick={primaryButton.onClick}
-                  className="px-4 py-2 bg-primary text-text-light rounded hover:bg-primary-dark"
+                  className="px-4 py-2 bg-secondary text-text-light rounded hover:bg-secondary-dark"
                 >
                   {primaryButton.text}
                 </button>
