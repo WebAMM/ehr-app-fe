@@ -4,38 +4,40 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import PageHeader from "@/components/ui/PageHeader";
 import Icon from "@/components/ui/Icon";
+import { authCookies } from "@/utils/cookieUtils";
+import OrangePayModel from "@/Models/OrangePayModel";
 
 const plans = [
-  {
-    id: "basic",
-    title: "Basic",
-    price: "5,000 FCFA",
-    features: [
-      "Up to 2 consultations per month",
-      "Access to general practitioners",
-      "Basic health records",
-      "Email support",
-    ],
-    popular: false,
-  },
-  {
-    id: "standard",
-    title: "Standard",
-    price: "10,000 FCFA",
-    features: [
-      "Up to 5 consultations per month",
-      "Access to all specialists",
-      "Full health records management",
-      "Priority email support",
-      "Prescription management",
-      "Lab test booking",
-    ],
-    popular: true,
-  },
+  // {
+  //   id: "basic",
+  //   title: "Basic",
+  //   price: "5,000 FCFA",
+  //   features: [
+  //     "Up to 2 consultations per month",
+  //     "Access to general practitioners",
+  //     "Basic health records",
+  //     "Email support",
+  //   ],
+  //   popular: false,
+  // },
+  // {
+  //   id: "standard",
+  //   title: "Standard",
+  //   price: "10,000 FCFA",
+  //   features: [
+  //     "Up to 5 consultations per month",
+  //     "Access to all specialists",
+  //     "Full health records management",
+  //     "Priority email support",
+  //     "Prescription management",
+  //     "Lab test booking",
+  //   ],
+  //   popular: true,
+  // },
   {
     id: "premium",
-    title: "Premium",
-    price: "20,000 FCFA",
+    title: "",
+    price: "3,000 FCFA",
     features: [
       "Unlimited consultations",
       "Access to all specialists",
@@ -51,7 +53,12 @@ const plans = [
 ];
 
 const payments = [
-  { id: "om", icon: Smartphone, label: "Orange Money", sub: "Mobile payment" },
+  {
+    id: "orangeMoney",
+    icon: Smartphone,
+    label: "Orange Money",
+    sub: "Mobile payment",
+  },
 
   {
     id: "card",
@@ -63,6 +70,11 @@ const payments = [
 
 const SubscriptionPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState("standard");
+  const [isOrangePayModelOpen, setIsOrangePayModelOpen] = useState(false);
+  const { getUser } = authCookies;
+  const user = getUser();
+  // const userId = user?._id;
+  const userType = user?.status;
 
   return (
     <div className="bg-pageBackground p-10 space-y-10">
@@ -70,7 +82,7 @@ const SubscriptionPlans = () => {
         title="Subscription Plans"
         subtitle="Choose the plan that fits your needs"
       />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="">
         {plans.map((plan) => {
           const active = selectedPlan === plan.id;
 
@@ -91,11 +103,11 @@ const SubscriptionPlans = () => {
                 <h3 className="text-lg font-semibold">{plan.title}</h3>
                 <p className="text-2xl font-bold">
                   {plan.price}
-                  <span className="text-sm font-normal opacity-70">/month</span>
+                  <span className="text-sm font-normal opacity-70">/year</span>
                 </p>
               </div>
 
-              <ul className="space-y-3">
+              <ul className="grid col-span-2 gap-4 w-full">
                 {plan.features.map((item, i) => (
                   <li key={i} className="flex gap-3 text-sm">
                     <Check className="w-4 h-4 text-secondary mt-0.5" />
@@ -103,14 +115,6 @@ const SubscriptionPlans = () => {
                   </li>
                 ))}
               </ul>
-
-              <Button
-                fullWidth
-                variant={active ? "secondary" : "grayOutline"}
-                onClick={() => setSelectedPlan(plan.id)}
-              >
-                Choose Plan
-              </Button>
             </Card>
           );
         })}
@@ -122,6 +126,11 @@ const SubscriptionPlans = () => {
             <div
               key={pay.id}
               className="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-gray-50 transition cursor-pointer w-full"
+              onClick={() => {
+                if (pay.id === "orangeMoney") {
+                  setIsOrangePayModelOpen(true);
+                }
+              }}
             >
               <Icon iconClass="text-secondary" bg={true} icon={pay.icon} />
               <div>
@@ -132,6 +141,10 @@ const SubscriptionPlans = () => {
           ))}
         </div>
       </Card>
+      <OrangePayModel
+        isOpen={isOrangePayModelOpen}
+        onClose={() => setIsOrangePayModelOpen(false)}
+      />
     </div>
   );
 };
