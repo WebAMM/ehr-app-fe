@@ -1,25 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import clsx from "clsx";
 import StickyHeader from "@/components/ui/StickyHeader";
 import { TIME_CATEGORIES } from "./TimeCatagories";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAddSlotMutation } from "@/services";
+import { toastError, toastSuccess } from "@/components/ui/Toast";
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const consultation = [
+  { id: "In-Clinic Consultation", name: "In-Clinic Consultation" },
+  { id: "Video Consultation", name: "Video Consultation" },
+];
 
 export default function DoctorBookingAppointment() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [booking, setBooking] = useState({
-    consultationType: "video",
+    consultationType: "In-Clinic Consultation",
     selectedDate: null,
     duration: 30,
     selectedTime: null,
   });
-
+  const [addSlot, { isLoading }] = useAddSlotMutation();
   const location = useLocation();
-  console.log("Received doctor details:", location.state?.doctorDetails);
+  const doctorDetails = location.state?.doctorDetails;
+  const doctorConsultationType = doctorDetails?.type;
+
+  useEffect(() => {
+    if (doctorConsultationType && doctorConsultationType !== "both") {
+      setBooking((prev) => ({
+        ...prev,
+        consultationType: doctorConsultationType,
+      }));
+    }
+  }, [doctorConsultationType]);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const navigate = useNavigate();
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -39,36 +56,71 @@ export default function DoctorBookingAppointment() {
   const updateBooking = (key, value) => {
     setBooking((prev) => ({ ...prev, [key]: value }));
   };
+  const handleAddSlot = async () => {
+    const slotData = {
+      doctorId: doctorDetails?._id,
+      date: booking.selectedDate,
+      time: booking.selectedTime,
+      duration: booking.duration,
+    };
+    try {
+      const response = await addSlot({ body: slotData }).unwrap();
+
+      if (response) {
+        toastSuccess(response?.message || "Slot added successfully");
+        navigate("/patient-details", {
+          state: {
+            slotData: {
+              type: booking.consultationType,
+              slotId: response?.data?._id,
+              doctorId: response?.data?.doctorId,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      toastError(error?.data?.message || "Failed to add slot");
+    }
+  };
   const isFormComplete =
     booking.selectedDate && booking.selectedTime && booking.duration;
   return (
     <div className="min-h-screen bg-bg ">
       <StickyHeader
-        linkTo="/doctor-details"
-        linkText="Doctor Details"
-        showFavorite={true}
+        linkTo="/find-doctors"
+        linkText="Create a new appointment"
+        showFavorite={false}
         isFavorite={isFavorite}
         onFavoriteToggle={() => setIsFavorite(!isFavorite)}
       />
       <div className="flex justify-start mt-2 sm:mt-4">
         <div className="w-full max-w-sm sm:max-w-md lg:max-w-5xl bg-white rounded-xl shadow-sm p-2 sm:p-4 lg:p-8 space-y-4 sm:space-y-6">
           <div className="flex bg-gray-100 rounded-lg p-1">
-            {["clinic", "video"].map((type) => (
-              <button
-                key={type}
-                onClick={() => updateBooking("consultationType", type)}
-                className={clsx(
-                  "flex-1 py-1 sm:py-2 text-xs sm:text-sm font-medium rounded-md transition",
-                  booking.consultationType === type
-                    ? "bg-secondary text-white"
-                    : "text-gray-500",
-                )}
-              >
-                {type === "clinic"
-                  ? "In-Clinic Consultation"
-                  : "Video Consultation"}
-              </button>
-            ))}
+            {consultation.map((type) => {
+              const isDisabled =
+                doctorConsultationType &&
+                doctorConsultationType !== "both" &&
+                type.id !== doctorConsultationType;
+              return (
+                <button
+                  key={type.id}
+                  disabled={isDisabled}
+                  onClick={() =>
+                    !isDisabled && updateBooking("consultationType", type.id)
+                  }
+                  className={clsx(
+                    "flex-1 py-1 sm:py-2 text-xs sm:text-sm font-medium rounded-md transition",
+                    isDisabled
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-40 pointer-events-none"
+                      : booking.consultationType === type.id
+                        ? "bg-secondary text-white"
+                        : "text-gray-500 hover:bg-gray-200 cursor-pointer",
+                  )}
+                >
+                  {type.name}
+                </button>
+              );
+            })}
           </div>
 
           <div>
@@ -199,14 +251,12 @@ export default function DoctorBookingAppointment() {
             className={clsx(
               "w-full py-2 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base",
               isFormComplete
-                ? "bg-secondary text-white"
+                ? "bg-secondary text-white cursor-pointer hover:bg-secondary/90"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed",
             )}
-            onClick={() => {
-              console.log("Booking payload:", booking);
-            }}
+            onClick={handleAddSlot}
           >
-            Next
+            {isLoading ? "Loading..." : "Next"}
           </button>
         </div>
       </div>

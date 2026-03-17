@@ -1,39 +1,16 @@
 import React, { useState } from "react";
 import { Check, Smartphone, CreditCard } from "lucide-react";
-import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import PageHeader from "@/components/ui/PageHeader";
 import Icon from "@/components/ui/Icon";
 import { authCookies } from "@/utils/cookieUtils";
 import OrangePayModel from "@/Models/OrangePayModel";
+import { BsCashStack } from "react-icons/bs";
+import { useAddSubscriptionMutation } from "@/services";
+import Swal from "sweetalert2";
+import { LoaderCenter } from "@/components/ui/Loader";
 
 const plans = [
-  // {
-  //   id: "basic",
-  //   title: "Basic",
-  //   price: "5,000 FCFA",
-  //   features: [
-  //     "Up to 2 consultations per month",
-  //     "Access to general practitioners",
-  //     "Basic health records",
-  //     "Email support",
-  //   ],
-  //   popular: false,
-  // },
-  // {
-  //   id: "standard",
-  //   title: "Standard",
-  //   price: "10,000 FCFA",
-  //   features: [
-  //     "Up to 5 consultations per month",
-  //     "Access to all specialists",
-  //     "Full health records management",
-  //     "Priority email support",
-  //     "Prescription management",
-  //     "Lab test booking",
-  //   ],
-  //   popular: true,
-  // },
   {
     id: "premium",
     title: "",
@@ -61,20 +38,58 @@ const payments = [
   },
 
   {
-    id: "card",
-    icon: CreditCard,
-    label: "Credit Card",
-    sub: "Visa, Mastercard",
+    id: "cash",
+    icon: BsCashStack,
+    label: "Cash",
+    sub: "Pay with cash",
   },
 ];
 
 const SubscriptionPlans = () => {
-  const [selectedPlan, setSelectedPlan] = useState("standard");
   const [isOrangePayModelOpen, setIsOrangePayModelOpen] = useState(false);
   const { getUser } = authCookies;
   const user = getUser();
-  // const userId = user?._id;
   const userType = user?.status;
+  const [addSubscription, { isLoading: isAddingSubscription }] =
+    useAddSubscriptionMutation();
+
+  const handleSubscribe = async () => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirm Subscription",
+        text: `Subscribe for 3,000 FCFA per year?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#10b981",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, subscribe!",
+      });
+
+      if (result.isConfirmed) {
+        const payload = {
+          subscription: "3,000",
+          type: "yearly",
+          paymentMethod: "cash",
+        };
+        const response = await addSubscription({ body: payload }).unwrap();
+        if (response.success) {
+          Swal.fire({
+            title: "Success!",
+            text: response.message || "Subscription successful!",
+            icon: "success",
+            confirmButtonColor: "#10b981",
+          });
+        }
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.data?.message || "Error subscribing. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
+    }
+  };
 
   return (
     <div className="bg-pageBackground p-10 space-y-10">
@@ -84,14 +99,12 @@ const SubscriptionPlans = () => {
       />
       <div className="">
         {plans.map((plan) => {
-          const active = selectedPlan === plan.id;
-
           return (
             <Card
               key={plan.id}
               padding="lg"
               className={`space-y-6 ${plan.popular ? "pt-8" : ""}`}
-              parentClass={`relative ${active ? "ring-2 ring-secondary" : ""}`}
+              parentClass={`relative ring-2 ring-secondary`}
             >
               {plan.popular && (
                 <div className="absolute top-0 left-0 right-0 bg-secondary text-white text-xs font-medium text-center py-3 rounded-t-lg">
@@ -122,23 +135,52 @@ const SubscriptionPlans = () => {
 
       <Card title="Payment Methods" padding="lg">
         <div className="flex items-center justify-between gap-4">
-          {payments.map((pay) => (
-            <div
-              key={pay.id}
-              className="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-gray-50 transition cursor-pointer w-full"
-              onClick={() => {
-                if (pay.id === "orangeMoney") {
-                  setIsOrangePayModelOpen(true);
-                }
-              }}
-            >
-              <Icon iconClass="text-secondary" bg={true} icon={pay.icon} />
-              <div>
-                <p className="text-sm font-medium">{pay.label}</p>
-                <p className="text-xs opacity-70">{pay.sub}</p>
+          {payments.map((pay) => {
+            const isLoading = pay.id === "cash" && isAddingSubscription;
+            return (
+              <div
+                key={pay.id}
+                className={`flex items-center gap-4 p-4 border rounded-lg transition-all duration-300 cursor-pointer w-full ${
+                  isLoading
+                    ? "border-gray-300 bg-gray-50 opacity-70 pointer-events-none"
+                    : "border-border hover:bg-secondary/10 hover:border-secondary"
+                }`}
+                onClick={() => {
+                  if (pay.id === "orangeMoney") {
+                    setIsOrangePayModelOpen(true);
+                  } else if (pay.id === "cash") {
+                    handleSubscribe();
+                  }
+                }}
+              >
+                <Icon
+                  iconClass={isLoading ? "text-gray-400" : "text-secondary"}
+                  bg={true}
+                  icon={pay.icon}
+                />
+                <div className="flex-1">
+                  <p
+                    className={`text-sm font-medium transition-colors duration-300 ${
+                      isLoading ? "text-gray-500" : "text-foreground"
+                    }`}
+                  >
+                    {isLoading ? (
+                      <>
+                        Processing <LoaderCenter size={18} />
+                      </>
+                    ) : (
+                      pay.label
+                    )}
+                  </p>
+                  <p
+                    className={`text-xs ${isLoading ? "text-gray-400" : "opacity-70"}`}
+                  >
+                    {isLoading ? "Please wait..." : pay.sub}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
       <OrangePayModel

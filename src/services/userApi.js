@@ -1,27 +1,25 @@
-import { baseApi } from "@/redux"; 
-import { use } from "react";
+import { baseApi } from "@/redux";
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
    
    searchDoctors: builder.query({
   query: ({
-    search,
+    fullName,
     specialty,
     location,
     page = 1,
     limit = 10,
-    fullName,
+  
   }) => {
     const params = {
       page,
       limit,
     };
 
-    if (search?.trim()) params.search = search;
+    if (fullName?.trim()) params.fullName = fullName;
     if (specialty?.trim()) params.specialty = specialty;
     if (location?.trim()) params.location = location;
-    if (fullName?.trim()) params.fullName = fullName;
-
+  
     return {
       url: "/doctor/searchDoctors",
       params,
@@ -29,6 +27,19 @@ export const userApi = baseApi.injectEndpoints({
   },
   providesTags: ["Doctor"],
 }),
+  
+    allDoctors: builder.query({
+      query: ({ page = 1, limit = 12, search }) => {
+        const params = { page, limit };
+        if (search?.trim()) params.search = search;
+        return {
+          url: `/doctor/allDoctors`,
+          method: 'GET',
+          params,
+        };
+      },
+      providesTags: ["Doctor"],
+    }),
     getDoctorDetails: builder.query({
       query: ({ userId }) => ({
         url: `/doctor/getDoctorDetails/${userId}`,
@@ -68,6 +79,47 @@ export const userApi = baseApi.injectEndpoints({
       }),
    invalidatesTags: ["User"],
     }),
+    addFavorite: builder.mutation({
+      query: ({ body }) => ({
+        url: `/favorite/addFavorite`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Favorite"],
+    }),
+    removeFavorite: builder.mutation({
+      query: ({ body }) => ({
+        url: `/favorite/removeFavorite`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Favorite"],
+    }),
+    addSlot: builder.mutation({
+      query: ({ body }) => ({
+        url: `/slot/addSlot`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Addslot"],
+    }),
+    bookAppointment: builder.mutation({
+      query: ({ body }) => ({
+        url: `/appointment/bookAppointment`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Appointment"],
+    }),
+    claimFeeWithOrangeMoney: builder.mutation({
+      query: ({ body }) => ({
+        url: `/claimRequest/claimFeeWithOrangeMoney`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Subscription"],
+    }),
+
 
    
   
@@ -82,4 +134,10 @@ export const {
   useGetUserByIdQuery,
   useUpdateUserProfileMutation,
   useUpdateUserPasswordMutation,
+  useAllDoctorsQuery,
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+  useAddSlotMutation,
+  useBookAppointmentMutation,
+  useClaimFeeWithOrangeMoneyMutation,
 } = userApi;

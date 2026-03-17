@@ -11,6 +11,7 @@ const PATH = {
   RESET_PASSWORD: "/reset-password",
   USER_AND_PATIENT_DASHBOARD: "/user-and-patient-dashboard",
   FIND_DOCTORS: "/find-doctors",
+  PATIENT_DETAILS: "/patient-details",
   DOCTOR_DETAILS: "/doctor-details",
   DOCTOR_BOOKING_APPOINTMENT: "/doctor-booking-appointment",
   NEARBY_CLINICS_AND_HOSPITALS: "/nearby-clinics-and-hospitals",
