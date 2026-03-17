@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Check, Smartphone, CreditCard } from "lucide-react";
-
 import Card from "@/components/ui/Card";
 import PageHeader from "@/components/ui/PageHeader";
 import Icon from "@/components/ui/Icon";

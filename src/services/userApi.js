@@ -95,6 +95,31 @@ export const userApi = baseApi.injectEndpoints({
       }),
    invalidatesTags: ["Favorite"],
     }),
+    addSlot: builder.mutation({
+      query: ({ body }) => ({
+        url: `/slot/addSlot`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Addslot"],
+    }),
+    bookAppointment: builder.mutation({
+      query: ({ body }) => ({
+        url: `/appointment/bookAppointment`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Appointment"],
+    }),
+    claimFeeWithOrangeMoney: builder.mutation({
+      query: ({ body }) => ({
+        url: `/claimRequest/claimFeeWithOrangeMoney`,
+        method: 'POST',
+        body: body,
+      }),
+   invalidatesTags: ["Subscription"],
+    }),
+
 
    
   
@@ -111,5 +136,8 @@ export const {
   useUpdateUserPasswordMutation,
   useAllDoctorsQuery,
   useAddFavoriteMutation,
-  useRemoveFavoriteMutation
+  useRemoveFavoriteMutation,
+  useAddSlotMutation,
+  useBookAppointmentMutation,
+  useClaimFeeWithOrangeMoneyMutation,
 } = userApi;

@@ -5,6 +5,7 @@ import Otp from "./Authentication/Otp";
 import ResetPassword from "./Authentication/ResetPassword"; 
 import UserAndPatientDashboard from "./UserAndPatient/UserAndPatientDashboard";
 import FindDoctors from "./UserAndPatient/FindDoctors";
+import PatientDetails from "./UserAndPatient/FindDoctors/PatientDetails"; 
 import DoctorDetailsPage from "./UserAndPatient/FindDoctors/DoctorDetails";
 import DoctorBookingAppointment from "./UserAndPatient/FindDoctors/DoctorBookingpointment";
 import NearbyClinicsAndHospitals from "./UserAndPatient/NearbyClinics&Hospitals/MainPage";
@@ -47,6 +48,7 @@ const WEB_PAGES = {
   RESET_PASSWORD: ResetPassword,
   USER_AND_PATIENT_DASHBOARD: UserAndPatientDashboard,
   FIND_DOCTORS: FindDoctors,
+  PATIENT_DETAILS: PatientDetails,
   DOCTOR_DETAILS: DoctorDetailsPage,
   DOCTOR_BOOKING_APPOINTMENT: DoctorBookingAppointment,
   NEARBY_CLINICS_AND_HOSPITALS: NearbyClinicsAndHospitals,
