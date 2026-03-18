@@ -47,6 +47,7 @@ const PATH = {
   CLINIC_AND_LAB_UPDATE: "/clinic-and-lab-update",
   CLINIC_SETTING: "/clinic-settings",
   UPDATE_USER_PASSWORD: "/update-profile-password",
+  PAYMENT_METHOD: "/payment-method",
 };
 
 const TOASTER_STYLING_VALUES = {
