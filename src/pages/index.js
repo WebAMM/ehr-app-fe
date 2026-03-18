@@ -40,6 +40,7 @@ import DoctorProfileRegister from "./Doctor/DoctorProfileRegister";
 import PendingVerification from "./Doctor/DoctorProfileRegister/PendingVerification";
 import ClinicAndLabUpdate from "./Laboratories/ClinicAndLabUpdate";
 import UpdateUserPassword from "./UserAndPatient/Settings/UpdateUserPassword";
+import PaymentMethod from "./UserAndPatient/FindDoctors/PaymentMethod";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -83,5 +84,6 @@ const WEB_PAGES = {
   PENDING_VERIFICATION: PendingVerification,
   CLINIC_AND_LAB_UPDATE: ClinicAndLabUpdate,
   UPDATE_USER_PASSWORD: UpdateUserPassword,
+  PAYMENT_METHOD: PaymentMethod,
 };
 export { WEB_PAGES };

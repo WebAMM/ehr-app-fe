@@ -8,6 +8,9 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBookAppointmentMutation } from "@/services/userApi";
 import { toastError, toastSuccess } from "@/components/ui/Toast";
+import PaymentMethodModal from "@/Models/PaymentMethodModal";
+import ConfirmAppointment from "@/Models/ConfirmAppointmentModal";
+import AppointmentDetailsModal from "@/Models/AppointmentDetailsModal";
 
 const PatientDetailsSchema = Yup.object().shape({
   patientName: Yup.string()
@@ -45,10 +48,16 @@ export default function PatientDetails() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isAppointmentDetailsModalOpen, setIsAppointmentDetailsModalOpen] =
+    useState(false);
+  const [confirmationData, setConfirmationData] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState("cash");
   const [fileError, setFileError] = useState("");
 
   const slotData = location.state?.slotData || {};
-  const { slotId, doctorId, clinicId } = slotData;
+  const { slotId, doctorId } = slotData;
 
   const [bookAppointment, { isLoading: isBooking }] =
     useBookAppointmentMutation();
@@ -71,10 +80,9 @@ export default function PatientDetails() {
       }
       try {
         const formData = new FormData();
-        // Top-level fields
+
         formData.append("doctorId", doctorId);
         formData.append("slotId", slotId);
-
         formData.append("patientDetails[patientName]", values.patientName);
         formData.append("patientDetails[patientMobileNo]", values.mobileNo);
         formData.append("patientDetails[gender]", values.gender);
@@ -89,7 +97,9 @@ export default function PatientDetails() {
         const response = await bookAppointment({ body: formData }).unwrap();
         if (response) {
           toastSuccess(response.message || "Appointment booked successfully!");
-          //   navigate("/my-bookings");
+          const appointmentData = response.data?.data?.appointment;
+          setIsPaymentModalOpen(true);
+          setConfirmationData({ appointmentData });
         }
       } catch (error) {
         toastError(
@@ -99,7 +109,13 @@ export default function PatientDetails() {
       }
     },
   });
-
+  const handlePaymentMethodChange = (methodId) => {
+    if (methodId === "orange") {
+      setIsAppointmentDetailsModalOpen(true);
+    } else if (methodId === "cash") {
+      setIsConfirmationModalOpen(true);
+    }
+  };
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -248,21 +264,6 @@ export default function PatientDetails() {
             }
           />
 
-          <Input
-            label="Insurance No"
-            name="insuranceNo"
-            placeholder="Enter insurance number"
-            value={formik.values.insuranceNo}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.insuranceNo && formik.errors.insuranceNo
-                ? formik.errors.insuranceNo
-                : ""
-            }
-          />
-
-          {/* Insurance Name */}
           <div>
             <label
               htmlFor="insuranceName"
@@ -301,7 +302,6 @@ export default function PatientDetails() {
               Attach Doc <span className="text-red-500">*</span>
             </label>
 
-            {/* File Button and Tab Info */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start sm:items-center">
               <label className="flex items-center gap-2 bg-secondary text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg cursor-pointer hover:bg-secondary-dark transition-colors text-xs sm:text-sm font-medium">
                 <Upload className="w-4 h-4" />
@@ -339,6 +339,23 @@ export default function PatientDetails() {
           </Button>
         </div>
       </div>
+      <PaymentMethodModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        setSelectedPayment={setSelectedPayment}
+        selectedPayment={selectedPayment}
+        handlePaymentMethodChange={handlePaymentMethodChange}
+      />
+      <ConfirmAppointment
+        isOpen={isConfirmationModalOpen}
+        appointmentData={confirmationData}
+        onClose={() => setIsConfirmationModalOpen(false)}
+      />
+      <AppointmentDetailsModal
+        isOpen={isAppointmentDetailsModalOpen}
+        onClose={() => setIsAppointmentDetailsModalOpen(false)}
+        appointmentData={confirmationData?.appointmentData}
+      />
     </div>
   );
 }

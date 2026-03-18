@@ -25,6 +25,7 @@ export default function DoctorBookingAppointment() {
   const location = useLocation();
   const doctorDetails = location.state?.doctorDetails;
   const doctorConsultationType = doctorDetails?.type;
+  const doctorId = doctorDetails?._id;
 
   useEffect(() => {
     if (doctorConsultationType && doctorConsultationType !== "both") {
@@ -58,7 +59,7 @@ export default function DoctorBookingAppointment() {
   };
   const handleAddSlot = async () => {
     const slotData = {
-      doctorId: doctorDetails?._id,
+      doctorId: doctorId,
       date: booking.selectedDate,
       time: booking.selectedTime,
       duration: booking.duration,
