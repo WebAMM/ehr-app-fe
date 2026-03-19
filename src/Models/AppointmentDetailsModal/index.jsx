@@ -12,7 +12,7 @@ const AppointmentDetailsModal = ({
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
   };
-
+  console.log("Appointment Data:", appointmentData);
   return (
     <Modal
       isOpen={isOpen}
@@ -35,18 +35,18 @@ const AppointmentDetailsModal = ({
           </p>
 
           <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
-            <div className="flex items-center gap-3 mb-3">
+            {/* <div className="flex items-center gap-3 mb-3">
               <div className="w-8 h-8 bg-orange-500 rounded"></div>
               <h4 className="font-bold text-gray-900">
                 {appointmentData?.paymentMethod || "N/A"}
               </h4>
-            </div>
+            </div> */}
 
-            <div className="space-y-2 mb-4">
+            {/* <div className="space-y-2 mb-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">Account Name:</p>
                 <p className="text-sm font-medium text-gray-900">
-                  {appointmentData?.patientDetails.accountName || "N/A"}
+                  {appointmentData?.patientDetails?.accountName || "N/A"}
                 </p>
               </div>
               <div className="flex items-center justify-between">
@@ -66,7 +66,7 @@ const AppointmentDetailsModal = ({
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <button
@@ -84,8 +84,8 @@ const AppointmentDetailsModal = ({
               value={appointmentData?.patientDetails?.patientName || "N/A"}
             />
             <DetailRow
-              label="Doctor Name:"
-              value={appointmentData?.doctorName || "N/A"}
+              label="Phone Number:"
+              value={appointmentData?.patientDetails?.patientMobileNo || "N/A"}
               fontWeight="font-bold"
             />
             <DetailRow
@@ -101,44 +101,34 @@ const AppointmentDetailsModal = ({
               value={appointmentData?.patientDetails?.problem || "N/A"}
             />
             <DetailRow
-              label="Clinic/Hospital:"
-              value={appointmentData?.patientDetails?.clinic || "N/A"}
+              label="Insurance Number"
+              value={appointmentData?.patientDetails?.insuranceNo || "N/A"}
             />
             <DetailRow
-              label="Address"
-              value={appointmentData?.patientDetails?.address || "N/A"}
+              label="Insurance Name"
+              value={appointmentData?.patientDetails?.insuranceName || "N/A"}
             />
             <DetailRow
-              label="Mobile Phone"
-              value={appointmentData?.patientDetails?.mobilePhone || "N/A"}
+              label="Payment Status"
+              value={appointmentData?.payment?.status || "N/A"}
+              valueClass="text-orange-600 font-semibold"
             />
             <DetailRow
-              label="Order"
-              value={appointmentData?.patientDetails?.order || "N/A"}
+              label="Payment Amount"
+              value={`$${appointmentData?.payment?.amount || 0}`}
+              valueClass="text-green-600 font-semibold"
             />
             <DetailRow
-              label="Payment"
-              value={appointmentData?.payment || "N/A"}
-              valueClass="text-red-500"
+              label="Doctor ID"
+              value={appointmentData?.doctorId || "N/A"}
             />
             <DetailRow
-              label="Clinic Location"
-              value={appointmentData?.clinicLocation || "N/A"}
-              valueClass="text-blue-600 cursor-pointer hover:underline"
+              label="Appointment Date"
+              value={
+                new Date(appointmentData?.createdAt).toLocaleDateString() ||
+                "N/A"
+              }
             />
-          </div>
-        </div>
-
-        {/* Total Section */}
-        <div className="flex items-center justify-between mb-6 px-2">
-          <p className="text-gray-900 font-semibold">Total:</p>
-          <div className="flex items-center gap-2">
-            <span className="text-green-600 font-bold text-lg">
-              {appointmentData?.total || "N/A"}
-            </span>
-            <span className="text-gray-400 line-through text-sm">
-              {appointmentData?.discount || "N/A"}
-            </span>
           </div>
         </div>
 
