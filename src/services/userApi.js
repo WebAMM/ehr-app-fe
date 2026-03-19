@@ -120,10 +120,15 @@ export const userApi = baseApi.injectEndpoints({
    invalidatesTags: ["Subscription"],
     }),
     getAllClinics: builder.query({
-      query: () => ({
-        url: `/clinic/allClinics`,
-        method: 'GET',
-      }),
+      query: ({search, page = 1 , limit = 12}) => {
+        const params = { page, limit };
+        if (search?.trim()) params.search = search;
+        return {
+          url: `/clinic/allClinics`,
+          method: 'GET',
+          params,
+        };
+      },
    providesTags: ["Clinic"],
     }),
 
@@ -147,4 +152,5 @@ export const {
   useAddSlotMutation,
   useBookAppointmentMutation,
   useClaimFeeWithOrangeMoneyMutation,
+  useGetAllClinicsQuery,
 } = userApi;

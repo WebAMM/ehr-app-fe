@@ -22,7 +22,7 @@ const SearchAndFilter = ({
         />
       </div>
       <div className="flex flex-wrap gap-2">
-        {filters.map((item) => (
+        {filters?.map((item) => (
           <Button
             key={item}
             variant={activeFilter === item ? "secondary" : "grayOutline"}
