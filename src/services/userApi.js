@@ -119,6 +119,13 @@ export const userApi = baseApi.injectEndpoints({
       }),
    invalidatesTags: ["Subscription"],
     }),
+    getAllClinics: builder.query({
+      query: () => ({
+        url: `/clinic/allClinics`,
+        method: 'GET',
+      }),
+   providesTags: ["Clinic"],
+    }),
 
 
    
