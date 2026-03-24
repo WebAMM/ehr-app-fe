@@ -4,7 +4,6 @@ import Modal from "../../components/ui/Modal";
 import Button from "@/components/ui/Button";
 
 const ConfirmAppointment = ({ isOpen, onClose, appointmentData }) => {
-  console.log("Appointment Data in Confirm Modal:", appointmentData);
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" className="p-0">
       <div className="flex flex-col items-center justify-center py-12 px-6">

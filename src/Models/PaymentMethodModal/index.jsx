@@ -41,66 +41,6 @@ export default function PaymentMethodModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-2xl mx-auto">
-        {/* Doctor Profile Card */}
-        {/* <Card className="mb-8 p-6">
-          <div className="flex gap-6">
-            <img
-              src={doctorDetails?.attachDoc}
-              alt={doctorDetails?.fullName}
-              className="w-24 h-24 rounded-lg object-cover shrink-0"
-            />
-
-            <div className="flex-1">
-              <h1 className="text-lg font-bold">{doctorDetails?.fullName}</h1>
-              <p className="text-muted-foreground text-sm">
-                {doctorDetails?.specialty}
-              </p>
-
-              <p className="text-xs text-muted-foreground mt-1">
-                {doctorDetails?.qualification}
-              </p>
-
-              <div className="flex items-center gap-2 mt-3">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold text-sm">
-                    {doctorDetails?.reviews?.averageRating || "5"}
-                  </span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {doctorDetails?.reviews?.totalReviews || "1,872"} Reviews
-                </span>
-              </div>
-
-              <div className="flex items-center gap-4 mt-3">
-                <div>
-                  <p className="text-xs text-muted-foreground">Video</p>
-                  <p className="text-sm font-semibold">
-                    {appointmentData?.consultationFee || "1800"} CFA
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <button className="text-gray-400 hover:text-red-500 transition-colors">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                />
-              </svg>
-            </button>
-          </div>
-        </Card> */}
-
-        {/* Payment Method Selection */}
         <Card className="p-6">
           <h2 className="text-lg font-bold mb-2">Select Payment Method</h2>
           <p className="text-sm text-muted-foreground mb-6">
