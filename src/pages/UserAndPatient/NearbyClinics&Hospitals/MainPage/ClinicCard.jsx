@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const ClinicCard = ({ data }) => {
   const navigate = useNavigate();
-  
+
   const handleViewDetails = () => {
     navigate("/health-center-details", { state: { clinicId: data._id } });
   };
@@ -25,7 +25,9 @@ const ClinicCard = ({ data }) => {
           <h3 className="font-semibold text-text">{data?.fullName}</h3>
         </div>
 
-        <p className="text-sm text-secondary mb-2 capitalize">{data?.typeOfHealthCenter}</p>
+        <p className="text-sm text-secondary mb-2 capitalize">
+          {data?.typeOfHealthCenter}
+        </p>
 
         <div className="flex items-start gap-2 mb-2">
           <MapPin size={16} className="text-secondary shrink-0 mt-0.5" />

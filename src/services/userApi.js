@@ -131,6 +131,14 @@ export const userApi = baseApi.injectEndpoints({
       },
    providesTags: ["Clinic"],
     }),
+    getClinicDetails: builder.query({
+      query: ({ id }) => ({
+        url: `/clinic/getClinicDetails/${id}`,
+        method: 'GET',
+       
+      }),
+   providesTags: ["Clinic"],
+    }),
 
 
    
@@ -153,4 +161,5 @@ export const {
   useBookAppointmentMutation,
   useClaimFeeWithOrangeMoneyMutation,
   useGetAllClinicsQuery,
+  useGetClinicDetailsQuery,
 } = userApi;

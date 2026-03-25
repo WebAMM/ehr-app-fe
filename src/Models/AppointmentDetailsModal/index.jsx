@@ -3,7 +3,7 @@ import { Copy, AlertCircle } from "lucide-react";
 import Modal from "../../components/ui/Modal";
 import { useGetAppointmentByIdQuery } from "@/services";
 import { LoaderCenter } from "../../components/ui/Loader";
-import Button from "@/components/ui/Button";
+
 import { useNavigate } from "react-router-dom";
 const AppointmentDetailsModal = ({ isOpen, onClose, appointmentData }) => {
   const {
@@ -19,14 +19,18 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointmentData }) => {
   const isLoading = apiLoading;
   const isError = apiError;
   const error = apiErrorDetails;
-
+  const handleClose = () => {
+    onClose();
+    navigate("/my-bookings");
+  };
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       size="lg"
       className="p-0"
       title="Appointment Details"
+      showButtons={true}
     >
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-12 px-6">
@@ -48,7 +52,7 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointmentData }) => {
           </p>
         </div>
       ) : appointment ? (
-        <div className="flex flex-col py-8 px-6 max-h-[90vh] overflow-y-auto">
+        <div className="flex flex-col py-8 px-6 max-h-[90vh] overflow-y-hidden">
           <div className="mb-6">
             <p className="text-gray-600 text-sm mb-1">Your Appointment ID</p>
             <h3 className="text-3xl font-bold text-green-600">
@@ -198,35 +202,13 @@ const AppointmentDetailsModal = ({ isOpen, onClose, appointmentData }) => {
             </div>
           </div>
 
-          <div className="bg-yellow-50 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-gray-900 mb-3">
-              Payment Summary
-            </h4>
-            <div className="space-y-3">
-              <DetailRow
-                label="Payment Status"
-                value={appointment?.payment?.status || "N/A"}
-                valueClass="text-orange-600 font-semibold"
-              />
-              <DetailRow
-                label="Payment Amount"
-                value={`$${appointment?.payment?.amount || 0}`}
-                valueClass="text-green-600 font-semibold"
-              />
-              <DetailRow
-                label="Payment Method"
-                value={
-                  appointment?.payment?.method === "orange_money"
-                    ? "Orange Money"
-                    : appointment?.payment?.method || "N/A"
-                }
-              />
-            </div>
-          </div>
-
-          <Button onClick={() => navigate("/my-bookings")} variant="success">
+          {/* <Button
+            onClick={() => navigate("/my-bookings")}
+            variant="success"
+            size="md"
+          >
             View Schedule
-          </Button>
+          </Button> */}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-12 px-6">
