@@ -57,7 +57,7 @@ const OrangePayModel = ({ isOpen, onClose }) => {
             ? "144,000"
             : userType === "doctor"
               ? "9,000"
-              : "3,000"}{" "}
+              : "3,000"}
           CFA
         </h1>
         <h6 className="text-base mb-4">Pay for respective Account</h6>

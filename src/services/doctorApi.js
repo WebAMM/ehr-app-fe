@@ -108,6 +108,22 @@ export const doctorApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Subscription'],
     }),
+   claimFeeWithOrangeMoney: builder.mutation({
+      query: ({ body }) => ({
+        url: `/claimRequest/claimFeeWithOrangeMoney`,
+        method: 'POST',
+        body
+      }),
+      invalidatesTags: ['Subscription'],
+    }),
+   getAppointmentById: builder.query({
+      query: ({ id }) => ({
+        url: `/claimRequest/claimRequestByUserId?id=${id}`,
+        method: 'GET',
+       
+      }),
+      providesTags: ['Subscription'],
+    }),
 
   }),
   overrideExisting: false,
@@ -127,5 +143,7 @@ export const {
   useDoctorConsultationStatsQuery,
   useTotalDoctorAppointmentsQuery,
   useTotalDoctorPatientsQuery,
-  useGetDoctorPaymentsQuery
+  useGetDoctorPaymentsQuery,
+  useClaimFeeWithOrangeMoneyMutation,
+  useGetAppointmentByIdQuery,
 } = doctorApi;

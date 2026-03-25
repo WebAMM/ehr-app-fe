@@ -11,6 +11,8 @@ import { toastError, toastSuccess } from "@/components/ui/Toast";
 import PaymentMethodModal from "@/Models/PaymentMethodModal";
 import ConfirmAppointment from "@/Models/ConfirmAppointmentModal";
 import AppointmentDetailsModal from "@/Models/AppointmentDetailsModal";
+import PaymentWithOrange from "@/Models/PayementWithOrange";
+import { useClaimFeeWithOrangeMoneyMutation } from "@/services/doctorApi";
 
 const PatientDetailsSchema = Yup.object().shape({
   patientName: Yup.string()
@@ -46,15 +48,20 @@ const INSURANCE_NAME_OPTIONS = [
 
 export default function PatientDetails() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isAppointmentDetailsModalOpen, setIsAppointmentDetailsModalOpen] =
     useState(false);
+  const [appointmentId, setAppointmentId] = useState(null);
+  const [accountNumber, setAccountNumber] = useState("");
+  const [paymentWithOrangeModalOpen, setPaymentWithOrangeModalOpen] =
+    useState(false);
   const [confirmationData, setConfirmationData] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState("cash");
   const [fileError, setFileError] = useState("");
+  const [claimFeeWithOrangeMoney, { isLoading: isClaiming }] =
+    useClaimFeeWithOrangeMoneyMutation();
 
   const slotData = location.state?.slotData || {};
   const { slotId, doctorId } = slotData;
@@ -111,7 +118,7 @@ export default function PatientDetails() {
   });
   const handlePaymentMethodChange = (methodId) => {
     if (methodId === "orange") {
-      setIsAppointmentDetailsModalOpen(true);
+      setPaymentWithOrangeModalOpen(true);
     } else if (methodId === "cash") {
       setIsConfirmationModalOpen(true);
     }
@@ -134,7 +141,35 @@ export default function PatientDetails() {
       setFileError("");
     }
   };
-
+  const handleClaimRequest = async () => {
+    const payload = {
+      appointmentId: confirmationData.appointmentData?._id,
+      doctorId: confirmationData?.appointmentData?.doctorId?._id,
+      paymentMethod: "orangeMoney",
+      amountPaid: confirmationData?.appointmentData?.doctorId?.consultationFee,
+      userId: confirmationData?.appointmentData?.userId,
+      accountName: "orangeMoney",
+      accountNo: accountNumber,
+      customerMsisdn: "72906251",
+      actionType: "consultation",
+    };
+    try {
+      const response = await claimFeeWithOrangeMoney({
+        body: payload,
+      }).unwrap();
+      if (response) {
+        toastSuccess("Claim request submitted successfully!");
+        setPaymentWithOrangeModalOpen(false);
+        setAppointmentId(response?.data?.claimRequest?.userId);
+        setIsAppointmentDetailsModalOpen(true);
+      }
+    } catch (error) {
+      toastError(
+        error?.data?.message ||
+          "Failed to submit claim request. Please try again.",
+      );
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <StickyHeader
@@ -339,6 +374,7 @@ export default function PatientDetails() {
           </Button>
         </div>
       </div>
+
       <PaymentMethodModal
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
@@ -354,7 +390,15 @@ export default function PatientDetails() {
       <AppointmentDetailsModal
         isOpen={isAppointmentDetailsModalOpen}
         onClose={() => setIsAppointmentDetailsModalOpen(false)}
-        appointmentData={confirmationData?.appointmentData}
+        appointmentData={appointmentId}
+      />
+      <PaymentWithOrange
+        isOpen={paymentWithOrangeModalOpen}
+        onClose={() => setPaymentWithOrangeModalOpen(false)}
+        isSubscribing={isClaiming}
+        handlePayNow={handleClaimRequest}
+        accountNumber={accountNumber}
+        setAccountNumber={setAccountNumber}
       />
     </div>
   );
