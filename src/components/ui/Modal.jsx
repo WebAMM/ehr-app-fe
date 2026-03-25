@@ -23,7 +23,7 @@ const Modal = memo(
     useEffect(() => {
       if (isOpen) {
         document.addEventListener("keydown", handleEscape);
-        document.body.style.overflow = "hidden"; // Prevent scroll
+        document.body.style.overflow = "hidden";
       }
       return () => {
         document.removeEventListener("keydown", handleEscape);
@@ -49,14 +49,14 @@ const Modal = memo(
 
     return createPortal(
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 "
         onClick={handleBackdropClick}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         <div
-          className={`bg-bg border border-border rounded-lg shadow-lg p-6 w-full mx-4 relative ${sizeClasses[size]} ${className}`}
+          className={`bg-bg border border-border rounded-lg py-5 shadow-lg p-6 w-full mx-4 relative ${sizeClasses[size]} ${className} max-h-[80vh] overflow-y-auto`}
         >
           {title && (
             <h2
@@ -89,7 +89,7 @@ const Modal = memo(
           )}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
             aria-label="Close modal"
             title="Close modal"
           >

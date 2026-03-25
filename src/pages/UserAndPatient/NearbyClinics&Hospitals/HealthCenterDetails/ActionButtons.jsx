@@ -3,55 +3,133 @@ import Card from "@/components/ui/Card";
 import {
   Clock,
   Globe,
+  Mail,
   MapPin,
-  MessageCircle,
   Phone,
   Stethoscope,
+  TestTube,
 } from "lucide-react";
-import Button from "@/components/ui/Button";
 
-const ActionButtons = () => {
-  const actions = [
-    { icon: Globe, label: "Website" },
-    { icon: MessageCircle, label: "Message" },
-    { icon: Phone, label: "Call" },
-  ];
-
+const ActionButtons = ({ clinicDetails }) => {
   return (
-    <Card padding="md">
-      <div className="mt-3 space-y-2 text-base opacity-90">
-        <p className="flex items-center gap-2">Dengue, Skin Care, Eye Care</p>
-        <p className="flex items-center gap-2">
-          <MapPin size={14} /> Cardiology Center, USA
-        </p>
-        <p className="flex items-center gap-2">
-          <Clock size={14} /> Mon–Fri, 08:00 AM – 08:00 PM
-        </p>
-      </div>
+    <div className="space-y-6">
+      <Card padding="sm" className="bg-secondary text-text-light rounded-2xl">
+        <div className="flex items-center gap-4">
+          <img
+            src={clinicDetails?.logo}
+            alt={clinicDetails?.name || "clinic"}
+            className="w-16 h-16 rounded-lg object-cover"
+          />
 
-      <div className="mt-3 text-sm flex flex-col gap-1">
-        <span>Clinic Package</span> <strong>10,000 CFA / Month</strong>
-      </div>
+          <div className="flex-1">
+            <h2 className="text-lg font-semibold text-text-light">
+              {clinicDetails?.fullName}
+            </h2>
+          </div>
+        </div>
+      </Card>
+      <Card padding="md" className="bg-white/90 rounded-2xl   ">
+        <div className="space-y-6 p-4">
+          <div className="flex flex-col md:flex-row md:items-center md:gap-8 gap-2 border-b  pb-4">
+            <div className="flex items-center gap-2 text-base text-gray-700">
+              <MapPin size={18} className="text-primary" />
+              <span className="font-medium">
+                {clinicDetails?.address || "N/A"}
+              </span>
+              <span className="text-gray-400">|</span>
+              <span>{clinicDetails?.city || "N/A"}</span>
+            </div>
+            <div className="flex items-center gap-2 text-base text-gray-700">
+              <Phone size={18} className="text-primary" />
+              <span>{clinicDetails?.phoneNumber || "N/A"}</span>
+            </div>
+            <div className="flex items-center gap-2 text-base text-gray-700">
+              <Mail size={18} className="text-primary" />
+              <span>{clinicDetails?.email || "N/A"}</span>
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Stethoscope size={18} className="text-primary" />
+              <h3 className="text-lg font-semibold text-gray-800 mb-0">
+                About
+              </h3>
+            </div>
+            <p className="text-base text-gray-700 leading-relaxed bg-primary/5 rounded-md px-3 py-2">
+              {clinicDetails?.about || (
+                <span className="italic text-gray-400">
+                  No description available.
+                </span>
+              )}
+            </p>
+          </div>
 
-      <Button fullWidth className="mt-4" variant="secondary" size="md">
-        Subscribe All Services
-      </Button>
-      <div className="grid grid-cols-3 max-sm:grid-cols-1 gap-3 mt-5">
-        {actions.map(
-          (
-            { icon: IconComponent, label }, // eslint-disable-line no-unused-vars
-          ) => (
-            <button
-              key={label}
-              className="flex flex-col items-center gap-2 py-3 rounded-lg bg-primary/5 hover:bg-primary/20 transition cursor-pointer"
-            >
-              <IconComponent className="text-secondary" />
-              <span className="text-sm">{label}</span>
-            </button>
-          ),
-        )}
-      </div>
-    </Card>
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock size={20} className="text-primary" />
+              <span className="text-lg font-semibold text-gray-800">
+                Availability
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {clinicDetails?.availableDayAndTime?.filter(
+                (slot) => slot?.available,
+              ).length === 0 ? (
+                <span className="text-gray-400 italic">
+                  No availability info
+                </span>
+              ) : (
+                clinicDetails?.availableDayAndTime.map(
+                  (slot, index) =>
+                    slot?.available && (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 px-3 py-2 rounded-full bg-primary/5 border border-primary/20 shadow-sm text-sm hover:bg-primary/20 transition-all min-w-40"
+                      >
+                        <span className="font-semibold text-primary text-sm">
+                          {slot.day}:
+                        </span>
+                        <span className="text-sm text-text">
+                          {slot.openingTime} - {slot.closingTime}
+                        </span>
+                      </div>
+                    ),
+                )
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <TestTube size={20} className="text-primary" />
+              <span className="text-lg font-semibold text-gray-800">
+                Medical Exam Types Provided
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {clinicDetails?.medicalExamTypesProvided?.length === 0 ? (
+                <span className="text-gray-400 italic">
+                  No exam types listed
+                </span>
+              ) : (
+                clinicDetails?.medicalExamTypesProvided.map(
+                  (examType, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/20 shadow-sm hover:bg-primary/20 transition-all min-w-[140px]"
+                    >
+                      <span className="font-semibold text-primary text-sm">
+                        {examType}
+                      </span>
+                    </div>
+                  ),
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 };
 
