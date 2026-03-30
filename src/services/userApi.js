@@ -139,9 +139,14 @@ export const userApi = baseApi.injectEndpoints({
       }),
    providesTags: ["Clinic"],
     }),
-
-
-   
+    ClinicDoctorProfile: builder.mutation({
+      query: ({ clinicId, body  }) => ({
+        url: `/clinic/getClinicDoctorProfile/${clinicId}`,
+        method: 'POST',
+        body : body,
+      }),
+   invalidatesTags: ["Doctor"],
+    }),
   
   }),
   overrideExisting: false,
@@ -162,4 +167,5 @@ export const {
   useClaimFeeWithOrangeMoneyMutation,
   useGetAllClinicsQuery,
   useGetClinicDetailsQuery,
+  useClinicDoctorProfileMutation,
 } = userApi;

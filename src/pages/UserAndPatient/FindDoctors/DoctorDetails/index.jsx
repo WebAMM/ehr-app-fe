@@ -138,17 +138,7 @@ export default function DoctorDetailsPage() {
             <div>
               <Map doctorDetails={doctorDetails} />
             </div>
-            {/* <Card className="p-6">
-            <h2 className="font-semibold mb-4">Education & Certifications</h2>
-            <ul className="space-y-3">
-              {doctor.education.map((edu, idx) => (
-                <li key={idx} className="flex gap-3">
-                  <Award className="w-5 h-5 text-secondary" />
-                  <span>{edu}</span>
-                </li>
-              ))}
-            </ul>
-          </Card> */}
+
             <Card className="p-6">
               <h2 className="font-semibold mb-4">Patient Reviews</h2>
               {reviewsLoading ? (

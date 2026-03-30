@@ -1,0 +1,281 @@
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import clsx from "clsx";
+import StickyHeader from "@/components/ui/StickyHeader";
+import { TIME_CATEGORIES } from "./TimeCatagories";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAddSlotMutation } from "@/services";
+import { toastError, toastSuccess } from "@/components/ui/Toast";
+
+const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const consultation = [
+  { id: "In-Clinic Consultation", name: "In-Clinic Consultation" },
+  { id: "Video Consultation", name: "Video Consultation" },
+];
+
+export default function DoctorBookingAppointment({ isClinic = false }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [booking, setBooking] = useState({
+    consultationType: "In-Clinic Consultation",
+    selectedDate: null,
+    duration: 30,
+    selectedTime: null,
+  });
+  const [addSlot, { isLoading }] = useAddSlotMutation();
+  const location = useLocation();
+  const doctorDetails = location?.state?.doctorDetails;
+  const clinicId = location?.state?.clinicId;
+  const doctorConsultationType = doctorDetails?.type;
+  const doctorId = doctorDetails?._id;
+
+  useEffect(() => {
+    if (doctorConsultationType && doctorConsultationType !== "both") {
+      setBooking((prev) => ({
+        ...prev,
+        consultationType: doctorConsultationType,
+      }));
+    }
+  }, [doctorConsultationType]);
+
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const navigate = useNavigate();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const daysInMonth = new Date(
+    currentMonth.getFullYear(),
+    currentMonth.getMonth() + 1,
+    0,
+  ).getDate();
+
+  const firstDayOfMonth = new Date(
+    currentMonth.getFullYear(),
+    currentMonth.getMonth(),
+    1,
+  ).getDay();
+
+  const updateBooking = (key, value) => {
+    setBooking((prev) => ({ ...prev, [key]: value }));
+  };
+  const handleAddSlot = async () => {
+    let slotData;
+    if (isClinic) {
+      slotData = {
+        date: booking.selectedDate,
+        duration: booking.duration,
+        clinicDoctorId: location?.state?.doctorID,
+        time: booking.selectedTime,
+        clinicId: clinicId,
+        consultationType: booking.consultationType,
+      };
+    } else {
+      slotData = {
+        doctorId: doctorId,
+        date: booking.selectedDate,
+        time: booking.selectedTime,
+        duration: booking.duration,
+        consultationType: booking.consultationType,
+      };
+    }
+    try {
+      const response = await addSlot({ body: slotData }).unwrap();
+
+      if (response) {
+        toastSuccess(response?.message || "Slot added successfully");
+        navigate("/patient-details", {
+          state: {
+            slotData: {
+              type: booking.consultationType,
+              slotId: response?.data?._id,
+              doctorId: response?.data?.doctorId,
+              clinicId: clinicId,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      toastError(error?.data?.message || "Failed to add slot");
+    }
+  };
+  const isFormComplete =
+    booking.selectedDate && booking.selectedTime && booking.duration;
+  return (
+    <div className="min-h-screen bg-bg ">
+      <StickyHeader
+        linkTo={isClinic ? "/nearby-clinics-and-hospitals" : "/find-doctors"}
+        linkText="Create a new appointment"
+        showFavorite={false}
+        isFavorite={isFavorite}
+        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+      />
+      <div className="flex justify-start mt-2 sm:mt-4">
+        <div className="w-full max-w-sm sm:max-w-md lg:max-w-5xl bg-white rounded-xl shadow-sm p-2 sm:p-4 lg:p-8 space-y-4 sm:space-y-6">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            {consultation.map((type) => {
+              const isDisabled =
+                doctorConsultationType &&
+                doctorConsultationType !== "both" &&
+                type.id !== doctorConsultationType;
+              return (
+                <button
+                  key={type.id}
+                  disabled={isDisabled}
+                  onClick={() =>
+                    !isDisabled && updateBooking("consultationType", type.id)
+                  }
+                  className={clsx(
+                    "flex-1 py-1 sm:py-2 text-xs sm:text-sm font-medium rounded-md transition",
+                    isDisabled
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-40 pointer-events-none"
+                      : booking.consultationType === type.id
+                        ? "bg-secondary text-white"
+                        : "text-gray-500 hover:bg-gray-200 cursor-pointer",
+                  )}
+                >
+                  {type.name}
+                </button>
+              );
+            })}
+          </div>
+
+          <div>
+            <h3 className="text-xs sm:text-sm font-medium mb-2">Select Date</h3>
+
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <span className="text-secondary text-xs sm:text-sm font-medium">
+                {currentMonth.toLocaleString("default", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+              <div className="flex gap-2">
+                <ChevronLeft
+                  className="w-5 h-5 cursor-pointer text-secondary"
+                  onClick={() =>
+                    setCurrentMonth(
+                      new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth() - 1,
+                      ),
+                    )
+                  }
+                />
+                <ChevronRight
+                  className="w-5 h-5 cursor-pointer text-secondary"
+                  onClick={() =>
+                    setCurrentMonth(
+                      new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth() + 1,
+                      ),
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-7 text-xs text-gray-400 mb-1 sm:mb-2">
+              {WEEK_DAYS.map((day) => (
+                <div key={day} className="text-center">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
+              {Array(firstDayOfMonth)
+                .fill(null)
+                .map((_, i) => (
+                  <div key={i} />
+                ))}
+
+              {Array(daysInMonth)
+                .fill(null)
+                .map((_, i) => {
+                  const date = new Date(
+                    currentMonth.getFullYear(),
+                    currentMonth.getMonth(),
+                    i + 1,
+                  );
+                  date.setHours(0, 0, 0, 0);
+                  const isPast = date < today;
+                  const isSelected =
+                    booking.selectedDate &&
+                    booking.selectedDate.toDateString() === date.toDateString();
+                  return (
+                    <button
+                      key={i}
+                      disabled={isPast}
+                      onClick={() => updateBooking("selectedDate", date)}
+                      className={clsx(
+                        "h-8 sm:h-10 rounded-lg text-xs sm:text-sm transition",
+                        isSelected && "bg-secondary text-white",
+                        !isSelected &&
+                          !isPast &&
+                          "hover:bg-gray-100 text-gray-700",
+                        isPast && "text-gray-300 cursor-not-allowed",
+                      )}
+                    >
+                      {i + 1}
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-medium mb-2">
+              Select Duration
+            </h3>
+            <div className="relative">
+              <Clock className="absolute left-3 top-2 sm:top-3 w-4 h-4 text-secondary" />
+              <select
+                value={booking.duration}
+                onChange={(e) =>
+                  updateBooking("duration", Number(e.target.value))
+                }
+                className="w-full border rounded-lg py-1 sm:py-2 pl-9 pr-3 text-xs sm:text-sm"
+              >
+                <option value={30}>30 Minutes</option>
+                <option value={45}>45 Minutes</option>
+                <option value={60}>60 Minutes</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xs sm:text-sm font-medium mb-2">Select Hour</h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2">
+              {TIME_CATEGORIES?.map((slot) => (
+                <button
+                  key={slot.id}
+                  onClick={() => updateBooking("selectedTime", slot.value)}
+                  className={clsx(
+                    "py-1 sm:py-2 rounded-lg text-xs sm:text-sm transition",
+                    booking.selectedTime === slot.value
+                      ? "bg-secondary text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                  )}
+                >
+                  {slot.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button
+            disabled={!isFormComplete}
+            className={clsx(
+              "w-full py-2 sm:py-3 rounded-lg font-medium transition text-sm sm:text-base",
+              isFormComplete
+                ? "bg-secondary text-white cursor-pointer hover:bg-secondary/90"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed",
+            )}
+            onClick={handleAddSlot}
+          >
+            {isLoading ? "Loading..." : "Next"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

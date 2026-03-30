@@ -27,13 +27,16 @@ const HealthCenterDetails = () => {
   const onChange = (tab) => {
     setActiveTab(tab);
   };
-  console.log(location.state);
+
   const {
     data: clinicDetails,
     isLoading: clinicLoading,
     isError: clinicError,
     error: clinicErrorDetails,
   } = useGetClinicDetailsQuery({ id: location.state?.clinicId });
+  const clinicId = location.state?.clinicId || clinicDetails?.data?.[0]?._id;
+  const galleryImages = clinicDetails?.data?.[0]?.gallery || [];
+
   return (
     <div className="bg-bg">
       <StickyHeader
@@ -64,11 +67,15 @@ const HealthCenterDetails = () => {
             <StepperTabs active={activeTab} onChange={onChange} tabs={tabs} />
           </div>
 
-          {activeTab === "specialists" && <SpecialistsList />}
-          {activeTab === "services" && <ServicesTab />}
-          {activeTab === "gallery" && <GalleryTab />}
-          {activeTab === "reviews" && <ReviewsTab />}
-          {activeTab === "contact" && <ContactTab />}
+          {activeTab === "specialists" && (
+            <SpecialistsList clinicId={clinicId} />
+          )}
+          {activeTab === "services" && <ServicesTab clinicId={clinicId} />}
+          {activeTab === "gallery" && <GalleryTab images={galleryImages} />}
+          {activeTab === "reviews" && <ReviewsTab clinicId={clinicId} />}
+          {activeTab === "contact" && (
+            <ContactTab clinicDetails={clinicDetails?.data?.[0]} />
+          )}
         </Card>
       </div>
     </div>

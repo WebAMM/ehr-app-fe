@@ -170,6 +170,13 @@ export const clinicApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Reviews'],
     }),
+    getClinicService: builder.query({
+      query: ({ id }) => ({
+        url: `/clinic/getClinicService/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Services'],
+    }),
   }),
   overrideExisting: false,
 });
@@ -195,5 +202,6 @@ export const {
   useSubscribeWithOrangeMoneyMutation,
   useAddSubscriptionMutation,
   useStartPaymentMutation,
+  useGetClinicServiceQuery,
 
 } = clinicApi;
