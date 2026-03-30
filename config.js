@@ -48,6 +48,9 @@ const PATH = {
   CLINIC_SETTING: "/clinic-settings",
   UPDATE_USER_PASSWORD: "/update-profile-password",
   PAYMENT_METHOD: "/payment-method",
+  CLINIC_DOCTOR_DETAILS: "/clinic-doctor-details",
+  CLINIC_DOCTOR_APPOINTMENT: "/clinic-doctor-appointment",
+  CLINIC_PATIENT_DETAILS: "/clinic-patient-details",
 };
 
 const TOASTER_STYLING_VALUES = {

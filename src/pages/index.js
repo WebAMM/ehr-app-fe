@@ -41,6 +41,9 @@ import PendingVerification from "./Doctor/DoctorProfileRegister/PendingVerificat
 import ClinicAndLabUpdate from "./Laboratories/ClinicAndLabUpdate";
 import UpdateUserPassword from "./UserAndPatient/Settings/UpdateUserPassword";
 import PaymentMethod from "./UserAndPatient/FindDoctors/PaymentMethod";
+import ClinicDoctorDetails from "./UserAndPatient/NearbyClinics&Hospitals/ClinicDoctorDetails";
+import ClinicDoctorAppointment from "./UserAndPatient/NearbyClinics&Hospitals/ClinicDoctorAppointment";
+import ClinicPatientDetails from "./UserAndPatient/NearbyClinics&Hospitals/ClinicPatientDetails";
 const WEB_PAGES = {
   SIGN_IN: Login,
   REGISTER: Register,
@@ -85,5 +88,8 @@ const WEB_PAGES = {
   CLINIC_AND_LAB_UPDATE: ClinicAndLabUpdate,
   UPDATE_USER_PASSWORD: UpdateUserPassword,
   PAYMENT_METHOD: PaymentMethod,
+  CLINIC_DOCTOR_DETAILS: ClinicDoctorDetails,
+  CLINIC_DOCTOR_APPOINTMENT: ClinicDoctorAppointment,
+  CLINIC_PATIENT_DETAILS: ClinicPatientDetails,
 };
 export { WEB_PAGES };

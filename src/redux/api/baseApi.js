@@ -21,7 +21,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     Cookies.remove('user_data');
     window.location.href = '/sign-in';
   }
-  
   return result;
 };
 export const baseApi = createApi({
