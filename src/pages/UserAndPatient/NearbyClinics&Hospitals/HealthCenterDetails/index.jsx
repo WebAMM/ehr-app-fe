@@ -1,6 +1,6 @@
 import StickyHeader from "@/components/ui/StickyHeader";
 import React, { useState } from "react";
-import ClinicHeader from "./ClinicHeader";
+
 import ActionButtons from "./ActionButtons";
 import StepperTabs from "@/components/common/StepperTabs";
 import SpecialistsList from "./SpecialistsList";
@@ -27,14 +27,14 @@ const HealthCenterDetails = () => {
   const onChange = (tab) => {
     setActiveTab(tab);
   };
-
+  const clinicIdFromState = location.state?.clinicId;
   const {
     data: clinicDetails,
     isLoading: clinicLoading,
     isError: clinicError,
     error: clinicErrorDetails,
-  } = useGetClinicDetailsQuery({ id: location.state?.clinicId });
-  const clinicId = location.state?.clinicId || clinicDetails?.data?.[0]?._id;
+  } = useGetClinicDetailsQuery({ id: clinicIdFromState });
+  const clinicId = clinicIdFromState || clinicDetails?.data?.[0]?._id;
   const galleryImages = clinicDetails?.data?.[0]?.gallery || [];
 
   return (

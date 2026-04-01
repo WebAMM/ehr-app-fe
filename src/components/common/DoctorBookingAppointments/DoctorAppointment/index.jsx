@@ -83,12 +83,13 @@ export default function DoctorBookingAppointment({ isClinic = false }) {
 
       if (response) {
         toastSuccess(response?.message || "Slot added successfully");
-        navigate("/patient-details", {
+        navigate(isClinic ? "/clinic-patient-details" : "/patient-details", {
           state: {
             slotData: {
               type: booking.consultationType,
               slotId: response?.data?._id,
-              doctorId: response?.data?.doctorId,
+              doctorId:
+                response?.data?.doctorId || response?.data?.clinicDoctorId,
               clinicId: clinicId,
             },
           },
