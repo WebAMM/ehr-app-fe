@@ -64,7 +64,8 @@ export default function PatientDetails({ isClinic = false }) {
     useClaimFeeWithOrangeMoneyMutation();
 
   const slotData = location.state?.slotData || {};
-  const { slotId, doctorId } = slotData;
+  const { slotId, doctorId, clinicId } = slotData;
+  console.log("Received slot data in PatientDetails:", slotData);
 
   const [bookAppointment, { isLoading: isBooking }] =
     useBookAppointmentMutation();
@@ -88,7 +89,14 @@ export default function PatientDetails({ isClinic = false }) {
       try {
         const formData = new FormData();
 
-        formData.append("doctorId", doctorId);
+        if (clinicId) {
+          formData.append("clinicId", clinicId);
+        }
+        if (isClinic === true) {
+          formData.append("clinicDoctorId", doctorId);
+        } else {
+          formData.append("doctorId", doctorId);
+        }
         formData.append("slotId", slotId);
         formData.append("patientDetails[patientName]", values.patientName);
         formData.append("patientDetails[patientMobileNo]", values.mobileNo);
@@ -173,7 +181,11 @@ export default function PatientDetails({ isClinic = false }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <StickyHeader
-        linkTo="/doctor-booking-appointment"
+        linkTo={
+          isClinic === true
+            ? "/nearby-clinics-and-hospitals"
+            : "/doctor-booking-appointment"
+        }
         linkText="Patient Details"
         showFavorite={false}
       />
